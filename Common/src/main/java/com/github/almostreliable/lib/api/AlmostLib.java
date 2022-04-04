@@ -1,6 +1,7 @@
 package com.github.almostreliable.lib.api;
 
 import com.github.almostreliable.lib.api.registry.IAlmostRegistry;
+import com.github.almostreliable.lib.api.registry.RegistryToRuleThemAll;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Registry;
 import net.minecraft.network.FriendlyByteBuf;
@@ -26,6 +27,8 @@ public interface AlmostLib {
     CreativeModeTab createCreativeTab(ResourceLocation location, Supplier<ItemStack> supplier);
 
     <T> IAlmostRegistry<T> createRegistry(String namespace, ResourceKey<Registry<T>> resourceKey);
+
+    RegistryToRuleThemAll createRegistry(String namespace);
 
     void openMenu(ServerPlayer player, MenuProvider menu, Consumer<FriendlyByteBuf> buf);
 

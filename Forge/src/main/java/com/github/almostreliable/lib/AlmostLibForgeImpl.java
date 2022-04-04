@@ -2,7 +2,9 @@ package com.github.almostreliable.lib;
 
 import com.github.almostreliable.lib.api.AlmostLib;
 import com.github.almostreliable.lib.api.registry.IAlmostRegistry;
+import com.github.almostreliable.lib.api.registry.RegistryToRuleThemAll;
 import com.github.almostreliable.lib.registry.ForgeAlmostRegistry;
+import com.github.almostreliable.lib.registry.RegistryToRuleThemAllForge;
 import net.minecraft.core.Registry;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.resources.ResourceKey;
@@ -52,6 +54,11 @@ public class AlmostLibForgeImpl implements AlmostLib {
     public <T> IAlmostRegistry<T> createRegistry(String namespace, ResourceKey<Registry<T>> resourceKey) {
         ForgeRegistry registry = RegistryManager.ACTIVE.getRegistry(resourceKey.location());
         return (IAlmostRegistry<T>) new ForgeAlmostRegistry(namespace, registry);
+    }
+
+    @Override
+    public RegistryToRuleThemAll createRegistry(String namespace) {
+        return new RegistryToRuleThemAllForge(namespace);
     }
 
     @Override

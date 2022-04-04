@@ -2,7 +2,9 @@ package com.github.almostreliable.lib;
 
 import com.github.almostreliable.lib.api.AlmostLib;
 import com.github.almostreliable.lib.api.registry.IAlmostRegistry;
+import com.github.almostreliable.lib.api.registry.RegistryToRuleThemAll;
 import com.github.almostreliable.lib.registry.FabricAlmostRegistry;
+import com.github.almostreliable.lib.registry.RegistryToRuleThemAllFabric;
 import net.fabricmc.fabric.api.client.itemgroup.FabricItemGroupBuilder;
 import net.fabricmc.fabric.api.screenhandler.v1.ExtendedScreenHandlerFactory;
 import net.fabricmc.loader.api.FabricLoader;
@@ -50,6 +52,11 @@ public class AlmostLibFabricImpl implements AlmostLib {
     public <T> IAlmostRegistry<T> createRegistry(String namespace, ResourceKey<Registry<T>> resourceKey) {
         Registry<T> registry = (Registry<T>) Registry.REGISTRY.get(resourceKey.location());
         return new FabricAlmostRegistry<>(namespace, registry);
+    }
+
+    @Override
+    public RegistryToRuleThemAll createRegistry(String namespace) {
+        return new RegistryToRuleThemAllFabric(namespace);
     }
 
     @Override
