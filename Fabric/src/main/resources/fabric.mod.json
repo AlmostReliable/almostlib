@@ -1,0 +1,31 @@
+{
+  "schemaVersion": 1,
+  "id": "${mod_id}",
+  "version": "${version}",
+  "name": "${mod_name}",
+  "description": "${mod_description}",
+  "authors": [
+    "${mod_author}"
+  ],
+  "contact": {
+    "homepage": "https://github.com/${github_user}",
+    "sources": "https://github.com/${github_user}/${github_repo}",
+    "issues": "https://github.com/${github_user}/${github_repo}/issues"
+  },
+  "license": "${license}",
+  "icon": "assets/universalpipeline/icon.png",
+  "environment": "*",
+  "entrypoints": {
+    "main": [
+      "com.github.almostreliable.lib.AlmostLibFabric"
+    ]
+  },
+  "mixins": [
+    "almostlib.mixins.json"
+  ],
+  "depends": {
+    "fabric": "*",
+    "minecraft": ">=${minecraft_version}",
+    "java": ">=17"
+  }
+}
