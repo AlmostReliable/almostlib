@@ -5,10 +5,13 @@ import com.github.almostreliable.lib.api.registry.RegistryDelegate;
 import com.github.almostreliable.lib.api.registry.RegistryManager;
 import com.github.almostreliable.lib.api.registry.builders.ItemBuilder;
 import com.github.almostreliable.lib.registry.builders.ItemBuilderImpl;
+import com.mojang.datafixers.util.Function4;
 import net.minecraft.core.NonNullList;
 import net.minecraft.core.Registry;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.world.item.Item;
+import net.minecraft.world.item.SwordItem;
+import net.minecraft.world.item.Tier;
 import net.minecraft.world.level.block.Block;
 
 import java.util.function.Function;
@@ -31,7 +34,12 @@ public abstract class AbstractRegistryManager implements RegistryManager {
     }
 
     @Override
-    public <I extends Item> ItemBuilder<I> item(String id, Function<Item.Properties, I> factory) {
+    public <I extends SwordItem> ItemBuilder<I> registerSword(String id, Tier tier, int atkDamage, int atkSpeed, Function4<Tier, Integer, Integer, Item.Properties, I> factory) {
+        return registerItem(id, properties -> factory.apply(tier, atkDamage, atkSpeed, properties));
+    }
+
+    @Override
+    public <I extends Item> ItemBuilder<I> registerItem(String id, Function<Item.Properties, I> factory) {
         return new ItemBuilderImpl<I>(id, factory, (id1, entrySupplier) -> {
             // TODO Datagen and all the stuff
             return items.register(id1, entrySupplier);
@@ -49,7 +57,7 @@ public abstract class AbstractRegistryManager implements RegistryManager {
     public void init() {
         // TODO: Think about ordering for fabric
         for (RegistryDelegate<?> registry : registries) {
-            if(registry.isPresent()) {
+            if (registry.isPresent()) {
                 registry.init();
             }
         }
