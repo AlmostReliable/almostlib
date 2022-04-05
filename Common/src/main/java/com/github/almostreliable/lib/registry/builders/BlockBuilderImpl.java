@@ -3,6 +3,8 @@ package com.github.almostreliable.lib.registry.builders;
 import com.github.almostreliable.lib.api.registry.RegisterCallback;
 import com.github.almostreliable.lib.api.registry.builders.BlockBuilder;
 import com.github.almostreliable.lib.api.registry.builders.ItemBuilder;
+import net.minecraft.core.Registry;
+import net.minecraft.resources.ResourceKey;
 import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.SoundType;
@@ -17,7 +19,7 @@ import java.util.function.Function;
 import java.util.function.Supplier;
 import java.util.function.ToIntFunction;
 
-public class BlockBuilderImpl<B extends Block, I extends BlockItem> extends AbstractEntryBuilder<B>
+public class BlockBuilderImpl<B extends Block, I extends BlockItem> extends AbstractEntryBuilder<B, Block>
         implements BlockBuilder<B, I> {
     private final Function<BlockBehaviour.Properties, B> factory;
     private final RegisterCallback<I> registerItemCallback;
@@ -157,5 +159,10 @@ public class BlockBuilderImpl<B extends Block, I extends BlockItem> extends Abst
     @Override
     public B create() {
         return factory.apply(properties);
+    }
+
+    @Override
+    protected ResourceKey<Registry<Block>> getRegistryKey() {
+        return Registry.BLOCK_REGISTRY;
     }
 }

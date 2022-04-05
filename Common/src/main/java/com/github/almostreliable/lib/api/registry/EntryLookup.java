@@ -1,4 +1,4 @@
-package com.github.almostreliable.lib.registry;
+package com.github.almostreliable.lib.api.registry;
 
 import net.minecraft.core.Registry;
 import net.minecraft.resources.ResourceKey;

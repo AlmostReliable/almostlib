@@ -2,6 +2,8 @@ package com.github.almostreliable.lib.registry.builders;
 
 import com.github.almostreliable.lib.api.registry.RegisterCallback;
 import com.github.almostreliable.lib.api.registry.builders.ItemBuilder;
+import net.minecraft.core.Registry;
+import net.minecraft.resources.ResourceKey;
 import net.minecraft.world.food.FoodProperties;
 import net.minecraft.world.item.CreativeModeTab;
 import net.minecraft.world.item.Item;
@@ -12,7 +14,7 @@ import java.util.Objects;
 import java.util.function.Function;
 import java.util.function.Supplier;
 
-public class ItemBuilderImpl<I extends Item> extends AbstractEntryBuilder<I> implements ItemBuilder<I> {
+public class ItemBuilderImpl<I extends Item> extends AbstractEntryBuilder<I, Item> implements ItemBuilder<I> {
     private final Function<Item.Properties, ? extends I> factory;
     private Item.Properties properties;
 
@@ -80,5 +82,10 @@ public class ItemBuilderImpl<I extends Item> extends AbstractEntryBuilder<I> imp
     @Override
     public I create() {
         return factory.apply(properties);
+    }
+
+    @Override
+    protected ResourceKey<Registry<Item>> getRegistryKey() {
+        return Registry.ITEM_REGISTRY;
     }
 }

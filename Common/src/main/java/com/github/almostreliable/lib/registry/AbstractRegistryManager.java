@@ -1,5 +1,6 @@
 package com.github.almostreliable.lib.registry;
 
+import com.github.almostreliable.lib.api.registry.EntryLookup;
 import com.github.almostreliable.lib.api.registry.RegistryDelegate;
 import com.github.almostreliable.lib.api.registry.RegistryManager;
 import com.github.almostreliable.lib.api.registry.builders.BlockBuilder;
@@ -42,10 +43,7 @@ public abstract class AbstractRegistryManager implements RegistryManager, EntryL
 
     @Override
     public <I extends Item> ItemBuilder<I> item(String id, Function<Item.Properties, I> factory) {
-        return new ItemBuilderImpl<I>(id, factory, (id1, entrySupplier) -> {
-            // TODO Datagen and all the stuff
-            return items.register(id1, entrySupplier);
-        });
+        return new ItemBuilderImpl<I>(id, factory, this::finalizeRegistration);
     }
 
     @Override
@@ -65,12 +63,17 @@ public abstract class AbstractRegistryManager implements RegistryManager, EntryL
 
     @Override
     public <B extends Block, I extends BlockItem> BlockBuilder<B, I> block(String id, BlockBehaviour.Properties properties, Function<BlockBehaviour.Properties, B> factory) {
-        return new BlockBuilderImpl<>(id, properties, factory, (id1, entrySupplier) -> {
-            return blocks.register(id1, entrySupplier);
-        }, (id1, entrySupplier) -> {return null;});
+        return new BlockBuilderImpl<>(id, properties, factory, this::finalizeRegistration, this::finalizeRegistration);
     }
 
     protected abstract <T> RegistryDelegate<T> getOrCreateDelegate(ResourceKey<Registry<T>> resourceKey);
+
+    // I hate generics...
+    protected <E, BASE> Supplier<E> finalizeRegistration(String id, Supplier<E> entrySupplier, ResourceKey<Registry<BASE>> resourceKey) {
+        @SuppressWarnings("unchecked")
+        RegistryDelegate<E> delegate = (RegistryDelegate<E>) getOrCreateDelegate(resourceKey);
+        return delegate.register(id, entrySupplier);
+    }
 
     @Override
     public void init() {
