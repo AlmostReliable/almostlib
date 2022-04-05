@@ -1,10 +1,10 @@
 package com.github.almostreliable.lib;
 
 import com.github.almostreliable.lib.api.AlmostLib;
-import com.github.almostreliable.lib.api.registry.IAlmostRegistry;
+import com.github.almostreliable.lib.api.registry.RegistryDelegate;
 import com.github.almostreliable.lib.api.registry.RegistryManager;
-import com.github.almostreliable.lib.registry.FabricAlmostRegistry;
 import com.github.almostreliable.lib.registry.RegistryManagerFabric;
+import com.github.almostreliable.lib.registry.VanillaRegistryDelegate;
 import net.fabricmc.fabric.api.client.itemgroup.FabricItemGroupBuilder;
 import net.fabricmc.fabric.api.screenhandler.v1.ExtendedScreenHandlerFactory;
 import net.fabricmc.loader.api.FabricLoader;
@@ -22,6 +22,7 @@ import net.minecraft.world.item.CreativeModeTab;
 import net.minecraft.world.item.ItemStack;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.Objects;
 import java.util.function.Consumer;
 import java.util.function.Supplier;
 
@@ -48,10 +49,11 @@ public class AlmostLibFabricImpl implements AlmostLib {
     }
 
     @Override
-    @SuppressWarnings("unchecked")
-    public <T> IAlmostRegistry<T> createRegistry(String namespace, ResourceKey<Registry<T>> resourceKey) {
-        Registry<T> registry = (Registry<T>) Registry.REGISTRY.get(resourceKey.location());
-        return new FabricAlmostRegistry<>(namespace, registry);
+    @SuppressWarnings({ "unchecked" })
+    public <T> RegistryDelegate<T> createRegistryDelegate(Supplier<String> namespace, ResourceKey<Registry<T>> resourceKey) {
+        Registry<T> vanillaRegistry = (Registry<T>) Registry.REGISTRY.get(resourceKey.location());
+        Objects.requireNonNull(vanillaRegistry, "Something went wrong"); // TODO handle this?
+        return new VanillaRegistryDelegate<>(namespace, vanillaRegistry);
     }
 
     @Override

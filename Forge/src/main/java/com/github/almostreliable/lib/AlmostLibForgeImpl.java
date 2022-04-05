@@ -1,10 +1,11 @@
 package com.github.almostreliable.lib;
 
 import com.github.almostreliable.lib.api.AlmostLib;
-import com.github.almostreliable.lib.api.registry.IAlmostRegistry;
+import com.github.almostreliable.lib.api.registry.RegistryDelegate;
 import com.github.almostreliable.lib.api.registry.RegistryManager;
-import com.github.almostreliable.lib.registry.ForgeAlmostRegistry;
+import com.github.almostreliable.lib.registry.DeferredRegistryDelegate;
 import com.github.almostreliable.lib.registry.RegistryManagerForge;
+import com.github.almostreliable.lib.registry.VanillaRegistryDelegate;
 import net.minecraft.core.Registry;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.resources.ResourceKey;
@@ -18,6 +19,7 @@ import net.minecraftforge.fml.loading.FMLLoader;
 import net.minecraftforge.network.NetworkHooks;
 import net.minecraftforge.registries.ForgeRegistry;
 
+import java.util.Objects;
 import java.util.function.Consumer;
 import java.util.function.Supplier;
 
@@ -50,9 +52,14 @@ public class AlmostLibForgeImpl implements AlmostLib {
 
     @Override
     @SuppressWarnings({ "unchecked", "rawtypes" })
-    public <T> IAlmostRegistry<T> createRegistry(String namespace, ResourceKey<Registry<T>> resourceKey) {
+    public <T> RegistryDelegate<T> createRegistryDelegate(Supplier<String> namespace, ResourceKey<Registry<T>> resourceKey) {
         ForgeRegistry registry = net.minecraftforge.registries.RegistryManager.ACTIVE.getRegistry(resourceKey.location());
-        return (IAlmostRegistry<T>) new ForgeAlmostRegistry(namespace, registry);
+        if (registry == null) {
+            Registry<T> vanillaRegistry = (Registry<T>) Registry.REGISTRY.get(resourceKey.location());
+            Objects.requireNonNull(vanillaRegistry, "Something went wrong"); // TODO handle this?
+            return new VanillaRegistryDelegate<>(namespace, vanillaRegistry);
+        }
+        return (RegistryDelegate<T>) new DeferredRegistryDelegate<>(namespace, registry);
     }
 
     @Override

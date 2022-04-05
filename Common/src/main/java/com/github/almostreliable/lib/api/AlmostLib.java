@@ -1,6 +1,6 @@
 package com.github.almostreliable.lib.api;
 
-import com.github.almostreliable.lib.api.registry.IAlmostRegistry;
+import com.github.almostreliable.lib.api.registry.RegistryDelegate;
 import com.github.almostreliable.lib.api.registry.RegistryManager;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Registry;
@@ -26,7 +26,7 @@ public interface AlmostLib {
 
     CreativeModeTab createCreativeTab(ResourceLocation location, Supplier<ItemStack> supplier);
 
-    <T> IAlmostRegistry<T> createRegistry(String namespace, ResourceKey<Registry<T>> resourceKey);
+    <T> RegistryDelegate<T> createRegistryDelegate(Supplier<String> namespace, ResourceKey<Registry<T>> resourceKey);
 
     RegistryManager createRegistry(String namespace);
 

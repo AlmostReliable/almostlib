@@ -10,8 +10,6 @@ import java.util.function.Function;
 public interface RegistryManager {
     String getNamespace();
 
-    <T> IAlmostRegistry<T> getOrCreateRegistry(ResourceKey<Registry<T>> resourceKey);
-
     <I extends Item> ItemBuilder<I> item(String id, Function<Item.Properties, I> factory);
 
     void init();
