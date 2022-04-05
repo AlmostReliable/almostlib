@@ -1,7 +1,7 @@
 package com.github.almostreliable.lib.registry.builders;
 
 import com.github.almostreliable.lib.api.registry.builders.ItemBuilder;
-import com.github.almostreliable.lib.registry.AbstractRegistryToRuleThemAll;
+import com.github.almostreliable.lib.registry.AbstractRegistryManager;
 import net.minecraft.world.food.FoodProperties;
 import net.minecraft.world.item.CreativeModeTab;
 import net.minecraft.world.item.Item;
@@ -14,11 +14,11 @@ import java.util.function.Supplier;
 
 public class ItemBuilderImpl<I extends Item> extends AbstractEntryBuilder<I> implements ItemBuilder<I> {
 
-    private final AbstractRegistryToRuleThemAll registry;
+    private final AbstractRegistryManager registry;
     private final Function<Item.Properties, I> factory;
     private Item.Properties properties;
 
-    public ItemBuilderImpl(AbstractRegistryToRuleThemAll registry, Function<Item.Properties, I> factory) {
+    public ItemBuilderImpl(AbstractRegistryManager registry, Function<Item.Properties, I> factory) {
         super();
         this.registry = registry;
         this.factory = factory;

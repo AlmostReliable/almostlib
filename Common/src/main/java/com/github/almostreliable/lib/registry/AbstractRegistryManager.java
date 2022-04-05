@@ -1,7 +1,7 @@
 package com.github.almostreliable.lib.registry;
 
 import com.github.almostreliable.lib.api.registry.IAlmostRegistry;
-import com.github.almostreliable.lib.api.registry.RegistryToRuleThemAll;
+import com.github.almostreliable.lib.api.registry.RegistryManager;
 import com.github.almostreliable.lib.api.registry.builders.ItemBuilder;
 import com.github.almostreliable.lib.registry.builders.ItemBuilderImpl;
 import net.minecraft.core.Registry;
@@ -10,12 +10,12 @@ import net.minecraft.world.item.Item;
 
 import java.util.function.Function;
 
-public abstract class AbstractRegistryToRuleThemAll implements RegistryToRuleThemAll {
+public abstract class AbstractRegistryManager implements RegistryManager {
 
     protected final RegistryMap registries = new RegistryMap();
     private final String namespace;
 
-    public AbstractRegistryToRuleThemAll(String namespace) {
+    public AbstractRegistryManager(String namespace) {
         this.namespace = namespace;
     }
 

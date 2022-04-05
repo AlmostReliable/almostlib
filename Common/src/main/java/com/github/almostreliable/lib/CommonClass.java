@@ -1,14 +1,14 @@
 package com.github.almostreliable.lib;
 
 import com.github.almostreliable.lib.api.AlmostLib;
-import com.github.almostreliable.lib.api.registry.RegistryToRuleThemAll;
+import com.github.almostreliable.lib.api.registry.RegistryManager;
 import net.minecraft.world.item.*;
 
 import java.util.function.Supplier;
 
 public class CommonClass {
     // TODO Clean up later, just for testing right now
-    public static RegistryToRuleThemAll registry = AlmostLib.INSTANCE.createRegistry(AlmostConstants.MOD_ID);
+    public static RegistryManager registry = AlmostLib.INSTANCE.createRegistry(AlmostConstants.MOD_ID);
 
     Supplier<CompassItem> DUMMY_ITEM = registry
             .item("dummy_item", CompassItem::new)

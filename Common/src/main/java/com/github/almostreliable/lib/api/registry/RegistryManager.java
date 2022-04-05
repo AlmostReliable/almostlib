@@ -7,7 +7,7 @@ import net.minecraft.world.item.Item;
 
 import java.util.function.Function;
 
-public interface RegistryToRuleThemAll {
+public interface RegistryManager {
     String getNamespace();
 
     <T> IAlmostRegistry<T> getOrCreateRegistry(ResourceKey<Registry<T>> resourceKey);
