@@ -26,8 +26,6 @@ public interface AlmostLib {
 
     CreativeModeTab createCreativeTab(ResourceLocation location, Supplier<ItemStack> supplier);
 
-    <T> RegistryDelegate<T> createRegistryDelegate(Supplier<String> namespace, ResourceKey<Registry<T>> resourceKey);
-
     RegistryManager createRegistry(String namespace);
 
     void openMenu(ServerPlayer player, MenuProvider menu, Consumer<FriendlyByteBuf> buf);

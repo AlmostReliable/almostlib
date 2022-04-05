@@ -49,14 +49,6 @@ public class AlmostLibFabricImpl implements AlmostLib {
     }
 
     @Override
-    @SuppressWarnings({ "unchecked" })
-    public <T> RegistryDelegate<T> createRegistryDelegate(Supplier<String> namespace, ResourceKey<Registry<T>> resourceKey) {
-        Registry<T> vanillaRegistry = (Registry<T>) Registry.REGISTRY.get(resourceKey.location());
-        Objects.requireNonNull(vanillaRegistry, "Something went wrong"); // TODO handle this?
-        return new VanillaRegistryDelegate<>(namespace, vanillaRegistry);
-    }
-
-    @Override
     public RegistryManager createRegistry(String namespace) {
         return new RegistryManagerFabric(namespace);
     }

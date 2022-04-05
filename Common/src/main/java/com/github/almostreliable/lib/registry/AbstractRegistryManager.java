@@ -1,6 +1,5 @@
 package com.github.almostreliable.lib.registry;
 
-import com.github.almostreliable.lib.api.AlmostLib;
 import com.github.almostreliable.lib.api.registry.RegistryDelegate;
 import com.github.almostreliable.lib.api.registry.RegistryManager;
 import com.github.almostreliable.lib.api.registry.builders.BlockBuilder;
@@ -8,7 +7,6 @@ import com.github.almostreliable.lib.api.registry.builders.ItemBuilder;
 import com.github.almostreliable.lib.registry.builders.BlockBuilderImpl;
 import com.github.almostreliable.lib.registry.builders.ItemBuilderImpl;
 import com.mojang.datafixers.util.Function4;
-import net.minecraft.core.NonNullList;
 import net.minecraft.core.Registry;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.world.item.*;
@@ -17,15 +15,14 @@ import net.minecraft.world.level.block.state.BlockBehaviour;
 import net.minecraft.world.level.material.Material;
 import net.minecraft.world.level.material.MaterialColor;
 
+import java.util.LinkedHashMap;
 import java.util.function.Function;
-import java.util.function.Supplier;
 
 public abstract class AbstractRegistryManager implements RegistryManager {
-    protected final NonNullList<RegistryDelegate<?>> registries = NonNullList.create();
+    protected final LinkedHashMap<ResourceKey<?>, RegistryDelegate<?>> registries = new LinkedHashMap<>();
+    protected final RegistryDelegate<Block> blocks = getOrCreateDelegate(Registry.BLOCK_REGISTRY);
+    protected final RegistryDelegate<Item> items = getOrCreateDelegate(Registry.ITEM_REGISTRY);
     private final String namespace;
-    protected final Supplier<String> namespaceSupplier = this::getNamespace;
-    protected final RegistryDelegate<Block> blocks = createRegistry(Registry.BLOCK_REGISTRY);
-    protected final RegistryDelegate<Item> items = createRegistry(Registry.ITEM_REGISTRY);
 
     public AbstractRegistryManager(String namespace) {
         this.namespace = namespace;
@@ -45,7 +42,7 @@ public abstract class AbstractRegistryManager implements RegistryManager {
     public <I extends Item> ItemBuilder<I> item(String id, Function<Item.Properties, I> factory) {
         return new ItemBuilderImpl<I>(id, factory, (id1, entrySupplier) -> {
             // TODO Datagen and all the stuff
-            return items.register(id1, entrySupplier);
+            return items.register(getNamespace(), id1, entrySupplier);
         });
     }
 
@@ -67,24 +64,17 @@ public abstract class AbstractRegistryManager implements RegistryManager {
     @Override
     public <B extends Block, I extends BlockItem> BlockBuilder<B, I> block(String id, BlockBehaviour.Properties properties, Function<BlockBehaviour.Properties, B> factory) {
         return new BlockBuilderImpl<>(id, properties, factory, (id1, entrySupplier) -> {
-            return blocks.register(id1, entrySupplier);
+            return blocks.register(getNamespace(), id1, entrySupplier);
         }, (id1, entrySupplier) -> {return null;});
     }
 
-    private <T> RegistryDelegate<T> createRegistry(ResourceKey<Registry<T>> resourceKey) {
-        RegistryDelegate<T> delegate = AlmostLib.INSTANCE.createRegistryDelegate(namespaceSupplier,
-                resourceKey);
-        registries.add(delegate);
-        return delegate;
-    }
+    protected abstract <T> RegistryDelegate<T> getOrCreateDelegate(ResourceKey<Registry<T>> resourceKey);
 
     @Override
     public void init() {
         // TODO: Think about ordering for fabric
-        for (RegistryDelegate<?> registry : registries) {
-            if (registry.isPresent()) {
-                registry.init();
-            }
-        }
+        registries.forEach((resourceKey, registryDelegate) -> {
+            registryDelegate.init();
+        });
     }
 }

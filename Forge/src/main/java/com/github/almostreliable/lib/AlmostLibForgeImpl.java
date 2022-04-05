@@ -51,18 +51,6 @@ public class AlmostLibForgeImpl implements AlmostLib {
     }
 
     @Override
-    @SuppressWarnings({ "unchecked", "rawtypes" })
-    public <T> RegistryDelegate<T> createRegistryDelegate(Supplier<String> namespace, ResourceKey<Registry<T>> resourceKey) {
-        ForgeRegistry registry = net.minecraftforge.registries.RegistryManager.ACTIVE.getRegistry(resourceKey.location());
-        if (registry == null) {
-            Registry<T> vanillaRegistry = (Registry<T>) Registry.REGISTRY.get(resourceKey.location());
-            Objects.requireNonNull(vanillaRegistry, "Something went wrong"); // TODO handle this?
-            return new VanillaRegistryDelegate<>(namespace, vanillaRegistry);
-        }
-        return (RegistryDelegate<T>) new DeferredRegistryDelegate<>(namespace, registry);
-    }
-
-    @Override
     public RegistryManager createRegistry(String namespace) {
         return new RegistryManagerForge(namespace);
     }
