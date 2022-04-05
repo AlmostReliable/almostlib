@@ -6,12 +6,4 @@ public class RegistryManagerFabric extends AbstractRegistryManager {
     public RegistryManagerFabric(String namespace) {
         super(namespace);
     }
-
-    @Override
-    public void init() {
-        // TODO: Think about ordering
-        for (RegistryDelegate<?> registry : registries) {
-            registry.init();
-        }
-    }
 }

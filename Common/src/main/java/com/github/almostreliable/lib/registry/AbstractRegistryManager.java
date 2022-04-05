@@ -32,7 +32,10 @@ public abstract class AbstractRegistryManager implements RegistryManager {
 
     @Override
     public <I extends Item> ItemBuilder<I> item(String id, Function<Item.Properties, I> factory) {
-        return new ItemBuilderImpl<>(this, factory);
+        return new ItemBuilderImpl<I>(id, factory, (id1, entrySupplier) -> {
+            // TODO Datagen and all the stuff
+            return items.register(id1, entrySupplier);
+        });
     }
 
     private <T> RegistryDelegate<T> createRegistry(ResourceKey<Registry<T>> resourceKey) {
@@ -40,5 +43,15 @@ public abstract class AbstractRegistryManager implements RegistryManager {
                 resourceKey);
         registries.add(delegate);
         return delegate;
+    }
+
+    @Override
+    public void init() {
+        // TODO: Think about ordering for fabric
+        for (RegistryDelegate<?> registry : registries) {
+            if(registry.isPresent()) {
+                registry.init();
+            }
+        }
     }
 }

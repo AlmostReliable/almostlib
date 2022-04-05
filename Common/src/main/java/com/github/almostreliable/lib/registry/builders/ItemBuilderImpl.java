@@ -1,7 +1,7 @@
 package com.github.almostreliable.lib.registry.builders;
 
+import com.github.almostreliable.lib.api.registry.RegisterCallback;
 import com.github.almostreliable.lib.api.registry.builders.ItemBuilder;
-import com.github.almostreliable.lib.registry.AbstractRegistryManager;
 import net.minecraft.world.food.FoodProperties;
 import net.minecraft.world.item.CreativeModeTab;
 import net.minecraft.world.item.Item;
@@ -13,14 +13,11 @@ import java.util.function.Function;
 import java.util.function.Supplier;
 
 public class ItemBuilderImpl<I extends Item> extends AbstractEntryBuilder<I> implements ItemBuilder<I> {
-
-    private final AbstractRegistryManager registry;
-    private final Function<Item.Properties, I> factory;
+    private final Function<Item.Properties, ? extends I> factory;
     private Item.Properties properties;
 
-    public ItemBuilderImpl(AbstractRegistryManager registry, Function<Item.Properties, I> factory) {
-        super();
-        this.registry = registry;
+    public ItemBuilderImpl(String id, Function<Item.Properties, ? extends I> factory, RegisterCallback<I> registerCallback) {
+        super(id, registerCallback);
         this.factory = factory;
         this.properties = new Item.Properties();
     }
