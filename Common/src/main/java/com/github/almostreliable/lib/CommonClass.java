@@ -6,6 +6,8 @@ import net.minecraft.world.item.CompassItem;
 import net.minecraft.world.item.CreativeModeTab;
 import net.minecraft.world.item.SwordItem;
 import net.minecraft.world.item.Tiers;
+import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.material.Material;
 
 import java.util.function.Supplier;
 
@@ -23,6 +25,14 @@ public class CommonClass {
             .registerSword("dummy_sword", Tiers.GOLD, 3, 1, SwordItem::new)
             .durability(3)
             .tab(CreativeModeTab.TAB_COMBAT)
+            .finish();
+
+    public static Supplier<Block> DUMMY_BLOCK = registry
+            .registerBlock("dummy_block", Material.BAMBOO, Block::new)
+            .strength(300)
+            .noDrops()
+            .noCollision()
+            .noOcclusion()
             .finish();
 
     public static void init() {

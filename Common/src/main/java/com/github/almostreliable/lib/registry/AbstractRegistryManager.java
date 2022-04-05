@@ -3,16 +3,22 @@ package com.github.almostreliable.lib.registry;
 import com.github.almostreliable.lib.api.AlmostLib;
 import com.github.almostreliable.lib.api.registry.RegistryDelegate;
 import com.github.almostreliable.lib.api.registry.RegistryManager;
+import com.github.almostreliable.lib.api.registry.builders.BlockBuilder;
 import com.github.almostreliable.lib.api.registry.builders.ItemBuilder;
+import com.github.almostreliable.lib.registry.builders.BlockBuilderImpl;
 import com.github.almostreliable.lib.registry.builders.ItemBuilderImpl;
 import com.mojang.datafixers.util.Function4;
 import net.minecraft.core.NonNullList;
 import net.minecraft.core.Registry;
 import net.minecraft.resources.ResourceKey;
+import net.minecraft.world.item.DyeColor;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.SwordItem;
 import net.minecraft.world.item.Tier;
 import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.state.BlockBehaviour;
+import net.minecraft.world.level.material.Material;
+import net.minecraft.world.level.material.MaterialColor;
 
 import java.util.function.Function;
 import java.util.function.Supplier;
@@ -43,6 +49,28 @@ public abstract class AbstractRegistryManager implements RegistryManager {
         return new ItemBuilderImpl<I>(id, factory, (id1, entrySupplier) -> {
             // TODO Datagen and all the stuff
             return items.register(id1, entrySupplier);
+        });
+    }
+
+    @Override
+    public <B extends Block> BlockBuilder<B> registerBlock(String id, Material material, Function<BlockBehaviour.Properties, B> factory) {
+        return registerBlock(id, BlockBehaviour.Properties.of(material), factory);
+    }
+
+    @Override
+    public <B extends Block> BlockBuilder<B> registerBlock(String id, Material material, MaterialColor color, Function<BlockBehaviour.Properties, B> factory) {
+        return registerBlock(id, BlockBehaviour.Properties.of(material, color), factory);
+    }
+
+    @Override
+    public <B extends Block> BlockBuilder<B> registerBlock(String id, Material material, DyeColor color, Function<BlockBehaviour.Properties, B> factory) {
+        return registerBlock(id, BlockBehaviour.Properties.of(material, color), factory);
+    }
+
+    @Override
+    public <B extends Block> BlockBuilder<B> registerBlock(String id, BlockBehaviour.Properties properties, Function<BlockBehaviour.Properties, B> factory) {
+        return new BlockBuilderImpl<>(id, properties, factory, (id1, entrySupplier) -> {
+            return blocks.register(id1, entrySupplier);
         });
     }
 
