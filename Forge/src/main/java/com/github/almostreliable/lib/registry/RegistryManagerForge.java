@@ -22,7 +22,7 @@ public class RegistryManagerForge extends AbstractRegistryManager {
                 Objects.requireNonNull(vanillaRegistry, "Something went wrong"); // TODO handle this?
                 return new VanillaRegistryDelegate<>(vanillaRegistry);
             }
-            return (RegistryDelegate<T>) new DeferredRegistryDelegate<>(registry);
+            return (RegistryDelegate<T>) new ForgeRegistryDelegate<>(registry);
         });
     }
 }

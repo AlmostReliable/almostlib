@@ -14,11 +14,13 @@ import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.state.BlockBehaviour;
 import net.minecraft.world.level.material.Material;
 import net.minecraft.world.level.material.MaterialColor;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.LinkedHashMap;
 import java.util.function.Function;
+import java.util.function.Supplier;
 
-public abstract class AbstractRegistryManager implements RegistryManager {
+public abstract class AbstractRegistryManager implements RegistryManager, EntryLookup {
     protected final LinkedHashMap<ResourceKey<?>, RegistryDelegate<?>> registries = new LinkedHashMap<>();
     protected final RegistryDelegate<Block> blocks = getOrCreateDelegate(Registry.BLOCK_REGISTRY);
     protected final RegistryDelegate<Item> items = getOrCreateDelegate(Registry.ITEM_REGISTRY);
@@ -42,7 +44,7 @@ public abstract class AbstractRegistryManager implements RegistryManager {
     public <I extends Item> ItemBuilder<I> item(String id, Function<Item.Properties, I> factory) {
         return new ItemBuilderImpl<I>(id, factory, (id1, entrySupplier) -> {
             // TODO Datagen and all the stuff
-            return items.register(getNamespace(), id1, entrySupplier);
+            return items.register(id1, entrySupplier);
         });
     }
 
@@ -64,7 +66,7 @@ public abstract class AbstractRegistryManager implements RegistryManager {
     @Override
     public <B extends Block, I extends BlockItem> BlockBuilder<B, I> block(String id, BlockBehaviour.Properties properties, Function<BlockBehaviour.Properties, B> factory) {
         return new BlockBuilderImpl<>(id, properties, factory, (id1, entrySupplier) -> {
-            return blocks.register(getNamespace(), id1, entrySupplier);
+            return blocks.register(id1, entrySupplier);
         }, (id1, entrySupplier) -> {return null;});
     }
 
@@ -74,7 +76,18 @@ public abstract class AbstractRegistryManager implements RegistryManager {
     public void init() {
         // TODO: Think about ordering for fabric
         registries.forEach((resourceKey, registryDelegate) -> {
-            registryDelegate.init();
+            registryDelegate.init(getNamespace());
         });
+    }
+
+    @Nullable
+    @Override
+    public <E> Supplier<E> getEntry(ResourceKey<Registry<E>> resourceKey, String id) {
+        RegistryDelegate<?> delegate = registries.get(resourceKey);
+        if (delegate == null) {
+            return null;
+        }
+        //noinspection unchecked
+        return (Supplier<E>) delegate.find(id);
     }
 }
