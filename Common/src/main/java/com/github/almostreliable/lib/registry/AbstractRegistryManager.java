@@ -1,6 +1,5 @@
 package com.github.almostreliable.lib.registry;
 
-import com.github.almostreliable.lib.api.registry.EntryLookup;
 import com.github.almostreliable.lib.api.registry.RegistryDelegate;
 import com.github.almostreliable.lib.api.registry.RegistryManager;
 import com.github.almostreliable.lib.api.registry.builders.BlockBuilder;
@@ -21,7 +20,7 @@ import java.util.LinkedHashMap;
 import java.util.function.Function;
 import java.util.function.Supplier;
 
-public abstract class AbstractRegistryManager implements RegistryManager, EntryLookup {
+public abstract class AbstractRegistryManager implements RegistryManager {
     protected final LinkedHashMap<ResourceKey<?>, RegistryDelegate<?>> registries = new LinkedHashMap<>();
     protected final RegistryDelegate<Block> blocks = getOrCreateDelegate(Registry.BLOCK_REGISTRY);
     protected final RegistryDelegate<Item> items = getOrCreateDelegate(Registry.ITEM_REGISTRY);
@@ -43,7 +42,7 @@ public abstract class AbstractRegistryManager implements RegistryManager, EntryL
 
     @Override
     public <I extends Item> ItemBuilder<I> item(String id, Function<Item.Properties, I> factory) {
-        return new ItemBuilderImpl<I>(id, factory, this::finalizeRegistration);
+        return new ItemBuilderImpl<I>(id, factory, this, this::finalizeRegistration);
     }
 
     @Override
@@ -63,7 +62,7 @@ public abstract class AbstractRegistryManager implements RegistryManager, EntryL
 
     @Override
     public <B extends Block, I extends BlockItem> BlockBuilder<B, I> block(String id, BlockBehaviour.Properties properties, Function<BlockBehaviour.Properties, B> factory) {
-        return new BlockBuilderImpl<>(id, properties, factory, this::finalizeRegistration, this::finalizeRegistration);
+        return new BlockBuilderImpl<>(id, properties, factory, this, this::finalizeRegistration);
     }
 
     protected abstract <T> RegistryDelegate<T> getOrCreateDelegate(ResourceKey<Registry<T>> resourceKey);

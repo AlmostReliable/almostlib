@@ -1,6 +1,7 @@
 package com.github.almostreliable.lib.api.registry.builders;
 
 import net.minecraft.world.item.BlockItem;
+import net.minecraft.world.item.CreativeModeTab;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.SoundType;
 import net.minecraft.world.level.block.state.BlockBehaviour;
@@ -52,4 +53,13 @@ public interface BlockBuilder<B extends Block, I extends BlockItem> extends Entr
     BlockBuilder<B, I> color(MaterialColor materialColor);
 
     BlockBuilder<B, I> destroyTime(float destroyTime);
+
+    /**
+     * If set, it will be only used if {@link #noItem()} was not called. If custom {@link ItemBuilder} provided, this
+     * will overwrite the item builder tab.
+     *
+     * @param tab the creative tab the item should be shown in
+     * @return self
+     */
+    BlockBuilder<B, I> tab(CreativeModeTab tab);
 }

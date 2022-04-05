@@ -1,19 +1,22 @@
 package com.github.almostreliable.lib.registry.builders;
 
 import com.github.almostreliable.lib.api.registry.RegisterCallback;
+import com.github.almostreliable.lib.api.registry.RegistryManager;
 import com.github.almostreliable.lib.api.registry.builders.EntryBuilder;
 import net.minecraft.core.Registry;
 import net.minecraft.resources.ResourceKey;
 
 import java.util.function.Supplier;
 
-public abstract class AbstractEntryBuilder<T, STUPID_BASE_TYPE> implements EntryBuilder<T> {
+public abstract class AbstractEntryBuilder<T, BASE> implements EntryBuilder<T> {
     protected final String id;
-    private final RegisterCallback<T> registerCallback;
+    protected final RegisterCallback registerCallback;
+    protected final RegistryManager manager;
 
-    public AbstractEntryBuilder(String id, RegisterCallback<T> registerCallback) {
+    public AbstractEntryBuilder(String id, RegisterCallback registerCallback, RegistryManager manager) {
         this.id = id;
         this.registerCallback = registerCallback;
+        this.manager = manager;
     }
 
     public abstract T create();
@@ -22,5 +25,15 @@ public abstract class AbstractEntryBuilder<T, STUPID_BASE_TYPE> implements Entry
         return registerCallback.onFinishRegister(id, this::create, getRegistryKey());
     }
 
-    protected abstract ResourceKey<Registry<STUPID_BASE_TYPE>> getRegistryKey();
+    protected T getBuiltEntry() {
+        Supplier<BASE> entry = manager.getEntry(this.getRegistryKey(), id);
+        if (entry == null) {
+            throw new IllegalStateException("Entry was not built at this moment or built incorrectly");
+        }
+
+        //noinspection unchecked
+        return (T) entry.get();
+    }
+
+    protected abstract ResourceKey<Registry<BASE>> getRegistryKey();
 }

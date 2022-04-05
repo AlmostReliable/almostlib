@@ -3,13 +3,17 @@ package com.github.almostreliable.lib.api.registry;
 import com.github.almostreliable.lib.api.registry.builders.BlockBuilder;
 import com.github.almostreliable.lib.api.registry.builders.ItemBuilder;
 import com.mojang.datafixers.util.Function4;
+import net.minecraft.core.Registry;
+import net.minecraft.resources.ResourceKey;
 import net.minecraft.world.item.*;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.state.BlockBehaviour;
 import net.minecraft.world.level.material.Material;
 import net.minecraft.world.level.material.MaterialColor;
 
+import javax.annotation.Nullable;
 import java.util.function.Function;
+import java.util.function.Supplier;
 
 public interface RegistryManager {
     String getNamespace();
@@ -25,6 +29,9 @@ public interface RegistryManager {
     <B extends Block, I extends BlockItem> BlockBuilder<B, I> block(String id, Material material, DyeColor color, Function<BlockBehaviour.Properties, B> factory);
 
     <B extends Block, I extends BlockItem> BlockBuilder<B, I> block(String id, BlockBehaviour.Properties properties, Function<BlockBehaviour.Properties, B> factory);
+
+    @Nullable
+    <E> Supplier<E> getEntry(ResourceKey<Registry<E>> resourceKey, String id);
 
     void init();
 }

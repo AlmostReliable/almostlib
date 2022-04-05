@@ -6,6 +6,6 @@ import net.minecraft.resources.ResourceKey;
 import java.util.function.Supplier;
 
 @FunctionalInterface
-public interface RegisterCallback<T> {
-    <BASE> Supplier<T> onFinishRegister(String id, Supplier<T> entrySupplier, ResourceKey<Registry<BASE>> resourceKey);
+public interface RegisterCallback {
+    <T, BASE> Supplier<T> onFinishRegister(String id, Supplier<T> entrySupplier, ResourceKey<Registry<BASE>> resourceKey);
 }

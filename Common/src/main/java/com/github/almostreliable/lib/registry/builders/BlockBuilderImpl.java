@@ -1,11 +1,13 @@
 package com.github.almostreliable.lib.registry.builders;
 
 import com.github.almostreliable.lib.api.registry.RegisterCallback;
+import com.github.almostreliable.lib.api.registry.RegistryManager;
 import com.github.almostreliable.lib.api.registry.builders.BlockBuilder;
 import com.github.almostreliable.lib.api.registry.builders.ItemBuilder;
 import net.minecraft.core.Registry;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.world.item.BlockItem;
+import net.minecraft.world.item.CreativeModeTab;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.SoundType;
 import net.minecraft.world.level.block.state.BlockBehaviour;
@@ -21,18 +23,18 @@ import java.util.function.ToIntFunction;
 
 public class BlockBuilderImpl<B extends Block, I extends BlockItem> extends AbstractEntryBuilder<B, Block>
         implements BlockBuilder<B, I> {
-    private final Function<BlockBehaviour.Properties, B> factory;
-    private final RegisterCallback<I> registerItemCallback;
-    private BlockBehaviour.Properties properties;
+    protected final Function<BlockBehaviour.Properties, B> factory;
+    protected BlockBehaviour.Properties properties;
     @Nullable
-    private ItemBuilder<I> itemBuilder;
+    protected ItemBuilder<I> itemBuilder;
+    @Nullable
+    protected CreativeModeTab creativeTab;
 
-    public BlockBuilderImpl(String id, BlockBehaviour.Properties properties, Function<BlockBehaviour.Properties, B> factory, RegisterCallback<B> registerCallback, RegisterCallback<I> registerItemCallback) {
-        super(id, registerCallback);
+    public BlockBuilderImpl(String id, BlockBehaviour.Properties properties, Function<BlockBehaviour.Properties, B> factory, RegistryManager manager, RegisterCallback registerCallback) {
+        super(id, registerCallback, manager);
         this.factory = factory;
         this.properties = properties;
-        this.registerItemCallback = registerItemCallback;
-//        this.itemBuilder = new ItemBuilderImpl<>(id, p -> new BlockItem())
+        item(iItemBuilder -> {});
     }
 
     @Override
@@ -43,7 +45,12 @@ public class BlockBuilderImpl<B extends Block, I extends BlockItem> extends Abst
 
     @Override
     public BlockBuilder<B, I> item(Consumer<ItemBuilder<I>> callback) {
-//        new ItemBuilderImpl<>()
+        //noinspection unchecked
+        itemBuilder = new ItemBuilderImpl<>(id,
+                p -> (I) new BlockItem(getBuiltEntry(), p),
+                manager,
+                registerCallback).tab(CreativeModeTab.TAB_BUILDING_BLOCKS);
+        callback.accept(itemBuilder);
         return this;
     }
 
@@ -157,6 +164,12 @@ public class BlockBuilderImpl<B extends Block, I extends BlockItem> extends Abst
     }
 
     @Override
+    public BlockBuilder<B, I> tab(CreativeModeTab tab) {
+        this.creativeTab = tab;
+        return this;
+    }
+
+    @Override
     public B create() {
         return factory.apply(properties);
     }
@@ -164,5 +177,16 @@ public class BlockBuilderImpl<B extends Block, I extends BlockItem> extends Abst
     @Override
     protected ResourceKey<Registry<Block>> getRegistryKey() {
         return Registry.BLOCK_REGISTRY;
+    }
+
+    @Override
+    public Supplier<B> register() {
+        if (itemBuilder != null) {
+            if (creativeTab != null) {
+                itemBuilder.tab(creativeTab);
+            }
+            itemBuilder.register();
+        }
+        return super.register();
     }
 }

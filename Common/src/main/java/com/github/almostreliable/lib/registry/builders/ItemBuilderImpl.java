@@ -1,6 +1,7 @@
 package com.github.almostreliable.lib.registry.builders;
 
 import com.github.almostreliable.lib.api.registry.RegisterCallback;
+import com.github.almostreliable.lib.api.registry.RegistryManager;
 import com.github.almostreliable.lib.api.registry.builders.ItemBuilder;
 import net.minecraft.core.Registry;
 import net.minecraft.resources.ResourceKey;
@@ -18,8 +19,8 @@ public class ItemBuilderImpl<I extends Item> extends AbstractEntryBuilder<I, Ite
     private final Function<Item.Properties, ? extends I> factory;
     private Item.Properties properties;
 
-    public ItemBuilderImpl(String id, Function<Item.Properties, ? extends I> factory, RegisterCallback<I> registerCallback) {
-        super(id, registerCallback);
+    public ItemBuilderImpl(String id, Function<Item.Properties, ? extends I> factory, RegistryManager manager, RegisterCallback registerCallback) {
+        super(id, registerCallback, manager);
         this.factory = factory;
         this.properties = new Item.Properties();
     }
