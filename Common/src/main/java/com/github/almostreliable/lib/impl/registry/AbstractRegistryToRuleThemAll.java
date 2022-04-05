@@ -12,8 +12,8 @@ import java.util.function.Function;
 
 public abstract class AbstractRegistryToRuleThemAll implements RegistryToRuleThemAll {
 
+    protected final RegistryMap registries = new RegistryMap();
     private final String namespace;
-    private final RegistryMap registries = new RegistryMap();
 
     public AbstractRegistryToRuleThemAll(String namespace) {
         this.namespace = namespace;
@@ -30,7 +30,12 @@ public abstract class AbstractRegistryToRuleThemAll implements RegistryToRuleThe
     }
 
     @Override
-    public ItemBuilder item(String id, Function<Item.Properties, Item> factory) {
-        return new ItemBuilderImpl(this, factory);
+    public <I extends Item> ItemBuilder<I> item(String id, Function<Item.Properties, I> factory) {
+        return new ItemBuilderImpl<>(this, factory);
+    }
+
+    @Override
+    public void init() {
+        registries.getEntries().forEach(entry -> entry.getValue().init());
     }
 }

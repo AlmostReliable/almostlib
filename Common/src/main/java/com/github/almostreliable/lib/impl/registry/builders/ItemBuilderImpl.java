@@ -12,77 +12,76 @@ import java.util.Objects;
 import java.util.function.Function;
 import java.util.function.Supplier;
 
-public class ItemBuilderImpl implements ItemBuilder {
+public class ItemBuilderImpl<I extends Item> extends AbstractEntryBuilder<I> implements ItemBuilder<I> {
 
     private final AbstractRegistryToRuleThemAll registry;
-    private final Function<Item.Properties, ? extends Item> factory;
+    private final Function<Item.Properties, I> factory;
     private Item.Properties properties;
 
-    public ItemBuilderImpl(AbstractRegistryToRuleThemAll registry, Function<Item.Properties, ? extends Item> factory) {
+    public ItemBuilderImpl(AbstractRegistryToRuleThemAll registry, Function<Item.Properties, I> factory) {
+        super();
         this.registry = registry;
         this.factory = factory;
         this.properties = new Item.Properties();
     }
 
     @Override
-    public ItemBuilder properties(Supplier<Item.Properties> supplier) {
+    public ItemBuilder<I> properties(Supplier<Item.Properties> supplier) {
         properties = supplier.get();
         Objects.requireNonNull(properties);
         return this;
     }
 
     @Override
-    public ItemBuilder food(FoodProperties food) {
+    public ItemBuilder<I> food(FoodProperties food) {
         properties.food(food);
         return this;
     }
 
     @Override
-    public ItemBuilder maxStackSize(int size) {
+    public ItemBuilder<I> maxStackSize(int size) {
         properties.stacksTo(size);
         return this;
     }
 
     @Override
-    public ItemBuilder defaultDurability(int durability) {
+    public ItemBuilder<I> defaultDurability(int durability) {
         properties.defaultDurability(durability);
         return this;
     }
 
     @Override
-    public ItemBuilder durability(int durability) {
+    public ItemBuilder<I> durability(int durability) {
         properties.durability(durability);
         return this;
     }
 
     @Override
-    public ItemBuilder craftRemainder(ItemLike itemLike) {
+    public ItemBuilder<I> craftRemainder(ItemLike itemLike) {
         properties.craftRemainder(itemLike.asItem());
         return this;
     }
 
     @Override
-    public ItemBuilder tab(CreativeModeTab tab) {
+    public ItemBuilder<I> tab(CreativeModeTab tab) {
         properties.tab(tab);
         return this;
     }
 
     @Override
-    public ItemBuilder rarity(Rarity rarity) {
+    public ItemBuilder<I> rarity(Rarity rarity) {
         properties.rarity(rarity);
         return this;
     }
 
     @Override
-    public ItemBuilder fireResistant() {
+    public ItemBuilder<I> fireResistant() {
         properties.fireResistant();
         return this;
     }
 
     @Override
-    public <T extends Item> Supplier<T> build() {
-        // TODO change custom function
-        //noinspection unchecked
-        return () -> (T) factory.apply(properties);
+    public I create() {
+        return factory.apply(properties);
     }
 }

@@ -8,25 +8,24 @@ import net.minecraft.world.level.ItemLike;
 
 import java.util.function.Supplier;
 
-public interface ItemBuilder {
+public interface ItemBuilder<I extends Item> extends EntryBuilder<I> {
 
-    ItemBuilder properties(Supplier<Item.Properties> supplier);
+    ItemBuilder<I> properties(Supplier<Item.Properties> supplier);
 
-    ItemBuilder food(FoodProperties food);
+    ItemBuilder<I> food(FoodProperties food);
 
-    ItemBuilder maxStackSize(int size);
+    ItemBuilder<I> maxStackSize(int size);
 
-    ItemBuilder defaultDurability(int durability);
+    ItemBuilder<I> defaultDurability(int durability);
 
-    ItemBuilder durability(int durability);
+    ItemBuilder<I> durability(int durability);
 
-    ItemBuilder craftRemainder(ItemLike itemLike);
+    ItemBuilder<I> craftRemainder(ItemLike itemLike);
 
-    ItemBuilder tab(CreativeModeTab tab);
+    ItemBuilder<I> tab(CreativeModeTab tab);
 
-    ItemBuilder rarity(Rarity rarity);
+    ItemBuilder<I> rarity(Rarity rarity);
 
-    ItemBuilder fireResistant();
+    ItemBuilder<I> fireResistant();
 
-    <T extends Item> Supplier<T> build();
 }

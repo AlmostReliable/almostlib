@@ -12,5 +12,7 @@ public interface RegistryToRuleThemAll {
 
     <T> IAlmostRegistry<T> getOrCreateRegistry(ResourceKey<Registry<T>> resourceKey);
 
-    ItemBuilder item(String id, Function<Item.Properties, Item> factory);
+    <I extends Item> ItemBuilder<I> item(String id, Function<Item.Properties, I> factory);
+
+    void init();
 }

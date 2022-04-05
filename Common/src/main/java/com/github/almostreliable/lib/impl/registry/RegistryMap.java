@@ -5,8 +5,10 @@ import com.github.almostreliable.lib.api.registry.IAlmostRegistry;
 import net.minecraft.core.Registry;
 import net.minecraft.resources.ResourceKey;
 
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Set;
 
 public class RegistryMap {
 
@@ -16,5 +18,9 @@ public class RegistryMap {
         //noinspection unchecked
         return (IAlmostRegistry<T>) registries.computeIfAbsent(resourceKey,
                 registryResourceKey -> AlmostLib.INSTANCE.createRegistry(namespace, resourceKey));
+    }
+
+    public Set<Map.Entry<ResourceKey<?>, IAlmostRegistry<?>>> getEntries() {
+        return Collections.unmodifiableSet(registries.entrySet());
     }
 }
