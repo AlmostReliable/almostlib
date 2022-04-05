@@ -40,12 +40,12 @@ public abstract class AbstractRegistryManager implements RegistryManager {
     }
 
     @Override
-    public <I extends SwordItem> ItemBuilder<I> registerSword(String id, Tier tier, int atkDamage, int atkSpeed, Function4<Tier, Integer, Integer, Item.Properties, I> factory) {
-        return registerItem(id, properties -> factory.apply(tier, atkDamage, atkSpeed, properties));
+    public <I extends SwordItem> ItemBuilder<I> itemSword(String id, Tier tier, int atkDamage, int atkSpeed, Function4<Tier, Integer, Integer, Item.Properties, I> factory) {
+        return item(id, properties -> factory.apply(tier, atkDamage, atkSpeed, properties));
     }
 
     @Override
-    public <I extends Item> ItemBuilder<I> registerItem(String id, Function<Item.Properties, I> factory) {
+    public <I extends Item> ItemBuilder<I> item(String id, Function<Item.Properties, I> factory) {
         return new ItemBuilderImpl<I>(id, factory, (id1, entrySupplier) -> {
             // TODO Datagen and all the stuff
             return items.register(id1, entrySupplier);
@@ -53,22 +53,22 @@ public abstract class AbstractRegistryManager implements RegistryManager {
     }
 
     @Override
-    public <B extends Block> BlockBuilder<B> registerBlock(String id, Material material, Function<BlockBehaviour.Properties, B> factory) {
-        return registerBlock(id, BlockBehaviour.Properties.of(material), factory);
+    public <B extends Block> BlockBuilder<B> block(String id, Material material, Function<BlockBehaviour.Properties, B> factory) {
+        return block(id, BlockBehaviour.Properties.of(material), factory);
     }
 
     @Override
-    public <B extends Block> BlockBuilder<B> registerBlock(String id, Material material, MaterialColor color, Function<BlockBehaviour.Properties, B> factory) {
-        return registerBlock(id, BlockBehaviour.Properties.of(material, color), factory);
+    public <B extends Block> BlockBuilder<B> block(String id, Material material, MaterialColor color, Function<BlockBehaviour.Properties, B> factory) {
+        return block(id, BlockBehaviour.Properties.of(material, color), factory);
     }
 
     @Override
-    public <B extends Block> BlockBuilder<B> registerBlock(String id, Material material, DyeColor color, Function<BlockBehaviour.Properties, B> factory) {
-        return registerBlock(id, BlockBehaviour.Properties.of(material, color), factory);
+    public <B extends Block> BlockBuilder<B> block(String id, Material material, DyeColor color, Function<BlockBehaviour.Properties, B> factory) {
+        return block(id, BlockBehaviour.Properties.of(material, color), factory);
     }
 
     @Override
-    public <B extends Block> BlockBuilder<B> registerBlock(String id, BlockBehaviour.Properties properties, Function<BlockBehaviour.Properties, B> factory) {
+    public <B extends Block> BlockBuilder<B> block(String id, BlockBehaviour.Properties properties, Function<BlockBehaviour.Properties, B> factory) {
         return new BlockBuilderImpl<>(id, properties, factory, (id1, entrySupplier) -> {
             return blocks.register(id1, entrySupplier);
         });

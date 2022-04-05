@@ -16,24 +16,24 @@ public class CommonClass {
     public static RegistryManager registry = AlmostLib.INSTANCE.createRegistry(AlmostConstants.MOD_ID);
 
     public static Supplier<CompassItem> DUMMY_ITEM = registry
-            .registerItem("dummy_item", CompassItem::new)
+            .item("dummy_item", CompassItem::new)
             .durability(3)
             .tab(CreativeModeTab.TAB_COMBAT)
-            .finish();
+            .register();
 
     public static Supplier<SwordItem> DUMMY_SWORD = registry
-            .registerSword("dummy_sword", Tiers.GOLD, 3, 1, SwordItem::new)
+            .itemSword("dummy_sword", Tiers.GOLD, 3, 1, SwordItem::new)
             .durability(3)
             .tab(CreativeModeTab.TAB_COMBAT)
-            .finish();
+            .register();
 
     public static Supplier<Block> DUMMY_BLOCK = registry
-            .registerBlock("dummy_block", Material.BAMBOO, Block::new)
+            .block("dummy_block", Material.BAMBOO, Block::new)
             .strength(300)
             .noDrops()
             .noCollision()
             .noOcclusion()
-            .finish();
+            .register();
 
     public static void init() {
         registry.init();

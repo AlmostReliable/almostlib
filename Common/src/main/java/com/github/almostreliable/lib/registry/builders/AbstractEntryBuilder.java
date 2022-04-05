@@ -16,7 +16,7 @@ public abstract class AbstractEntryBuilder<T> implements EntryBuilder<T> {
 
     public abstract T create();
 
-    public Supplier<T> finish() {
+    public Supplier<T> register() {
         return registerCallback.onFinishRegister(id, this::create);
     }
 }
