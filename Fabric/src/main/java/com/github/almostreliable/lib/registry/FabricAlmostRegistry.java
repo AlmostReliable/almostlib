@@ -1,6 +1,5 @@
 package com.github.almostreliable.lib.registry;
 
-import com.github.almostreliable.lib.impl.registry.AbstractAlmostRegistry;
 import net.minecraft.core.Registry;
 
 import java.util.Objects;

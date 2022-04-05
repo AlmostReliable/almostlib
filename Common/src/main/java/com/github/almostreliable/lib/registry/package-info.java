@@ -1,5 +1,5 @@
 @ParametersAreNonnullByDefault @MethodsReturnNonnullByDefault
-package com.github.almostreliable.lib.impl.registry;
+package com.github.almostreliable.lib.registry;
 
 import net.minecraft.MethodsReturnNonnullByDefault;
 

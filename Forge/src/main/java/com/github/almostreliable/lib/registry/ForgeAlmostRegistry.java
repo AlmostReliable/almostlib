@@ -1,6 +1,5 @@
 package com.github.almostreliable.lib.registry;
 
-import com.github.almostreliable.lib.impl.registry.AbstractAlmostRegistry;
 import net.minecraftforge.event.RegistryEvent;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
 import net.minecraftforge.registries.ForgeRegistry;

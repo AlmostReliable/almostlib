@@ -1,4 +1,4 @@
-package com.github.almostreliable.lib.impl.registry;
+package com.github.almostreliable.lib.registry;
 
 import com.github.almostreliable.lib.api.AlmostLib;
 import com.github.almostreliable.lib.api.registry.IAlmostRegistry;

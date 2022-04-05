@@ -1,4 +1,4 @@
-package com.github.almostreliable.lib.impl.registry.builders;
+package com.github.almostreliable.lib.registry.builders;
 
 import com.github.almostreliable.lib.api.registry.builders.EntryBuilder;
 
