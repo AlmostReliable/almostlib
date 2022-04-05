@@ -3,10 +3,7 @@ package com.github.almostreliable.lib.api.registry;
 import com.github.almostreliable.lib.api.registry.builders.BlockBuilder;
 import com.github.almostreliable.lib.api.registry.builders.ItemBuilder;
 import com.mojang.datafixers.util.Function4;
-import net.minecraft.world.item.DyeColor;
-import net.minecraft.world.item.Item;
-import net.minecraft.world.item.SwordItem;
-import net.minecraft.world.item.Tier;
+import net.minecraft.world.item.*;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.state.BlockBehaviour;
 import net.minecraft.world.level.material.Material;
@@ -21,13 +18,13 @@ public interface RegistryManager {
 
     <I extends Item> ItemBuilder<I> item(String id, Function<Item.Properties, I> factory);
 
-    <B extends Block> BlockBuilder<B> block(String id, Material material, Function<BlockBehaviour.Properties, B> factory);
+    <B extends Block, I extends BlockItem> BlockBuilder<B, I> block(String id, Material material, Function<BlockBehaviour.Properties, B> factory);
 
-    <B extends Block> BlockBuilder<B> block(String id, Material material, MaterialColor color, Function<BlockBehaviour.Properties, B> factory);
+    <B extends Block, I extends BlockItem> BlockBuilder<B, I> block(String id, Material material, MaterialColor color, Function<BlockBehaviour.Properties, B> factory);
 
-    <B extends Block> BlockBuilder<B> block(String id, Material material, DyeColor color, Function<BlockBehaviour.Properties, B> factory);
+    <B extends Block, I extends BlockItem> BlockBuilder<B, I> block(String id, Material material, DyeColor color, Function<BlockBehaviour.Properties, B> factory);
 
-    <B extends Block> BlockBuilder<B> block(String id, BlockBehaviour.Properties properties, Function<BlockBehaviour.Properties, B> factory);
+    <B extends Block, I extends BlockItem> BlockBuilder<B, I> block(String id, BlockBehaviour.Properties properties, Function<BlockBehaviour.Properties, B> factory);
 
     void init();
 }

@@ -11,10 +11,7 @@ import com.mojang.datafixers.util.Function4;
 import net.minecraft.core.NonNullList;
 import net.minecraft.core.Registry;
 import net.minecraft.resources.ResourceKey;
-import net.minecraft.world.item.DyeColor;
-import net.minecraft.world.item.Item;
-import net.minecraft.world.item.SwordItem;
-import net.minecraft.world.item.Tier;
+import net.minecraft.world.item.*;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.state.BlockBehaviour;
 import net.minecraft.world.level.material.Material;
@@ -53,25 +50,25 @@ public abstract class AbstractRegistryManager implements RegistryManager {
     }
 
     @Override
-    public <B extends Block> BlockBuilder<B> block(String id, Material material, Function<BlockBehaviour.Properties, B> factory) {
+    public <B extends Block, I extends BlockItem> BlockBuilder<B, I> block(String id, Material material, Function<BlockBehaviour.Properties, B> factory) {
         return block(id, BlockBehaviour.Properties.of(material), factory);
     }
 
     @Override
-    public <B extends Block> BlockBuilder<B> block(String id, Material material, MaterialColor color, Function<BlockBehaviour.Properties, B> factory) {
+    public <B extends Block, I extends BlockItem> BlockBuilder<B, I> block(String id, Material material, MaterialColor color, Function<BlockBehaviour.Properties, B> factory) {
         return block(id, BlockBehaviour.Properties.of(material, color), factory);
     }
 
     @Override
-    public <B extends Block> BlockBuilder<B> block(String id, Material material, DyeColor color, Function<BlockBehaviour.Properties, B> factory) {
+    public <B extends Block, I extends BlockItem> BlockBuilder<B, I> block(String id, Material material, DyeColor color, Function<BlockBehaviour.Properties, B> factory) {
         return block(id, BlockBehaviour.Properties.of(material, color), factory);
     }
 
     @Override
-    public <B extends Block> BlockBuilder<B> block(String id, BlockBehaviour.Properties properties, Function<BlockBehaviour.Properties, B> factory) {
+    public <B extends Block, I extends BlockItem> BlockBuilder<B, I> block(String id, BlockBehaviour.Properties properties, Function<BlockBehaviour.Properties, B> factory) {
         return new BlockBuilderImpl<>(id, properties, factory, (id1, entrySupplier) -> {
             return blocks.register(id1, entrySupplier);
-        });
+        }, (id1, entrySupplier) -> {return null;});
     }
 
     private <T> RegistryDelegate<T> createRegistry(ResourceKey<Registry<T>> resourceKey) {

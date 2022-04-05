@@ -1,49 +1,55 @@
 package com.github.almostreliable.lib.api.registry.builders;
 
+import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.SoundType;
 import net.minecraft.world.level.block.state.BlockBehaviour;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.material.MaterialColor;
 
+import java.util.function.Consumer;
 import java.util.function.Supplier;
 import java.util.function.ToIntFunction;
 
-public interface BlockBuilder<B extends Block> extends EntryBuilder<B> {
+public interface BlockBuilder<B extends Block, I extends BlockItem> extends EntryBuilder<B> {
 
-    BlockBuilder<B> properties(Supplier<BlockBehaviour.Properties> supplier);
+    BlockBuilder<B, I> noItem();
 
-    BlockBuilder<B> noCollision();
+    BlockBuilder<B, I> item(Consumer<ItemBuilder<I>> callback);
 
-    BlockBuilder<B> noOcclusion();
+    BlockBuilder<B, I> properties(Supplier<BlockBehaviour.Properties> supplier);
 
-    BlockBuilder<B> friction(float friction);
+    BlockBuilder<B, I> noCollision();
 
-    BlockBuilder<B> speedFactor(float speedFactor);
+    BlockBuilder<B, I> noOcclusion();
 
-    BlockBuilder<B> jumpFactor(float jumpFactor);
+    BlockBuilder<B, I> friction(float friction);
 
-    BlockBuilder<B> sound(SoundType soundType);
+    BlockBuilder<B, I> speedFactor(float speedFactor);
 
-    BlockBuilder<B> lightLevel(ToIntFunction<BlockState> toState);
+    BlockBuilder<B, I> jumpFactor(float jumpFactor);
 
-    BlockBuilder<B> lightLevel(int lightLevel);
+    BlockBuilder<B, I> sound(SoundType soundType);
 
-    BlockBuilder<B> instabreak();
+    BlockBuilder<B, I> lightLevel(ToIntFunction<BlockState> toState);
 
-    BlockBuilder<B> explosionResistance(float strength);
+    BlockBuilder<B, I> lightLevel(int lightLevel);
 
-    BlockBuilder<B> strength(float strength);
+    BlockBuilder<B, I> instabreak();
 
-    BlockBuilder<B> randomTicks();
+    BlockBuilder<B, I> explosionResistance(float strength);
 
-    BlockBuilder<B> dynamicShape();
+    BlockBuilder<B, I> strength(float strength);
 
-    BlockBuilder<B> noDrops();
+    BlockBuilder<B, I> randomTicks();
 
-    BlockBuilder<B> requiresCorrectToolForDrops();
+    BlockBuilder<B, I> dynamicShape();
 
-    BlockBuilder<B> color(MaterialColor materialColor);
+    BlockBuilder<B, I> noDrops();
 
-    BlockBuilder<B> destroyTime(float destroyTime);
+    BlockBuilder<B, I> requiresCorrectToolForDrops();
+
+    BlockBuilder<B, I> color(MaterialColor materialColor);
+
+    BlockBuilder<B, I> destroyTime(float destroyTime);
 }
