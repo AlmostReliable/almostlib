@@ -1,9 +1,10 @@
 package com.github.almostreliable.lib.registry;
 
+import com.github.almostreliable.lib.AlmostConstants;
+import com.github.almostreliable.lib.api.registry.RegistryEntry;
 import net.minecraft.core.Registry;
-import net.minecraft.resources.ResourceLocation;
 
-public class VanillaRegistryDelegate<T> extends AbstractRegistryDelegate<T> {
+public class VanillaRegistryDelegate<T> extends RegistryDelegate<T> {
     private final Registry<T> registry;
 
     public VanillaRegistryDelegate(Registry<T> registry) {
@@ -11,10 +12,16 @@ public class VanillaRegistryDelegate<T> extends AbstractRegistryDelegate<T> {
     }
 
     @Override
-    public void init(String namespace) {
+    public void init() {
+        // TODO Check how to set the logger for .debug in fabric
+        AlmostConstants.LOG.debug("Initialize vanilla registry {}", registry);
         for (var entry : entries.entrySet()) {
-            ResourceLocation location = new ResourceLocation(namespace, entry.getKey());
-            Registry.register(registry, location, entry.getValue().get());
+            RegistryEntryData<T> data = entry.getValue();
+            T createdValue = data.getFactory().get();
+            RegistryEntry<T> registryEntry = data.getRegistryEntry();
+            registryEntry.updateReference(createdValue);
+            Registry.register(registry, registryEntry.getRegistryName(), registryEntry.get());
+            AlmostConstants.LOG.debug(" - Object '{}' got registered", registryEntry.getRegistryName());
         }
     }
 }

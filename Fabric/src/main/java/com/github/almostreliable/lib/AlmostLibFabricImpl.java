@@ -1,17 +1,13 @@
 package com.github.almostreliable.lib;
 
 import com.github.almostreliable.lib.api.AlmostLib;
-import com.github.almostreliable.lib.api.registry.RegistryDelegate;
 import com.github.almostreliable.lib.api.registry.RegistryManager;
 import com.github.almostreliable.lib.registry.RegistryManagerFabric;
-import com.github.almostreliable.lib.registry.VanillaRegistryDelegate;
 import net.fabricmc.fabric.api.client.itemgroup.FabricItemGroupBuilder;
 import net.fabricmc.fabric.api.screenhandler.v1.ExtendedScreenHandlerFactory;
 import net.fabricmc.loader.api.FabricLoader;
-import net.minecraft.core.Registry;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.network.chat.Component;
-import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.MenuProvider;
@@ -22,7 +18,6 @@ import net.minecraft.world.item.CreativeModeTab;
 import net.minecraft.world.item.ItemStack;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.Objects;
 import java.util.function.Consumer;
 import java.util.function.Supplier;
 

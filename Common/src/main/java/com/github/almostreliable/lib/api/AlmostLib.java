@@ -1,11 +1,8 @@
 package com.github.almostreliable.lib.api;
 
-import com.github.almostreliable.lib.api.registry.RegistryDelegate;
 import com.github.almostreliable.lib.api.registry.RegistryManager;
 import net.minecraft.core.BlockPos;
-import net.minecraft.core.Registry;
 import net.minecraft.network.FriendlyByteBuf;
-import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.MenuProvider;

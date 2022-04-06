@@ -1,7 +1,8 @@
 package com.github.almostreliable.lib.registry;
 
+import com.github.almostreliable.lib.AlmostConstants;
+import com.github.almostreliable.lib.api.AlmostLib;
 import com.github.almostreliable.lib.api.Utils;
-import com.github.almostreliable.lib.api.registry.RegistryDelegate;
 import com.github.almostreliable.lib.api.registry.RegistryManager;
 import com.github.almostreliable.lib.api.registry.builders.BlockBuilder;
 import com.github.almostreliable.lib.api.registry.builders.ItemBuilder;
@@ -10,13 +11,14 @@ import com.github.almostreliable.lib.registry.builders.ItemBuilderImpl;
 import com.mojang.datafixers.util.Function4;
 import net.minecraft.core.Registry;
 import net.minecraft.resources.ResourceKey;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.*;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.state.BlockBehaviour;
 import net.minecraft.world.level.material.Material;
 import net.minecraft.world.level.material.MaterialColor;
-import org.jetbrains.annotations.Nullable;
 
+import javax.annotation.Nullable;
 import java.util.LinkedHashMap;
 import java.util.function.Function;
 import java.util.function.Supplier;
@@ -71,15 +73,19 @@ public abstract class AbstractRegistryManager implements RegistryManager {
     // I hate generics...
     protected <E, BASE> Supplier<E> finalizeRegistration(String id, Supplier<E> entrySupplier, ResourceKey<Registry<BASE>> resourceKey) {
         RegistryDelegate<E> delegate = Utils.cast(getOrCreateDelegate(resourceKey));
-        return delegate.register(id, entrySupplier);
+        RegistryEntryData<E> data = RegistryEntryData.of(new ResourceLocation(getNamespace(), id), entrySupplier);
+        delegate.add(data);
+        return data.getRegistryEntry();
     }
 
     @Override
     public void init() {
-        // TODO: Think about ordering for fabric
-        registries.forEach((resourceKey, registryDelegate) -> {
-            registryDelegate.init(getNamespace());
-        });
+        for (var entry : Registry.REGISTRY.entrySet()) { // Should handle ordering for fabric... I hope
+            RegistryDelegate<?> registryDelegate = registries.get(entry.getKey());
+            if (registryDelegate != null) {
+                registryDelegate.init();
+            }
+        }
     }
 
     @Nullable
@@ -89,6 +95,6 @@ public abstract class AbstractRegistryManager implements RegistryManager {
         if (delegate == null) {
             return null;
         }
-        return Utils.nullableCast(delegate.find(id));
+        return Utils.nullableCast(delegate.find(new ResourceLocation(getNamespace(), id)));
     }
 }
