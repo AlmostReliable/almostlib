@@ -1,5 +1,6 @@
 package com.github.almostreliable.lib.registry.builders;
 
+import com.github.almostreliable.lib.api.Utils;
 import com.github.almostreliable.lib.api.registry.RegisterCallback;
 import com.github.almostreliable.lib.api.registry.RegistryManager;
 import com.github.almostreliable.lib.api.registry.builders.BlockBuilder;
@@ -45,9 +46,8 @@ public class BlockBuilderImpl<B extends Block, I extends BlockItem> extends Abst
 
     @Override
     public BlockBuilder<B, I> item(Consumer<ItemBuilder<I>> callback) {
-        //noinspection unchecked
-        itemBuilder = new ItemBuilderImpl<>(id,
-                p -> (I) new BlockItem(getBuiltEntry(), p),
+        itemBuilder = new ItemBuilderImpl<I>(id,
+                p -> Utils.cast(new BlockItem(getBuiltEntry(), p)),
                 manager,
                 registerCallback).tab(CreativeModeTab.TAB_BUILDING_BLOCKS);
         callback.accept(itemBuilder);

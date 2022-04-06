@@ -1,5 +1,6 @@
 package com.github.almostreliable.lib.registry;
 
+import com.github.almostreliable.lib.api.Utils;
 import com.github.almostreliable.lib.api.registry.RegistryDelegate;
 import com.github.almostreliable.lib.api.registry.RegistryManager;
 import com.github.almostreliable.lib.api.registry.builders.BlockBuilder;
@@ -22,8 +23,8 @@ import java.util.function.Supplier;
 
 public abstract class AbstractRegistryManager implements RegistryManager {
     protected final LinkedHashMap<ResourceKey<?>, RegistryDelegate<?>> registries = new LinkedHashMap<>();
-    protected final RegistryDelegate<Block> blocks = getOrCreateDelegate(Registry.BLOCK_REGISTRY);
     protected final RegistryDelegate<Item> items = getOrCreateDelegate(Registry.ITEM_REGISTRY);
+    protected final RegistryDelegate<Block> blocks = getOrCreateDelegate(Registry.BLOCK_REGISTRY);
     private final String namespace;
 
     public AbstractRegistryManager(String namespace) {
@@ -69,8 +70,7 @@ public abstract class AbstractRegistryManager implements RegistryManager {
 
     // I hate generics...
     protected <E, BASE> Supplier<E> finalizeRegistration(String id, Supplier<E> entrySupplier, ResourceKey<Registry<BASE>> resourceKey) {
-        @SuppressWarnings("unchecked")
-        RegistryDelegate<E> delegate = (RegistryDelegate<E>) getOrCreateDelegate(resourceKey);
+        RegistryDelegate<E> delegate = Utils.cast(getOrCreateDelegate(resourceKey));
         return delegate.register(id, entrySupplier);
     }
 
@@ -89,7 +89,6 @@ public abstract class AbstractRegistryManager implements RegistryManager {
         if (delegate == null) {
             return null;
         }
-        //noinspection unchecked
-        return (Supplier<E>) delegate.find(id);
+        return Utils.nullableCast(delegate.find(id));
     }
 }

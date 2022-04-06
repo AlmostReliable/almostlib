@@ -1,5 +1,6 @@
 package com.github.almostreliable.lib.registry;
 
+import com.github.almostreliable.lib.api.Utils;
 import com.github.almostreliable.lib.api.registry.RegistryDelegate;
 import com.google.common.base.Suppliers;
 
@@ -23,8 +24,7 @@ public abstract class AbstractRegistryDelegate<T> implements RegistryDelegate<T>
 
         Supplier<E> entry = Suppliers.memoize(supplier::get);
 
-        //noinspection unchecked
-        entries.put(id, (Supplier<T>) entry);
+        entries.put(id, Utils.cast(entry));
         return entry;
     }
 
@@ -33,10 +33,9 @@ public abstract class AbstractRegistryDelegate<T> implements RegistryDelegate<T>
         return !entries.isEmpty();
     }
 
-    @SuppressWarnings("unchecked")
     @Override
     @Nullable
     public <E extends T> Supplier<E> find(String id) {
-        return (Supplier<E>) entries.get(id);
+        return Utils.cast(entries.get(id));
     }
 }

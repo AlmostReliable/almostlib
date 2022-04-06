@@ -1,5 +1,6 @@
 package com.github.almostreliable.lib.registry.builders;
 
+import com.github.almostreliable.lib.api.Utils;
 import com.github.almostreliable.lib.api.registry.RegisterCallback;
 import com.github.almostreliable.lib.api.registry.RegistryManager;
 import com.github.almostreliable.lib.api.registry.builders.EntryBuilder;
@@ -30,9 +31,7 @@ public abstract class AbstractEntryBuilder<T, BASE> implements EntryBuilder<T> {
         if (entry == null) {
             throw new IllegalStateException("Entry was not built at this moment or built incorrectly");
         }
-
-        //noinspection unchecked
-        return (T) entry.get();
+        return Utils.cast(entry.get());
     }
 
     protected abstract ResourceKey<Registry<BASE>> getRegistryKey();
