@@ -1,7 +1,7 @@
 package com.github.almostreliable.lib.api.registry.builders;
 
-import java.util.function.Supplier;
+import com.github.almostreliable.lib.api.registry.RegistryEntry;
 
 public interface EntryBuilder<T> {
-    Supplier<T> register();
+    RegistryEntry<T> register();
 }

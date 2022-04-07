@@ -2,6 +2,7 @@ package com.github.almostreliable.lib.registry.builders;
 
 import com.github.almostreliable.lib.api.Utils;
 import com.github.almostreliable.lib.api.registry.RegisterCallback;
+import com.github.almostreliable.lib.api.registry.RegistryEntry;
 import com.github.almostreliable.lib.api.registry.RegistryManager;
 import com.github.almostreliable.lib.api.registry.builders.BlockBuilder;
 import com.github.almostreliable.lib.api.registry.builders.ItemBuilder;
@@ -27,7 +28,7 @@ public class BlockBuilderImpl<B extends Block, I extends BlockItem> extends Abst
     protected final Function<BlockBehaviour.Properties, B> factory;
     protected BlockBehaviour.Properties properties;
     @Nullable
-    protected ItemBuilder<I> itemBuilder;
+    protected ItemBuilderImpl<I> itemBuilder;
     @Nullable
     protected CreativeModeTab creativeTab;
 
@@ -46,8 +47,7 @@ public class BlockBuilderImpl<B extends Block, I extends BlockItem> extends Abst
 
     @Override
     public BlockBuilder<B, I> item(Consumer<ItemBuilder<I>> callback) {
-        itemBuilder = new ItemBuilderImpl<I>(id,
-                p -> Utils.cast(new BlockItem(getBuiltEntry(), p)),
+        itemBuilder = (ItemBuilderImpl<I>) new ItemBuilderImpl<I>(id,
                 manager,
                 registerCallback).tab(CreativeModeTab.TAB_BUILDING_BLOCKS);
         callback.accept(itemBuilder);
@@ -180,13 +180,15 @@ public class BlockBuilderImpl<B extends Block, I extends BlockItem> extends Abst
     }
 
     @Override
-    public Supplier<B> register() {
+    public RegistryEntry<B> register() {
+        RegistryEntry<B> blockEntry = super.register();
         if (itemBuilder != null) {
             if (creativeTab != null) {
                 itemBuilder.tab(creativeTab);
             }
+            itemBuilder.setFactory(p -> Utils.cast(new BlockItem(blockEntry.get(), p)));
             itemBuilder.register();
         }
-        return super.register();
+        return blockEntry;
     }
 }

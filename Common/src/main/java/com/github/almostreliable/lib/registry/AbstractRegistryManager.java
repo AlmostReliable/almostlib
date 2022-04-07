@@ -1,6 +1,7 @@
 package com.github.almostreliable.lib.registry;
 
 import com.github.almostreliable.lib.api.Utils;
+import com.github.almostreliable.lib.api.registry.RegistryEntry;
 import com.github.almostreliable.lib.api.registry.RegistryManager;
 import com.github.almostreliable.lib.api.registry.builders.BlockBuilder;
 import com.github.almostreliable.lib.api.registry.builders.ItemBuilder;
@@ -69,7 +70,7 @@ public abstract class AbstractRegistryManager implements RegistryManager {
     protected abstract <T> RegistryDelegate<T> getOrCreateDelegate(ResourceKey<Registry<T>> resourceKey);
 
     // I hate generics...
-    protected <E, BASE> Supplier<E> finalizeRegistration(String id, Supplier<E> entrySupplier, ResourceKey<Registry<BASE>> resourceKey) {
+    protected <E, BASE> RegistryEntry<E> finalizeRegistration(String id, Supplier<E> entrySupplier, ResourceKey<Registry<BASE>> resourceKey) {
         RegistryDelegate<E> delegate = Utils.cast(getOrCreateDelegate(resourceKey));
         RegistryEntryData<E> data = RegistryEntryData.of(new ResourceLocation(getNamespace(), id), entrySupplier);
         delegate.add(data);

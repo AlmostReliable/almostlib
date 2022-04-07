@@ -11,23 +11,34 @@ import net.minecraft.world.item.Item;
 import net.minecraft.world.item.Rarity;
 import net.minecraft.world.level.ItemLike;
 
+import javax.annotation.Nullable;
 import java.util.Objects;
 import java.util.function.Function;
 import java.util.function.Supplier;
 
 public class ItemBuilderImpl<I extends Item> extends AbstractEntryBuilder<I, Item> implements ItemBuilder<I> {
-    private final Function<Item.Properties, ? extends I> factory;
+    @Nullable
+    private Function<Item.Properties, ? extends I> factory;
     private Item.Properties properties;
 
     public ItemBuilderImpl(String id, Function<Item.Properties, ? extends I> factory, RegistryManager manager, RegisterCallback registerCallback) {
-        super(id, registerCallback, manager);
+        this(id, manager, registerCallback);
         this.factory = factory;
+    }
+
+    ItemBuilderImpl(String id, RegistryManager manager, RegisterCallback registerCallback) {
+        super(id, registerCallback, manager);
         this.properties = new Item.Properties();
+    }
+
+    void setFactory(Function<Item.Properties, ? extends I> factory) {
+        this.factory = factory;
     }
 
     @Override
     public ItemBuilder<I> properties(Supplier<Item.Properties> supplier) {
         properties = supplier.get();
+
         Objects.requireNonNull(properties);
         return this;
     }
