@@ -37,25 +37,4 @@ public abstract class RegistryDelegate<T> {
     }
 
     public abstract void init();
-
-//    protected static class Entry<T> {
-//        protected RegistryEntry<T> registryEntry;
-//        @Nullable
-//        private Supplier<T> supplier;
-//
-//        Entry(Supplier<T> supplier, RegistryEntry<T> registryEntry) {
-//            this.supplier = supplier;
-//            this.registryEntry = registryEntry;
-//        }
-//
-//        void updateReference(ResourceLocation id) {
-//            if (supplier == null) {
-//                throw new IllegalStateException("Reference cannot be updated twice");
-//            }
-//
-//            T value = supplier.get();
-//            registryEntry.updateReference(id, value);
-//            supplier = null;
-//        }
-//    }
 }
