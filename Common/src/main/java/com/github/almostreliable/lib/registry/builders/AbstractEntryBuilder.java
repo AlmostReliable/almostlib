@@ -39,6 +39,10 @@ public abstract class AbstractEntryBuilder<T, BASE, SELF extends AbstractEntryBu
         return Utils.cast(this);
     }
 
+    public SELF lang(String key, String value) {
+        return lang($ -> key, $ -> value);
+    }
+
     protected String nameToLang() {
         return Arrays
                 .stream(name.split("_"))

@@ -147,11 +147,11 @@ public class BlockBuilder<B extends Block, I extends BlockItem>
     }
 
     public BlockBuilder<B, I> defaultLang(String value) {
-        return lang(Block::getDescriptionId, b -> value);
+        return lang(Block::getDescriptionId, $ -> value);
     }
 
     public BlockBuilder<B, I> defaultLang() {
-        return lang(Block::getDescriptionId, b -> nameToLang());
+        return lang(Block::getDescriptionId, $ -> nameToLang());
     }
 
 

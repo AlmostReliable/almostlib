@@ -19,7 +19,10 @@ import net.minecraft.world.level.material.Material;
 import net.minecraft.world.level.material.MaterialColor;
 
 import javax.annotation.Nullable;
+import java.util.Comparator;
 import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
 import java.util.function.BiFunction;
 import java.util.function.Function;
 import java.util.function.Supplier;
@@ -80,8 +83,26 @@ public abstract class RegistryManager {
     }
 
     public void init() {
-        for (var entry : Registry.REGISTRY.entrySet()) { // Should handle ordering for fabric... I hope
-            RegistryDelegate<?> registryDelegate = registries.get(entry.getKey());
+        List<ResourceKey<?>> priority = List.of(
+                Registry.BLOCK_REGISTRY,
+                Registry.FLUID_REGISTRY,
+                Registry.ITEM_REGISTRY,
+                Registry.BLOCK_ENTITY_TYPE_REGISTRY
+        );
+
+        List<? extends ResourceKey<? extends Registry<?>>> resourceKeys = Registry.REGISTRY
+                .entrySet()
+                .stream()
+                .map(Map.Entry::getKey)
+                .sorted((o1, o2) -> String.valueOf(o1).compareToIgnoreCase(String.valueOf(o2)))
+                .sorted(Comparator.comparingInt(value -> {
+                    int i = priority.indexOf(value);
+                    return i >= 0 ? i : priority.size();
+                }))
+                .toList();
+
+        for (var resourceKey : resourceKeys) {
+            RegistryDelegate<?> registryDelegate = registries.get(resourceKey);
             if (registryDelegate != null) {
                 registryDelegate.init();
             }

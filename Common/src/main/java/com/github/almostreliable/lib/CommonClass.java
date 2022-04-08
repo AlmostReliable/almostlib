@@ -1,11 +1,15 @@
 package com.github.almostreliable.lib;
 
+import com.github.almostreliable.lib.registry.RegistryEntry;
 import com.github.almostreliable.lib.registry.RegistryManager;
 import net.minecraft.world.item.CompassItem;
 import net.minecraft.world.item.CreativeModeTab;
 import net.minecraft.world.item.SwordItem;
 import net.minecraft.world.item.Tiers;
+import net.minecraft.world.level.block.BannerBlock;
 import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.entity.BannerBlockEntity;
+import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.material.Material;
 
 import java.util.function.Supplier;
@@ -32,6 +36,12 @@ public class CommonClass {
             .noDrops()
             .noCollision()
             .noOcclusion()
+            .register();
+
+
+    public static RegistryEntry<BlockEntityType<BannerBlockEntity>> DUMMY_ENTITY = registry
+            .blockEntity("dummy_entity", BannerBlockEntity::new)
+            .blocks(block -> block instanceof BannerBlock)
             .register();
 
     public static void init() {

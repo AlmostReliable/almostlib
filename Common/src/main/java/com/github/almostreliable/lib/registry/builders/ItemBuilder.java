@@ -83,11 +83,11 @@ public class ItemBuilder<I extends Item> extends AbstractEntryBuilder<I, Item, I
     }
 
     public ItemBuilder<I> defaultLang(String value) {
-        return lang(Item::getDescriptionId, i -> value);
+        return lang(Item::getDescriptionId, $ -> value);
     }
 
     public ItemBuilder<I> defaultLang() {
-        return lang(Item::getDescriptionId, i -> nameToLang());
+        return lang(Item::getDescriptionId, $ -> nameToLang());
     }
 
     public ItemBuilder<I> lang(ItemLike itemLike, String value) {

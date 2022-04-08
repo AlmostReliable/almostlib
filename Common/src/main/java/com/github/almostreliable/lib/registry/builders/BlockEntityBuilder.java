@@ -16,17 +16,16 @@ import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Set;
 import java.util.function.BiFunction;
-import java.util.function.Function;
+import java.util.function.Predicate;
 import java.util.function.Supplier;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 public class BlockEntityBuilder<BE extends BlockEntity>
         extends AbstractEntryBuilder<BlockEntityType<BE>, BlockEntityType<?>, BlockEntityBuilder<BE>> {
 
     private final BiFunction<BlockPos, BlockState, BE> factory;
     @Nullable
-    private Function<Stream<Block>, Stream<Block>> filterFunction;
+    private Predicate<Block> filterFunction;
     @Nullable
     private Supplier<Block[]> blocksSupplier;
 
@@ -35,7 +34,7 @@ public class BlockEntityBuilder<BE extends BlockEntity>
         this.factory = factory;
     }
 
-    public BlockEntityBuilder<BE> blocks(Function<Stream<Block>, Stream<Block>> filterFunction) {
+    public BlockEntityBuilder<BE> blocks(Predicate<Block> filterFunction) {
         this.filterFunction = filterFunction;
         return this;
     }
@@ -55,8 +54,9 @@ public class BlockEntityBuilder<BE extends BlockEntity>
         Set<Block> blocks = new HashSet<>();
 
         if (filterFunction != null) {
-            Set<Block> filteredBlocks = filterFunction
-                    .apply(AlmostLib.INSTANCE.getBlocks())
+            Set<Block> filteredBlocks = AlmostLib.INSTANCE
+                    .getBlocks()
+                    .filter(filterFunction)
                     .collect(Collectors.toSet());
             blocks.addAll(filteredBlocks);
         }
