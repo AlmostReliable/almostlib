@@ -1,13 +1,9 @@
 package com.github.almostreliable.lib.registry;
 
-import com.github.almostreliable.lib.api.Utils;
-import com.github.almostreliable.lib.api.registry.RegistryEntry;
-import com.github.almostreliable.lib.api.registry.RegistryManager;
-import com.github.almostreliable.lib.api.registry.builders.BlockBuilder;
-import com.github.almostreliable.lib.api.registry.builders.EntryBuilder;
-import com.github.almostreliable.lib.api.registry.builders.ItemBuilder;
-import com.github.almostreliable.lib.registry.builders.BlockBuilderImpl;
-import com.github.almostreliable.lib.registry.builders.ItemBuilderImpl;
+import com.github.almostreliable.lib.Utils;
+import com.github.almostreliable.lib.registry.builders.BlockBuilder;
+import com.github.almostreliable.lib.registry.builders.ItemBuilder;
+import com.github.almostreliable.lib.registry.builders.RegistryEntryBuilder;
 import com.mojang.datafixers.util.Function4;
 import net.minecraft.core.Registry;
 import net.minecraft.resources.ResourceKey;
@@ -45,7 +41,7 @@ public abstract class AbstractRegistryManager implements RegistryManager {
 
     @Override
     public <I extends Item> ItemBuilder<I> item(String id, Function<Item.Properties, I> factory) {
-        return new ItemBuilderImpl<I>(id, factory, this, this::finalizeRegistration);
+        return new ItemBuilder<I>(id, factory, this, this::finalizeRegistration);
     }
 
     @Override
@@ -65,13 +61,13 @@ public abstract class AbstractRegistryManager implements RegistryManager {
 
     @Override
     public <B extends Block, I extends BlockItem> BlockBuilder<B, I> block(String id, BlockBehaviour.Properties properties, Function<BlockBehaviour.Properties, B> factory) {
-        return new BlockBuilderImpl<>(id, properties, factory, this, this::finalizeRegistration);
+        return new BlockBuilder<>(id, properties, factory, this, this::finalizeRegistration);
     }
 
     protected abstract <T> RegistryDelegate<T> getOrCreateDelegate(ResourceKey<Registry<T>> resourceKey);
 
     // I hate generics...
-    protected <E, BASE> RegistryEntry<E> finalizeRegistration(EntryBuilder<E, BASE> builder) {
+    protected <E, BASE> RegistryEntry<E> finalizeRegistration(RegistryEntryBuilder<E, BASE> builder) {
         RegistryDelegate<E> delegate = Utils.cast(getOrCreateDelegate(builder.getRegistryKey()));
         RegistryEntryData<E> data = RegistryEntryData.of(
                 new ResourceLocation(getNamespace(), builder.getName()),

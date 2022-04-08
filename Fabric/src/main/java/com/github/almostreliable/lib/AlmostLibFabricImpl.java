@@ -1,7 +1,6 @@
 package com.github.almostreliable.lib;
 
-import com.github.almostreliable.lib.api.AlmostLib;
-import com.github.almostreliable.lib.api.registry.RegistryManager;
+import com.github.almostreliable.lib.registry.RegistryManager;
 import com.github.almostreliable.lib.registry.RegistryManagerFabric;
 import net.fabricmc.fabric.api.client.itemgroup.FabricItemGroupBuilder;
 import net.fabricmc.fabric.api.screenhandler.v1.ExtendedScreenHandlerFactory;

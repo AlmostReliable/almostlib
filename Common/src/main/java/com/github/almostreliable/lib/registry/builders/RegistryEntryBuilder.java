@@ -1,10 +1,10 @@
-package com.github.almostreliable.lib.api.registry.builders;
+package com.github.almostreliable.lib.registry.builders;
 
-import com.github.almostreliable.lib.api.registry.RegistryEntry;
+import com.github.almostreliable.lib.registry.RegistryEntry;
 import net.minecraft.core.Registry;
 import net.minecraft.resources.ResourceKey;
 
-public interface EntryBuilder<T, BASE> {
+public interface RegistryEntryBuilder<T, BASE> {
     ResourceKey<Registry<BASE>> getRegistryKey();
 
     T create();

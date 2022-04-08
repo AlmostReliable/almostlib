@@ -1,4 +1,4 @@
-package com.github.almostreliable.lib.api.registry;
+package com.github.almostreliable.lib.registry;
 
 import net.minecraft.resources.ResourceLocation;
 

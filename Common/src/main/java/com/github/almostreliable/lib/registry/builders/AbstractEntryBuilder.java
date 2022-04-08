@@ -1,11 +1,10 @@
 package com.github.almostreliable.lib.registry.builders;
 
-import com.github.almostreliable.lib.api.registry.RegisterCallback;
-import com.github.almostreliable.lib.api.registry.RegistryEntry;
-import com.github.almostreliable.lib.api.registry.RegistryManager;
-import com.github.almostreliable.lib.api.registry.builders.EntryBuilder;
+import com.github.almostreliable.lib.registry.RegisterCallback;
+import com.github.almostreliable.lib.registry.RegistryEntry;
+import com.github.almostreliable.lib.registry.RegistryManager;
 
-public abstract class AbstractEntryBuilder<T, BASE> implements EntryBuilder<T, BASE> {
+public abstract class AbstractEntryBuilder<T, BASE> implements RegistryEntryBuilder<T, BASE> {
     protected final String name;
     protected final RegisterCallback registerCallback;
     protected final RegistryManager manager;

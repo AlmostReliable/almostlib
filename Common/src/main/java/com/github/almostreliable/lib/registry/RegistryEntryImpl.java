@@ -1,6 +1,5 @@
 package com.github.almostreliable.lib.registry;
 
-import com.github.almostreliable.lib.api.registry.RegistryEntry;
 import net.minecraft.resources.ResourceLocation;
 
 import javax.annotation.Nullable;

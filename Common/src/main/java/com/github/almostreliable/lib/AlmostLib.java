@@ -1,6 +1,6 @@
-package com.github.almostreliable.lib.api;
+package com.github.almostreliable.lib;
 
-import com.github.almostreliable.lib.api.registry.RegistryManager;
+import com.github.almostreliable.lib.registry.RegistryManager;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.resources.ResourceLocation;
@@ -8,11 +8,19 @@ import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.MenuProvider;
 import net.minecraft.world.item.CreativeModeTab;
 import net.minecraft.world.item.ItemStack;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.function.Consumer;
 import java.util.function.Supplier;
 
 public interface AlmostLib {
+    String MOD_ID = "almostlib";
+    
+    String MOD_NAME = "AlmostReliable Lib";
+
+    Logger LOG = LoggerFactory.getLogger(MOD_NAME);
+
     AlmostLib INSTANCE = ServiceLoader.load(AlmostLib.class);
 
     String getPlatformName();

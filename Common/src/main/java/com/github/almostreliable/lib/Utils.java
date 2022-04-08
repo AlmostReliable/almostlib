@@ -1,4 +1,4 @@
-package com.github.almostreliable.lib.api;
+package com.github.almostreliable.lib;
 
 import javax.annotation.Nullable;
 

@@ -1,7 +1,7 @@
-package com.github.almostreliable.lib.api.registry;
+package com.github.almostreliable.lib.registry;
 
-import com.github.almostreliable.lib.api.registry.builders.BlockBuilder;
-import com.github.almostreliable.lib.api.registry.builders.ItemBuilder;
+import com.github.almostreliable.lib.registry.builders.BlockBuilder;
+import com.github.almostreliable.lib.registry.builders.ItemBuilder;
 import com.mojang.datafixers.util.Function4;
 import net.minecraft.core.Registry;
 import net.minecraft.resources.ResourceKey;

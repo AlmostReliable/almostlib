@@ -1,7 +1,6 @@
 package com.github.almostreliable.lib;
 
-import com.github.almostreliable.lib.api.AlmostLib;
-import com.github.almostreliable.lib.api.registry.RegistryManager;
+import com.github.almostreliable.lib.registry.RegistryManager;
 import com.github.almostreliable.lib.registry.RegistryManagerForge;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.resources.ResourceLocation;

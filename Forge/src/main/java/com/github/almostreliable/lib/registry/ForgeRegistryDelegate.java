@@ -1,7 +1,6 @@
 package com.github.almostreliable.lib.registry;
 
-import com.github.almostreliable.lib.AlmostConstants;
-import com.github.almostreliable.lib.api.registry.RegistryEntry;
+import com.github.almostreliable.lib.AlmostLib;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraftforge.event.RegistryEvent;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
@@ -21,7 +20,7 @@ public class ForgeRegistryDelegate<T extends IForgeRegistryEntry<T>> extends Reg
                 .get()
                 .getModEventBus()
                 .addGenericListener(forgeRegistry.getRegistrySuperType(), (RegistryEvent.Register<T> event) -> {
-                    AlmostConstants.LOG.debug("Initialize forge registry {} for type {}",
+                    AlmostLib.LOG.debug("Initialize forge registry {} for type {}",
                             forgeRegistry.getRegistryKey(),
                             forgeRegistry.getRegistrySuperType());
                     for (var entry : entries.entrySet()) {
@@ -31,7 +30,7 @@ public class ForgeRegistryDelegate<T extends IForgeRegistryEntry<T>> extends Reg
                         ResourceLocation id = registryEntry.getRegistryName();
                         registryEntry.updateReference(createdValue);
                         event.getRegistry().register(registryEntry.get().setRegistryName(id));
-                        AlmostConstants.LOG.debug(" - Object '{}' got registered", registryEntry.getRegistryName());
+                        AlmostLib.LOG.debug(" - Object '{}' got registered", registryEntry.getRegistryName());
                     }
                 });
     }
