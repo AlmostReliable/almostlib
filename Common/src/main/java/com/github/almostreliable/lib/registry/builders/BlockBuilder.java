@@ -21,7 +21,8 @@ import java.util.function.Function;
 import java.util.function.Supplier;
 import java.util.function.ToIntFunction;
 
-public class BlockBuilder<B extends Block, I extends BlockItem> extends AbstractEntryBuilder<B, Block> {
+public class BlockBuilder<B extends Block, I extends BlockItem>
+        extends AbstractEntryBuilder<B, Block, BlockBuilder<B, I>> {
     protected final Function<BlockBehaviour.Properties, B> factory;
     protected BlockBehaviour.Properties properties;
     @Nullable
@@ -144,6 +145,15 @@ public class BlockBuilder<B extends Block, I extends BlockItem> extends Abstract
         this.creativeTab = tab;
         return this;
     }
+
+    public BlockBuilder<B, I> defaultLang(String value) {
+        return lang(Block::getDescriptionId, b -> value);
+    }
+
+    public BlockBuilder<B, I> defaultLang() {
+        return lang(Block::getDescriptionId, b -> nameToLang());
+    }
+
 
     @Override
     public B create() {

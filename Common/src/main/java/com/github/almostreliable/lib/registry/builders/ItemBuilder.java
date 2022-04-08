@@ -7,6 +7,7 @@ import net.minecraft.resources.ResourceKey;
 import net.minecraft.world.food.FoodProperties;
 import net.minecraft.world.item.CreativeModeTab;
 import net.minecraft.world.item.Item;
+import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Rarity;
 import net.minecraft.world.level.ItemLike;
 
@@ -15,7 +16,7 @@ import java.util.Objects;
 import java.util.function.Function;
 import java.util.function.Supplier;
 
-public class ItemBuilder<I extends Item> extends AbstractEntryBuilder<I, Item> {
+public class ItemBuilder<I extends Item> extends AbstractEntryBuilder<I, Item, ItemBuilder<I>> {
     @Nullable
     private Function<Item.Properties, ? extends I> factory;
     private Item.Properties properties;
@@ -79,6 +80,21 @@ public class ItemBuilder<I extends Item> extends AbstractEntryBuilder<I, Item> {
     public ItemBuilder<I> fireResistant() {
         properties.fireResistant();
         return this;
+    }
+
+    public ItemBuilder<I> defaultLang(String value) {
+        return lang(Item::getDescriptionId, i -> value);
+    }
+
+    public ItemBuilder<I> defaultLang() {
+        return lang(Item::getDescriptionId, i -> nameToLang());
+    }
+
+    public ItemBuilder<I> lang(ItemLike itemLike, String value) {
+        return lang(i -> {
+            Item item = itemLike.asItem();
+            return i.getDescriptionId(new ItemStack(item));
+        }, i -> value);
     }
 
     @Override
