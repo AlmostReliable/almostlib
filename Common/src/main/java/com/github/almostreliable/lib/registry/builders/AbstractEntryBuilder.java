@@ -4,25 +4,24 @@ import com.github.almostreliable.lib.api.registry.RegisterCallback;
 import com.github.almostreliable.lib.api.registry.RegistryEntry;
 import com.github.almostreliable.lib.api.registry.RegistryManager;
 import com.github.almostreliable.lib.api.registry.builders.EntryBuilder;
-import net.minecraft.core.Registry;
-import net.minecraft.resources.ResourceKey;
 
-public abstract class AbstractEntryBuilder<T, BASE> implements EntryBuilder<T> {
-    protected final String id;
+public abstract class AbstractEntryBuilder<T, BASE> implements EntryBuilder<T, BASE> {
+    protected final String name;
     protected final RegisterCallback registerCallback;
     protected final RegistryManager manager;
 
-    public AbstractEntryBuilder(String id, RegisterCallback registerCallback, RegistryManager manager) {
-        this.id = id;
+    public AbstractEntryBuilder(String name, RegisterCallback registerCallback, RegistryManager manager) {
+        this.name = name;
         this.registerCallback = registerCallback;
         this.manager = manager;
     }
 
-    public abstract T create();
-
     public RegistryEntry<T> register() {
-        return registerCallback.onFinishRegister(id, this::create, getRegistryKey());
+        return registerCallback.onRegister(this);
     }
 
-    protected abstract ResourceKey<Registry<BASE>> getRegistryKey();
+    @Override
+    public String getName() {
+        return name;
+    }
 }

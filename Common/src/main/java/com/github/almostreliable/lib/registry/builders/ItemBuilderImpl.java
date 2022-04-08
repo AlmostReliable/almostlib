@@ -97,7 +97,7 @@ public class ItemBuilderImpl<I extends Item> extends AbstractEntryBuilder<I, Ite
     }
 
     @Override
-    protected ResourceKey<Registry<Item>> getRegistryKey() {
+    public ResourceKey<Registry<Item>> getRegistryKey() {
         return Registry.ITEM_REGISTRY;
     }
 }

@@ -12,7 +12,7 @@ import java.util.function.Consumer;
 import java.util.function.Supplier;
 import java.util.function.ToIntFunction;
 
-public interface BlockBuilder<B extends Block, I extends BlockItem> extends EntryBuilder<B> {
+public interface BlockBuilder<B extends Block, I extends BlockItem> extends EntryBuilder<B, Block> {
 
     BlockBuilder<B, I> noItem();
 

@@ -1,11 +1,8 @@
 package com.github.almostreliable.lib.api.registry;
 
-import net.minecraft.core.Registry;
-import net.minecraft.resources.ResourceKey;
-
-import java.util.function.Supplier;
+import com.github.almostreliable.lib.api.registry.builders.EntryBuilder;
 
 @FunctionalInterface
 public interface RegisterCallback {
-    <T, BASE> RegistryEntry<T> onFinishRegister(String id, Supplier<T> entrySupplier, ResourceKey<Registry<BASE>> resourceKey);
+    <T, BASE> RegistryEntry<T> onRegister(EntryBuilder<T, BASE> builder);
 }

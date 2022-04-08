@@ -47,7 +47,7 @@ public class BlockBuilderImpl<B extends Block, I extends BlockItem> extends Abst
 
     @Override
     public BlockBuilder<B, I> item(Consumer<ItemBuilder<I>> callback) {
-        itemBuilder = (ItemBuilderImpl<I>) new ItemBuilderImpl<I>(id,
+        itemBuilder = (ItemBuilderImpl<I>) new ItemBuilderImpl<I>(name,
                 manager,
                 registerCallback).tab(CreativeModeTab.TAB_BUILDING_BLOCKS);
         callback.accept(itemBuilder);
@@ -175,7 +175,7 @@ public class BlockBuilderImpl<B extends Block, I extends BlockItem> extends Abst
     }
 
     @Override
-    protected ResourceKey<Registry<Block>> getRegistryKey() {
+    public ResourceKey<Registry<Block>> getRegistryKey() {
         return Registry.BLOCK_REGISTRY;
     }
 

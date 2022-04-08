@@ -8,7 +8,7 @@ import net.minecraft.world.level.ItemLike;
 
 import java.util.function.Supplier;
 
-public interface ItemBuilder<I extends Item> extends EntryBuilder<I> {
+public interface ItemBuilder<I extends Item> extends EntryBuilder<I, Item> {
 
     ItemBuilder<I> properties(Supplier<Item.Properties> supplier);
 
