@@ -18,7 +18,7 @@ public abstract class AbstractEntryBuilder<T, BASE, SELF extends AbstractEntryBu
     protected final RegistryManager manager;
     protected final DataGenContainer<T> dataGenContainer;
 
-    public AbstractEntryBuilder(String name, RegisterCallback registerCallback, RegistryManager manager) {
+    public AbstractEntryBuilder(String name, RegistryManager manager, RegisterCallback registerCallback) {
         this.name = name;
         this.registerCallback = registerCallback;
         this.manager = manager;

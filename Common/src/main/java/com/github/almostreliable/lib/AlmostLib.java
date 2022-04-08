@@ -8,15 +8,21 @@ import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.MenuProvider;
 import net.minecraft.world.item.CreativeModeTab;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.entity.BlockEntity;
+import net.minecraft.world.level.block.entity.BlockEntityType;
+import net.minecraft.world.level.block.state.BlockState;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.util.function.BiFunction;
 import java.util.function.Consumer;
 import java.util.function.Supplier;
+import java.util.stream.Stream;
 
 public interface AlmostLib {
     String MOD_ID = "almostlib";
-    
+
     String MOD_NAME = "AlmostReliable Lib";
 
     Logger LOG = LoggerFactory.getLogger(MOD_NAME);
@@ -32,6 +38,10 @@ public interface AlmostLib {
     CreativeModeTab createCreativeTab(ResourceLocation location, Supplier<ItemStack> supplier);
 
     RegistryManager createRegistry(String namespace);
+
+    <T extends BlockEntity> BlockEntityType<T> createBlockEntityType(BiFunction<BlockPos, BlockState, T> factory, Block... blocks);
+
+    Stream<Block> getBlocks();
 
     void openMenu(ServerPlayer player, MenuProvider menu, Consumer<FriendlyByteBuf> buf);
 

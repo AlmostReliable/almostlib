@@ -27,7 +27,7 @@ public class ItemBuilder<I extends Item> extends AbstractEntryBuilder<I, Item, I
     }
 
     ItemBuilder(String id, RegistryManager manager, RegisterCallback registerCallback) {
-        super(id, registerCallback, manager);
+        super(id, manager, registerCallback);
         this.properties = new Item.Properties();
     }
 

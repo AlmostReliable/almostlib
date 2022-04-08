@@ -31,7 +31,7 @@ public class BlockBuilder<B extends Block, I extends BlockItem>
     protected CreativeModeTab creativeTab;
 
     public BlockBuilder(String id, BlockBehaviour.Properties properties, Function<BlockBehaviour.Properties, B> factory, RegistryManager manager, RegisterCallback registerCallback) {
-        super(id, registerCallback, manager);
+        super(id, manager, registerCallback);
         this.factory = factory;
         this.properties = properties;
         item(iItemBuilder -> {});

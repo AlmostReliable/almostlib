@@ -6,7 +6,7 @@ import net.minecraftforge.registries.ForgeRegistry;
 
 import java.util.Objects;
 
-public class RegistryManagerForge extends AbstractRegistryManager {
+public class RegistryManagerForge extends RegistryManager {
     public RegistryManagerForge(String namespace) {
         super(namespace);
     }

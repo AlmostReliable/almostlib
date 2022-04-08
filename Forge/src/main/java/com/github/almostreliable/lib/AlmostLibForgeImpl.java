@@ -2,18 +2,27 @@ package com.github.almostreliable.lib;
 
 import com.github.almostreliable.lib.registry.RegistryManager;
 import com.github.almostreliable.lib.registry.RegistryManagerForge;
+import net.minecraft.core.BlockPos;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.MenuProvider;
 import net.minecraft.world.item.CreativeModeTab;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.entity.BlockEntity;
+import net.minecraft.world.level.block.entity.BlockEntityType;
+import net.minecraft.world.level.block.state.BlockState;
 import net.minecraftforge.fml.ModList;
 import net.minecraftforge.fml.loading.FMLLoader;
 import net.minecraftforge.network.NetworkHooks;
+import net.minecraftforge.registries.ForgeRegistries;
 
+import javax.annotation.Nonnull;
+import java.util.function.BiFunction;
 import java.util.function.Consumer;
 import java.util.function.Supplier;
+import java.util.stream.Stream;
 
 public class AlmostLibForgeImpl implements AlmostLib {
 
@@ -45,6 +54,17 @@ public class AlmostLibForgeImpl implements AlmostLib {
     @Override
     public RegistryManager createRegistry(String namespace) {
         return new RegistryManagerForge(namespace);
+    }
+
+    @Override
+    public <T extends BlockEntity> BlockEntityType<T> createBlockEntityType(@Nonnull BiFunction<BlockPos, BlockState, T> factory, Block... blocks) {
+        //noinspection NullableProblems,ConstantConditions
+        return BlockEntityType.Builder.of(factory::apply, blocks).build(null);
+    }
+
+    @Override
+    public Stream<Block> getBlocks() {
+        return ForgeRegistries.BLOCKS.getValues().stream();
     }
 
     @Override

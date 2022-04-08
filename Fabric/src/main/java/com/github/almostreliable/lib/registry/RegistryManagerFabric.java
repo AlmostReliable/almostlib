@@ -5,7 +5,7 @@ import net.minecraft.resources.ResourceKey;
 
 import java.util.Objects;
 
-public class RegistryManagerFabric extends AbstractRegistryManager {
+public class RegistryManagerFabric extends RegistryManager {
     public RegistryManagerFabric(String namespace) {
         super(namespace);
     }
