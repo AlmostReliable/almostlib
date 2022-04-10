@@ -1,11 +1,14 @@
 package com.github.almostreliable.lib;
 
+import com.github.almostreliable.lib.client.MenuFactory;
 import com.github.almostreliable.lib.registry.RegistryManager;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.MenuProvider;
+import net.minecraft.world.inventory.AbstractContainerMenu;
+import net.minecraft.world.inventory.MenuType;
 import net.minecraft.world.item.CreativeModeTab;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.Block;
@@ -40,6 +43,8 @@ public interface AlmostLib {
     RegistryManager createRegistry(String namespace);
 
     <T extends BlockEntity> BlockEntityType<T> createBlockEntityType(BiFunction<BlockPos, BlockState, T> factory, Block... blocks);
+
+    <M extends AbstractContainerMenu> MenuType<M> createMenuType(MenuFactory<M> factory);
 
     Stream<Block> getBlocks();
 

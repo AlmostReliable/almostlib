@@ -1,9 +1,11 @@
 package com.github.almostreliable.lib.registry;
 
 import com.github.almostreliable.lib.Utils;
+import net.minecraft.client.gui.screens.MenuScreens;
 import net.minecraft.core.Registry;
 import net.minecraft.resources.ResourceKey;
 import net.minecraftforge.client.event.EntityRenderersEvent;
+import net.minecraftforge.fml.event.lifecycle.FMLClientSetupEvent;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
 import net.minecraftforge.registries.ForgeRegistry;
 
@@ -31,11 +33,20 @@ public class RegistryManagerForge extends RegistryManager {
     @Override
     public void initClient() {
         var eventBus = FMLJavaModLoadingContext.get().getModEventBus();
+        eventBus.addListener(this::handleFMLClient);
         eventBus.addListener(this::handleBlockEntityRenderers);
     }
 
+    private void handleFMLClient(FMLClientSetupEvent event) {
+        event.enqueueWork(() -> {
+            registeredScreenFactories.forEach((registryEntry, screenConstructor) -> {
+                MenuScreens.register(Utils.cast(registryEntry.get()), screenConstructor::create);
+            });
+        });
+    }
+
     private void handleBlockEntityRenderers(EntityRenderersEvent.RegisterRenderers event) {
-        for (var entry : blockEntityRenderers.entrySet()) {
+        for (var entry : registeredBlockEntityRendererFactories.entrySet()) {
             event.registerBlockEntityRenderer(entry.getKey().get(), Utils.cast(entry.getValue()));
         }
     }

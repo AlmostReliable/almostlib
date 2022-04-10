@@ -1,11 +1,13 @@
 package com.github.almostreliable.lib;
 
+import com.github.almostreliable.lib.client.MenuFactory;
 import com.github.almostreliable.lib.registry.RegistryManager;
 import com.github.almostreliable.lib.registry.RegistryManagerFabric;
 import net.fabricmc.fabric.api.client.itemgroup.FabricItemGroupBuilder;
 import net.fabricmc.fabric.api.object.builder.v1.block.entity.FabricBlockEntityTypeBuilder;
 import net.fabricmc.fabric.api.screenhandler.v1.ExtendedScreenHandlerFactory;
 import net.fabricmc.fabric.impl.gametest.FabricGameTestHelper;
+import net.fabricmc.fabric.impl.screenhandler.ExtendedScreenHandlerType;
 import net.fabricmc.loader.api.FabricLoader;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Registry;
@@ -17,6 +19,7 @@ import net.minecraft.world.MenuProvider;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.AbstractContainerMenu;
+import net.minecraft.world.inventory.MenuType;
 import net.minecraft.world.item.CreativeModeTab;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.Block;
@@ -62,6 +65,11 @@ public class AlmostLibFabricImpl implements AlmostLib {
     @Override
     public <T extends BlockEntity> BlockEntityType<T> createBlockEntityType(BiFunction<BlockPos, BlockState, T> factory, Block... blocks) {
         return FabricBlockEntityTypeBuilder.create(factory::apply, blocks).build();
+    }
+
+    @Override
+    public <T extends AbstractContainerMenu> MenuType<T> createMenuType(MenuFactory<T> factory) {
+        return new ExtendedScreenHandlerType<>(factory::apply);
     }
 
     @Override

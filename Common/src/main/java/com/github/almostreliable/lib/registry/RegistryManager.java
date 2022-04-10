@@ -2,13 +2,20 @@ package com.github.almostreliable.lib.registry;
 
 import com.github.almostreliable.lib.AlmostLib;
 import com.github.almostreliable.lib.Utils;
+import com.github.almostreliable.lib.client.MenuFactory;
+import com.github.almostreliable.lib.client.ScreenFactory;
 import com.github.almostreliable.lib.registry.builders.*;
 import com.mojang.datafixers.util.Function4;
+import net.minecraft.client.gui.screens.Screen;
+import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
+import net.minecraft.client.gui.screens.inventory.MenuAccess;
 import net.minecraft.client.renderer.blockentity.BlockEntityRendererProvider;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Registry;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.inventory.AbstractContainerMenu;
+import net.minecraft.world.inventory.MenuType;
 import net.minecraft.world.item.*;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.entity.BlockEntity;
@@ -30,8 +37,10 @@ import java.util.function.Supplier;
 
 public abstract class RegistryManager {
     protected final LinkedHashMap<ResourceKey<?>, RegistryDelegate<?>> registries = new LinkedHashMap<>();
-    protected final Map<RegistryEntry<? extends BlockEntityType<? extends BlockEntity>>, BlockEntityRendererProvider<? extends BlockEntity>> blockEntityRenderers = new ConcurrentHashMap<>();
+    protected final Map<RegistryEntry<? extends BlockEntityType<? extends BlockEntity>>, BlockEntityRendererProvider<? extends BlockEntity>> registeredBlockEntityRendererFactories = new ConcurrentHashMap<>();
+    protected final Map<RegistryEntry<? extends MenuType<?>>, ScreenFactory<?, ?>> registeredScreenFactories = new ConcurrentHashMap<>();
     private final String namespace;
+
 
     public RegistryManager(String namespace) {
         this.namespace = namespace;
@@ -70,20 +79,37 @@ public abstract class RegistryManager {
         return new BlockEntityBuilder<>(id, factory, this, this::finalizeRegistration);
     }
 
+    public <M extends AbstractContainerMenu, S extends AbstractContainerScreen<M>> RegistryEntry<MenuType<M>> menu(String id,
+                                                                                                                   MenuFactory<M> menuFactory,
+                                                                                                                   ScreenFactory<M, S> screenFactory) {
+        RegistryEntryData<MenuType<M>> data = createRegistryEntryData(Registry.MENU_REGISTRY,
+                id,
+                () -> AlmostLib.INSTANCE.createMenuType(menuFactory));
+        registerScreen(data.getRegistryEntry(), screenFactory);
+        return data.getRegistryEntry();
+    }
+
     protected abstract <T> RegistryDelegate<T> getOrCreateDelegate(ResourceKey<Registry<T>> resourceKey);
 
     // I hate generics...
     protected <E, BASE> RegistryEntry<E> finalizeRegistration(RegistryEntryBuilder<E, BASE> builder) {
-        RegistryDelegate<E> delegate = Utils.cast(getOrCreateDelegate(builder.getRegistryKey()));
-        RegistryEntryData<E> data = RegistryEntryData.of(
-                new ResourceLocation(getNamespace(), builder.getName()),
-                builder::create
-        );
-        delegate.add(data);
+        RegistryEntryData<E> data = createRegistryEntryData(builder.getRegistryKey(),
+                builder.getName(),
+                builder::create);
         if (builder instanceof PostRegisterListener listener) {
             listener.onPostRegister(data.getRegistryEntry());
         }
         return data.getRegistryEntry();
+    }
+
+    protected <E, BASE> RegistryEntryData<E> createRegistryEntryData(ResourceKey<Registry<BASE>> resourceKey, String name, Supplier<E> supplier) {
+        RegistryDelegate<E> delegate = Utils.cast(getOrCreateDelegate(resourceKey));
+        RegistryEntryData<E> data = RegistryEntryData.of(
+                new ResourceLocation(getNamespace(), name),
+                supplier
+        );
+        delegate.add(data);
+        return data;
     }
 
     @Nullable
@@ -110,12 +136,12 @@ public abstract class RegistryManager {
         return Utils.cast(registryEntry);
     }
 
-//    public <T extends BlockEntity> void registerRenderer(RegistryEntry<? extends BlockEntityType<? extends BlockEntity>> blockEntityType, BlockEntityRendererProvider<T> provider) {
-//        blockEntityRenderers.put(blockEntityType, provider);
-//    }
-
     public <T extends BlockEntity> void registerRenderer(RegistryEntry<? extends BlockEntityType<? extends T>> blockEntityType, BlockEntityRendererProvider<T> provider) {
-        blockEntityRenderers.put(blockEntityType, provider);
+        registeredBlockEntityRendererFactories.put(blockEntityType, provider);
+    }
+
+    public <M extends AbstractContainerMenu, S extends Screen & MenuAccess<M>> void registerScreen(RegistryEntry<? extends MenuType<? extends M>> menuType, ScreenFactory<M, S> screenFactory) {
+        registeredScreenFactories.put(menuType, screenFactory);
     }
 
     public void init() {
