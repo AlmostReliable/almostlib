@@ -31,8 +31,6 @@ import java.util.function.Supplier;
 public abstract class RegistryManager {
     protected final LinkedHashMap<ResourceKey<?>, RegistryDelegate<?>> registries = new LinkedHashMap<>();
     protected final Map<RegistryEntry<? extends BlockEntityType<? extends BlockEntity>>, BlockEntityRendererProvider<?>> blockEntityRenderers = new ConcurrentHashMap<>();
-    protected final RegistryDelegate<Item> items = getOrCreateDelegate(Registry.ITEM_REGISTRY);
-    protected final RegistryDelegate<Block> blocks = getOrCreateDelegate(Registry.BLOCK_REGISTRY);
     private final String namespace;
 
     public RegistryManager(String namespace) {

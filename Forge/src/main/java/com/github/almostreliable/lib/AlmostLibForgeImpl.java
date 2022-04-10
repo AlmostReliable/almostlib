@@ -54,7 +54,9 @@ public class AlmostLibForgeImpl implements AlmostLib {
 
     @Override
     public RegistryManager createRegistry(String namespace) {
-        return new RegistryManagerForge(namespace);
+        RegistryManagerForge manager = new RegistryManagerForge(namespace);
+        AlmostLibCommon.MANAGERS.add(manager);
+        return manager;
     }
 
     @Override

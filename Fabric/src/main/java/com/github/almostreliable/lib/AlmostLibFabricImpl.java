@@ -54,7 +54,9 @@ public class AlmostLibFabricImpl implements AlmostLib {
 
     @Override
     public RegistryManager createRegistry(String namespace) {
-        return new RegistryManagerFabric(namespace);
+        RegistryManagerFabric manager = new RegistryManagerFabric(namespace);
+        AlmostLibCommon.MANAGERS.add(manager);
+        return manager;
     }
 
     @Override

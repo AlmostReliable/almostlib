@@ -51,6 +51,5 @@ public class TestRegistry {
                 .register();
 
         REGISTRY.registerRenderer(DUMMY_ENTITY, SignRenderer::new);
-        REGISTRY.init();
     }
 }
