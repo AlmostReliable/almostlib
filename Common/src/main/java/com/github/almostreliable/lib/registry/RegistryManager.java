@@ -2,11 +2,9 @@ package com.github.almostreliable.lib.registry;
 
 import com.github.almostreliable.lib.AlmostLib;
 import com.github.almostreliable.lib.Utils;
-import com.github.almostreliable.lib.registry.builders.BlockBuilder;
-import com.github.almostreliable.lib.registry.builders.BlockEntityBuilder;
-import com.github.almostreliable.lib.registry.builders.ItemBuilder;
-import com.github.almostreliable.lib.registry.builders.RegistryEntryBuilder;
+import com.github.almostreliable.lib.registry.builders.*;
 import com.mojang.datafixers.util.Function4;
+import net.minecraft.client.renderer.blockentity.BlockEntityRendererProvider;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Registry;
 import net.minecraft.resources.ResourceKey;
@@ -14,6 +12,7 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.*;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.entity.BlockEntity;
+import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockBehaviour;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.material.Material;
@@ -24,12 +23,14 @@ import java.util.Comparator;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.function.BiFunction;
 import java.util.function.Function;
 import java.util.function.Supplier;
 
 public abstract class RegistryManager {
     protected final LinkedHashMap<ResourceKey<?>, RegistryDelegate<?>> registries = new LinkedHashMap<>();
+    protected final Map<RegistryEntry<? extends BlockEntityType<? extends BlockEntity>>, BlockEntityRendererProvider<?>> blockEntityRenderers = new ConcurrentHashMap<>();
     protected final RegistryDelegate<Item> items = getOrCreateDelegate(Registry.ITEM_REGISTRY);
     protected final RegistryDelegate<Block> blocks = getOrCreateDelegate(Registry.BLOCK_REGISTRY);
     private final String namespace;
@@ -81,7 +82,38 @@ public abstract class RegistryManager {
                 builder::create
         );
         delegate.add(data);
+        if (builder instanceof PostRegisterListener listener) {
+            listener.onPostRegister(data.getRegistryEntry());
+        }
         return data.getRegistryEntry();
+    }
+
+    @Nullable
+    public <E> Supplier<E> getEntry(ResourceKey<Registry<E>> resourceKey, String id) {
+        RegistryDelegate<?> delegate = registries.get(resourceKey);
+        if (delegate == null) {
+            return null;
+        }
+        return Utils.nullableCast(delegate.find(new ResourceLocation(getNamespace(), id)));
+    }
+
+    public <E1 extends BASE, E2, BASE> RegistryEntry<E1> getLink(ResourceKey<Registry<BASE>> resourceKey, RegistryEntry<E2> link) {
+        RegistryDelegate<?> delegate = registries.get(resourceKey);
+        if (delegate == null) {
+            throw new IllegalStateException("No registry currently in use for " + resourceKey);
+        }
+
+        RegistryEntry<?> registryEntry = delegate.find(link.getRegistryName());
+        if (registryEntry == null) {
+            throw new IllegalStateException(
+                    "No link could be found for " + link.getRegistryName() + " in registry " + delegate.getName());
+        }
+
+        return Utils.cast(registryEntry);
+    }
+
+    public <T extends BlockEntity> void registerRenderer(RegistryEntry<? extends BlockEntityType<? extends BlockEntity>> blockEntityType, BlockEntityRendererProvider<T> provider) {
+        blockEntityRenderers.put(blockEntityType, provider);
     }
 
     public void init() {
@@ -111,27 +143,7 @@ public abstract class RegistryManager {
         }
     }
 
-    @Nullable
-    public <E> Supplier<E> getEntry(ResourceKey<Registry<E>> resourceKey, String id) {
-        RegistryDelegate<?> delegate = registries.get(resourceKey);
-        if (delegate == null) {
-            return null;
-        }
-        return Utils.nullableCast(delegate.find(new ResourceLocation(getNamespace(), id)));
-    }
-
-    public <E1 extends BASE, E2, BASE> RegistryEntry<E1> getLink(ResourceKey<Registry<BASE>> resourceKey, RegistryEntry<E2> link) {
-        RegistryDelegate<?> delegate = registries.get(resourceKey);
-        if (delegate == null) {
-            throw new IllegalStateException("No registry currently in use for " + resourceKey);
-        }
-
-        RegistryEntry<?> registryEntry = delegate.find(link.getRegistryName());
-        if (registryEntry == null) {
-            throw new IllegalStateException(
-                    "No link could be found for " + link.getRegistryName() + " in registry " + delegate.getName());
-        }
-
-        return Utils.cast(registryEntry);
+    public void initClient() {
+        // TODO
     }
 }

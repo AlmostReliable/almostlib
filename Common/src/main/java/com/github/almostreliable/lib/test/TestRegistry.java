@@ -3,6 +3,7 @@ package com.github.almostreliable.lib.test;
 import com.github.almostreliable.lib.AlmostLib;
 import com.github.almostreliable.lib.registry.RegistryEntry;
 import com.github.almostreliable.lib.registry.RegistryManager;
+import net.minecraft.client.renderer.blockentity.SignRenderer;
 import net.minecraft.core.Registry;
 import net.minecraft.world.item.*;
 import net.minecraft.world.level.block.BannerBlock;
@@ -49,6 +50,7 @@ public class TestRegistry {
                 .blocks(block -> block instanceof BannerBlock)
                 .register();
 
+        REGISTRY.registerRenderer(DUMMY_ENTITY, SignRenderer::new);
         REGISTRY.init();
     }
 }

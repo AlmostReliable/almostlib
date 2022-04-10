@@ -22,7 +22,8 @@ import java.util.function.Supplier;
 import java.util.function.ToIntFunction;
 
 public class BlockBuilder<B extends Block, I extends BlockItem>
-        extends AbstractEntryBuilder<B, Block, BlockBuilder<B, I>> {
+        extends AbstractEntryBuilder<B, Block, BlockBuilder<B, I>>
+        implements PostRegisterListener {
     protected final Function<BlockBehaviour.Properties, B> factory;
     protected BlockBehaviour.Properties properties;
     @Nullable
@@ -154,7 +155,6 @@ public class BlockBuilder<B extends Block, I extends BlockItem>
         return lang(Block::getDescriptionId, $ -> nameToLang());
     }
 
-
     @Override
     public B create() {
         return factory.apply(properties);
@@ -166,15 +166,13 @@ public class BlockBuilder<B extends Block, I extends BlockItem>
     }
 
     @Override
-    public RegistryEntry<B> register() {
-        RegistryEntry<B> blockEntry = super.register();
+    public <T> void onPostRegister(RegistryEntry<T> registryEntry) {
         if (itemBuilder != null) {
             if (creativeTab != null) {
                 itemBuilder.tab(creativeTab);
             }
-            itemBuilder.setFactory(p -> Utils.cast(new BlockItem(blockEntry.get(), p)));
+            itemBuilder.setFactory(p -> Utils.cast(new BlockItem(Utils.cast(registryEntry.get()), p)));
             itemBuilder.register();
         }
-        return blockEntry;
     }
 }

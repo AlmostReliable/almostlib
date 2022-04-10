@@ -1,8 +1,11 @@
 package com.github.almostreliable.lib.registry.builders;
 
 import com.github.almostreliable.lib.AlmostLib;
+import com.github.almostreliable.lib.Utils;
 import com.github.almostreliable.lib.registry.RegisterCallback;
+import com.github.almostreliable.lib.registry.RegistryEntry;
 import com.github.almostreliable.lib.registry.RegistryManager;
+import net.minecraft.client.renderer.blockentity.BlockEntityRendererProvider;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Registry;
 import net.minecraft.resources.ResourceKey;
@@ -21,13 +24,16 @@ import java.util.function.Supplier;
 import java.util.stream.Collectors;
 
 public class BlockEntityBuilder<BE extends BlockEntity>
-        extends AbstractEntryBuilder<BlockEntityType<BE>, BlockEntityType<?>, BlockEntityBuilder<BE>> {
+        extends AbstractEntryBuilder<BlockEntityType<BE>, BlockEntityType<?>, BlockEntityBuilder<BE>>
+        implements PostRegisterListener {
 
     private final BiFunction<BlockPos, BlockState, BE> factory;
     @Nullable
     private Predicate<Block> filterFunction;
     @Nullable
     private Supplier<Block[]> blocksSupplier;
+    @Nullable
+    private BlockEntityRendererProvider<?> rendererProvider;
 
     public BlockEntityBuilder(String name, BiFunction<BlockPos, BlockState, BE> factory, RegistryManager manager, RegisterCallback registerCallback) {
         super(name, manager, registerCallback);
@@ -41,6 +47,11 @@ public class BlockEntityBuilder<BE extends BlockEntity>
 
     public BlockEntityBuilder<BE> blocks(Supplier<Block[]> blocksSupplier) {
         this.blocksSupplier = blocksSupplier;
+        return this;
+    }
+
+    public BlockEntityBuilder<BE> renderer(BlockEntityRendererProvider<?> rendererProvider) {
+        this.rendererProvider = rendererProvider;
         return this;
     }
 
@@ -66,6 +77,14 @@ public class BlockEntityBuilder<BE extends BlockEntity>
             blocks.addAll(Arrays.stream(blocksArray).toList());
         }
 
+
         return AlmostLib.INSTANCE.createBlockEntityType(factory, blocks.toArray(Block[]::new));
+    }
+
+    @Override
+    public <T> void onPostRegister(RegistryEntry<T> registryEntry) {
+        if (rendererProvider != null) {
+            manager.registerRenderer(Utils.cast(registryEntry), rendererProvider);
+        }
     }
 }
