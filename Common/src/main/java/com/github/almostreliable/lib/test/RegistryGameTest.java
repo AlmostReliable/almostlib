@@ -22,12 +22,12 @@ public class RegistryGameTest {
 
     @GameTest(template = EMPTY_STRUCTURE)
     public void dummyBlockPresent(GameTestHelper helper) {
-        ifPresentCheck(helper, TestRegistry.DUMMY_BLOCK);
+        ifPresentCheck(helper, TestRegistry.TEST_BLOCK);
     }
 
     @GameTest(template = EMPTY_STRUCTURE)
     public void dummyBlockLinkPresent(GameTestHelper helper) {
-        ifPresentCheck(helper, TestRegistry.DUMMY_BLOCK_LINKED_ITEM);
+        ifPresentCheck(helper, TestRegistry.TEST_BLOCK_ITEM);
     }
 
     @GameTest(template = EMPTY_STRUCTURE)

@@ -1,7 +1,10 @@
 package com.github.almostreliable.lib.registry;
 
+import com.github.almostreliable.lib.Utils;
 import net.minecraft.core.Registry;
 import net.minecraft.resources.ResourceKey;
+import net.minecraftforge.client.event.EntityRenderersEvent;
+import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
 import net.minecraftforge.registries.ForgeRegistry;
 
 import java.util.Objects;
@@ -23,5 +26,17 @@ public class RegistryManagerForge extends RegistryManager {
             }
             return (RegistryDelegate<T>) new ForgeRegistryDelegate<>(registry);
         });
+    }
+
+    @Override
+    public void initClient() {
+        var eventBus = FMLJavaModLoadingContext.get().getModEventBus();
+        eventBus.addListener(this::handleBlockEntityRenderers);
+    }
+
+    private void handleBlockEntityRenderers(EntityRenderersEvent.RegisterRenderers event) {
+        for (var entry : blockEntityRenderers.entrySet()) {
+            event.registerBlockEntityRenderer(entry.getKey().get(), Utils.cast(entry.getValue()));
+        }
     }
 }

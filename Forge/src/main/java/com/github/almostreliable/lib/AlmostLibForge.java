@@ -10,11 +10,13 @@ public class AlmostLibForge {
     public AlmostLibForge() {
         AlmostLibCommon.init();
         FMLJavaModLoadingContext.get().getModEventBus().addListener(AlmostLibForge::onCommonSetup);
+        for (RegistryManager manager : AlmostLibCommon.MANAGERS) {
+            manager.init();
+            manager.initClient();
+        }
     }
 
     private static void onCommonSetup(FMLConstructModEvent event) {
-        for (RegistryManager manager : AlmostLibCommon.MANAGERS) {
-            manager.init();
-        }
+
     }
 }

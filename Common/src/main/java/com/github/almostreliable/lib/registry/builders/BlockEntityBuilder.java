@@ -50,7 +50,7 @@ public class BlockEntityBuilder<BE extends BlockEntity>
         return this;
     }
 
-    public BlockEntityBuilder<BE> renderer(BlockEntityRendererProvider<?> rendererProvider) {
+    public BlockEntityBuilder<BE> renderer(BlockEntityRendererProvider<BE> rendererProvider) {
         this.rendererProvider = rendererProvider;
         return this;
     }

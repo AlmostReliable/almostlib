@@ -30,7 +30,7 @@ import java.util.function.Supplier;
 
 public abstract class RegistryManager {
     protected final LinkedHashMap<ResourceKey<?>, RegistryDelegate<?>> registries = new LinkedHashMap<>();
-    protected final Map<RegistryEntry<? extends BlockEntityType<? extends BlockEntity>>, BlockEntityRendererProvider<?>> blockEntityRenderers = new ConcurrentHashMap<>();
+    protected final Map<RegistryEntry<? extends BlockEntityType<? extends BlockEntity>>, BlockEntityRendererProvider<? extends BlockEntity>> blockEntityRenderers = new ConcurrentHashMap<>();
     private final String namespace;
 
     public RegistryManager(String namespace) {
@@ -110,7 +110,11 @@ public abstract class RegistryManager {
         return Utils.cast(registryEntry);
     }
 
-    public <T extends BlockEntity> void registerRenderer(RegistryEntry<? extends BlockEntityType<? extends BlockEntity>> blockEntityType, BlockEntityRendererProvider<T> provider) {
+//    public <T extends BlockEntity> void registerRenderer(RegistryEntry<? extends BlockEntityType<? extends BlockEntity>> blockEntityType, BlockEntityRendererProvider<T> provider) {
+//        blockEntityRenderers.put(blockEntityType, provider);
+//    }
+
+    public <T extends BlockEntity> void registerRenderer(RegistryEntry<? extends BlockEntityType<? extends T>> blockEntityType, BlockEntityRendererProvider<T> provider) {
         blockEntityRenderers.put(blockEntityType, provider);
     }
 
@@ -141,7 +145,5 @@ public abstract class RegistryManager {
         }
     }
 
-    public void initClient() {
-        // TODO
-    }
+    public abstract void initClient();
 }

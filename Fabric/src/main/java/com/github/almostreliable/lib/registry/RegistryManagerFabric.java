@@ -1,5 +1,7 @@
 package com.github.almostreliable.lib.registry;
 
+import com.github.almostreliable.lib.Utils;
+import net.fabricmc.fabric.api.client.rendering.v1.BlockEntityRendererRegistry;
 import net.minecraft.core.Registry;
 import net.minecraft.resources.ResourceKey;
 
@@ -17,6 +19,13 @@ public class RegistryManagerFabric extends RegistryManager {
             Registry<T> vanillaRegistry = (Registry<T>) Registry.REGISTRY.get(key.location());
             Objects.requireNonNull(vanillaRegistry, "Something went wrong"); // TODO handle this?
             return new VanillaRegistryDelegate<>(vanillaRegistry);
+        });
+    }
+
+    @Override
+    public void initClient() {
+        blockEntityRenderers.forEach((registryEntry, provider) -> {
+            BlockEntityRendererRegistry.register(registryEntry.get(), Utils.cast(provider));
         });
     }
 }
