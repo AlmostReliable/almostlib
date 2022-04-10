@@ -79,6 +79,33 @@ public abstract class RegistryManager {
         return new BlockEntityBuilder<>(id, factory, this, this::finalizeRegistration);
     }
 
+
+    public <M extends AbstractContainerMenu, S extends AbstractContainerScreen<M>, BE extends BlockEntity> RegistryEntry<MenuType<M>> menuBlockEntity(String id,
+                                                                                                                                                      MenuFactory.ForBlockEntityAndInventory<M, BE> menuFactory,
+                                                                                                                                                      ScreenFactory<M, S> screenFactory) {
+        return menu(id, (windowId, inventory, buffer) -> {
+            BE entity = Utils.nullableCast(inventory.player.level.getBlockEntity(buffer.readBlockPos()));
+            if (entity == null) {
+                throw new IllegalStateException("Wrong BlockEntity usage.");
+            }
+            return menuFactory.apply(windowId, inventory, entity);
+        }, screenFactory);
+    }
+
+
+    public <M extends AbstractContainerMenu, S extends AbstractContainerScreen<M>, BE extends BlockEntity> RegistryEntry<MenuType<M>> menuBlockEntity(String id,
+                                                                                                                                                      MenuFactory.ForBlockEntity<M, BE> menuFactory,
+                                                                                                                                                      ScreenFactory<M, S> screenFactory) {
+        return menu(id, (windowId, inventory, buffer) -> {
+            BE entity = Utils.nullableCast(inventory.player.level.getBlockEntity(buffer.readBlockPos()));
+            if (entity == null) {
+                throw new IllegalStateException("Wrong BlockEntity usage.");
+            }
+            return menuFactory.apply(windowId, entity);
+        }, screenFactory);
+    }
+
+
     public <M extends AbstractContainerMenu, S extends AbstractContainerScreen<M>> RegistryEntry<MenuType<M>> menu(String id,
                                                                                                                    MenuFactory<M> menuFactory,
                                                                                                                    ScreenFactory<M, S> screenFactory) {
@@ -88,6 +115,7 @@ public abstract class RegistryManager {
         registerScreen(data.getRegistryEntry(), screenFactory);
         return data.getRegistryEntry();
     }
+
 
     protected abstract <T> RegistryDelegate<T> getOrCreateDelegate(ResourceKey<Registry<T>> resourceKey);
 
