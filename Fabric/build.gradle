@@ -17,17 +17,22 @@ dependencies {
 
 loom {
     runs {
+        gametest {
+            server()
+            setConfigName("Gametest Server")
+            vmArg "-Dfabric-api.gametest=1"
+        }
         client {
             client()
-            setConfigName("Fabric Client")
-            ideConfigGenerated(true)
-            runDir("run")
+            setConfigName("Client")
         }
         server {
             server()
-            setConfigName("Fabric Server")
+            setConfigName("Server")
+        }
+        configureEach {
+            runDir "run"
             ideConfigGenerated(true)
-            runDir("run")
         }
     }
 }

@@ -36,4 +36,6 @@ public abstract class RegistryDelegate<T> {
     }
 
     public abstract void init();
+
+    public abstract String getName();
 }

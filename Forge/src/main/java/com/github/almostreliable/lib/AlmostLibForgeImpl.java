@@ -15,6 +15,7 @@ import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraftforge.fml.ModList;
 import net.minecraftforge.fml.loading.FMLLoader;
+import net.minecraftforge.gametest.ForgeGameTestHooks;
 import net.minecraftforge.network.NetworkHooks;
 import net.minecraftforge.registries.ForgeRegistries;
 
@@ -70,6 +71,11 @@ public class AlmostLibForgeImpl implements AlmostLib {
     @Override
     public void openMenu(ServerPlayer player, MenuProvider menu, Consumer<FriendlyByteBuf> bufferCallback) {
         NetworkHooks.openGui(player, menu, bufferCallback);
+    }
+
+    @Override
+    public boolean isGameTestMode() {
+        return ForgeGameTestHooks.isGametestEnabled();
     }
 
 }

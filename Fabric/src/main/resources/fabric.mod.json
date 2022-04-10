@@ -18,6 +18,9 @@
   "entrypoints": {
     "main": [
       "com.github.almostreliable.lib.AlmostLibFabric"
+    ],
+    "fabric-gametest": [
+      "com.github.almostreliable.lib.test.RegistryGameTest"
     ]
   },
   "mixins": [

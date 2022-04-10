@@ -1,5 +1,6 @@
 package com.github.almostreliable.lib.registry;
 
+import com.github.almostreliable.lib.AlmostLib;
 import com.github.almostreliable.lib.Utils;
 import com.github.almostreliable.lib.registry.builders.BlockBuilder;
 import com.github.almostreliable.lib.registry.builders.BlockEntityBuilder;
@@ -35,6 +36,7 @@ public abstract class RegistryManager {
 
     public RegistryManager(String namespace) {
         this.namespace = namespace;
+        AlmostLib.LOG.info("RegistryManager created for '{}'", namespace);
     }
 
     public String getNamespace() {
@@ -116,5 +118,20 @@ public abstract class RegistryManager {
             return null;
         }
         return Utils.nullableCast(delegate.find(new ResourceLocation(getNamespace(), id)));
+    }
+
+    public <E1 extends BASE, E2, BASE> RegistryEntry<E1> getLink(ResourceKey<Registry<BASE>> resourceKey, RegistryEntry<E2> link) {
+        RegistryDelegate<?> delegate = registries.get(resourceKey);
+        if (delegate == null) {
+            throw new IllegalStateException("No registry currently in use for " + resourceKey);
+        }
+
+        RegistryEntry<?> registryEntry = delegate.find(link.getRegistryName());
+        if (registryEntry == null) {
+            throw new IllegalStateException(
+                    "No link could be found for " + link.getRegistryName() + " in registry " + delegate.getName());
+        }
+
+        return Utils.cast(registryEntry);
     }
 }

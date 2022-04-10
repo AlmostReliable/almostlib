@@ -23,4 +23,9 @@ public class VanillaRegistryDelegate<T> extends RegistryDelegate<T> {
             AlmostLib.LOG.debug(" - Object '{}' got registered", registryEntry.getRegistryName());
         }
     }
+
+    @Override
+    public String getName() {
+        return registry.toString();
+    }
 }

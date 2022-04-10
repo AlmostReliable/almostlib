@@ -35,4 +35,9 @@ public class ForgeRegistryDelegate<T extends IForgeRegistryEntry<T>> extends Reg
                 });
     }
 
+    @Override
+    public String getName() {
+        return forgeRegistry.getRegistryName().toString();
+    }
+
 }

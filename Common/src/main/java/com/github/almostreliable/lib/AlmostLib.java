@@ -48,4 +48,6 @@ public interface AlmostLib {
     default void openMenu(ServerPlayer player, MenuProvider menu, BlockPos blockPos) {
         this.openMenu(player, menu, buf -> buf.writeBlockPos(blockPos));
     }
+
+    boolean isGameTestMode();
 }

@@ -5,6 +5,7 @@ import com.github.almostreliable.lib.registry.RegistryManagerFabric;
 import net.fabricmc.fabric.api.client.itemgroup.FabricItemGroupBuilder;
 import net.fabricmc.fabric.api.object.builder.v1.block.entity.FabricBlockEntityTypeBuilder;
 import net.fabricmc.fabric.api.screenhandler.v1.ExtendedScreenHandlerFactory;
+import net.fabricmc.fabric.impl.gametest.FabricGameTestHelper;
 import net.fabricmc.loader.api.FabricLoader;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Registry;
@@ -85,5 +86,10 @@ public class AlmostLibFabricImpl implements AlmostLib {
                 return menu.createMenu(i, inventory, player);
             }
         });
+    }
+
+    @Override
+    public boolean isGameTestMode() {
+        return FabricGameTestHelper.ENABLED;
     }
 }
