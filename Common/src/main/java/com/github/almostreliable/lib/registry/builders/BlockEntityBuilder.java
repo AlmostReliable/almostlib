@@ -15,9 +15,7 @@ import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
 
 import javax.annotation.Nullable;
-import java.util.Arrays;
-import java.util.HashSet;
-import java.util.Set;
+import java.util.*;
 import java.util.function.BiFunction;
 import java.util.function.Predicate;
 import java.util.function.Supplier;
@@ -29,9 +27,9 @@ public class BlockEntityBuilder<BE extends BlockEntity>
 
     private final BiFunction<BlockPos, BlockState, BE> factory;
     @Nullable
-    private Predicate<Block> filterFunction;
+    private Predicate<? extends Block> filterFunction;
     @Nullable
-    private Supplier<Block[]> blocksSupplier;
+    private List<Supplier<? extends Block>> blocksSuppliers;
     @Nullable
     private BlockEntityRendererProvider<?> rendererProvider;
 
@@ -40,13 +38,18 @@ public class BlockEntityBuilder<BE extends BlockEntity>
         this.factory = factory;
     }
 
-    public BlockEntityBuilder<BE> blocks(Predicate<Block> filterFunction) {
+    public BlockEntityBuilder<BE> blocks(Predicate<? extends Block> filterFunction) {
         this.filterFunction = filterFunction;
         return this;
     }
 
-    public BlockEntityBuilder<BE> blocks(Supplier<Block[]> blocksSupplier) {
-        this.blocksSupplier = blocksSupplier;
+    @SafeVarargs
+    public final <B extends Block> BlockEntityBuilder<BE> blocks(Supplier<B>... additionalSuppliers) {
+        if (blocksSuppliers == null) {
+            blocksSuppliers = new ArrayList<>();
+        }
+
+        blocksSuppliers.addAll(Arrays.asList(additionalSuppliers));
         return this;
     }
 
@@ -67,16 +70,16 @@ public class BlockEntityBuilder<BE extends BlockEntity>
         if (filterFunction != null) {
             Set<Block> filteredBlocks = AlmostLib.INSTANCE
                     .getBlocks()
-                    .filter(filterFunction)
+                    .filter(o -> filterFunction.test(Utils.cast(o)))
                     .collect(Collectors.toSet());
             blocks.addAll(filteredBlocks);
         }
 
-        if (blocksSupplier != null) {
-            Block[] blocksArray = blocksSupplier.get();
-            blocks.addAll(Arrays.stream(blocksArray).toList());
+        if (blocksSuppliers != null) {
+            for (var supplier : blocksSuppliers) {
+                blocks.add(supplier.get());
+            }
         }
-
 
         return AlmostLib.INSTANCE.createBlockEntityType(factory, blocks.toArray(Block[]::new));
     }

@@ -75,7 +75,7 @@ public class AlmostLibForgeImpl implements AlmostLib {
     }
 
     @Override
-    public Stream<Block> getBlocks() {
+    public Stream<? extends Block> getBlocks() {
         return ForgeRegistries.BLOCKS.getValues().stream();
     }
 

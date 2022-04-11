@@ -73,7 +73,7 @@ public class AlmostLibFabricImpl implements AlmostLib {
     }
 
     @Override
-    public Stream<Block> getBlocks() {
+    public Stream<? extends Block> getBlocks() {
         return Registry.BLOCK.stream();
     }
 

@@ -6,7 +6,6 @@ import com.github.almostreliable.lib.registry.RegistryManager;
 import net.minecraft.core.Registry;
 import net.minecraft.world.inventory.MenuType;
 import net.minecraft.world.item.*;
-import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.entity.BannerBlockEntity;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.material.Material;
@@ -49,7 +48,8 @@ public class TestRegistry {
 
         TEST_BLOCK_ENTITY = REGISTRY
                 .blockEntity("test_block_entity", TestBlockEntity::new)
-                .blocks(() -> new Block[]{ TEST_BLOCK.get() })
+                .blocks(block -> block == TEST_BLOCK.get())
+//                .blocks(TEST_BLOCK)
                 .renderer(TestBlockEntityRenderer::new)
                 .register();
 

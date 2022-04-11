@@ -46,7 +46,7 @@ public interface AlmostLib {
 
     <M extends AbstractContainerMenu> MenuType<M> createMenuType(MenuFactory<M> factory);
 
-    Stream<Block> getBlocks();
+    Stream<? extends Block> getBlocks();
 
     void openMenu(ServerPlayer player, MenuProvider menu, Consumer<FriendlyByteBuf> buf);
 
