@@ -24,6 +24,9 @@
     ],
     "fabric-gametest": [
       "com.github.almostreliable.lib.test.RegistryGameTest"
+    ],
+    "fabric-datagen": [
+      "com.github.almostreliable.lib.AlmostLibFabric"
     ]
   },
   "mixins": [

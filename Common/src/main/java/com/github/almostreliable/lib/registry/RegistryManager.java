@@ -4,6 +4,7 @@ import com.github.almostreliable.lib.AlmostLib;
 import com.github.almostreliable.lib.Utils;
 import com.github.almostreliable.lib.client.MenuFactory;
 import com.github.almostreliable.lib.client.ScreenFactory;
+import com.github.almostreliable.lib.datagen.DataGeneratorManager;
 import com.github.almostreliable.lib.registry.builders.*;
 import com.mojang.datafixers.util.Function4;
 import net.minecraft.client.gui.screens.Screen;
@@ -12,6 +13,7 @@ import net.minecraft.client.gui.screens.inventory.MenuAccess;
 import net.minecraft.client.renderer.blockentity.BlockEntityRendererProvider;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Registry;
+import net.minecraft.data.DataGenerator;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.inventory.AbstractContainerMenu;
@@ -26,10 +28,7 @@ import net.minecraft.world.level.material.Material;
 import net.minecraft.world.level.material.MaterialColor;
 
 import javax.annotation.Nullable;
-import java.util.Comparator;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.function.BiFunction;
 import java.util.function.Function;
@@ -39,11 +38,13 @@ public abstract class RegistryManager {
     protected final LinkedHashMap<ResourceKey<?>, RegistryDelegate<?>> registries = new LinkedHashMap<>();
     protected final Map<RegistryEntry<? extends BlockEntityType<? extends BlockEntity>>, BlockEntityRendererProvider<? extends BlockEntity>> registeredBlockEntityRendererFactories = new ConcurrentHashMap<>();
     protected final Map<RegistryEntry<? extends MenuType<?>>, ScreenFactory<?, ?>> registeredScreenFactories = new ConcurrentHashMap<>();
+    @Nullable
+    protected final List<DataGeneratorManager.Entry<?>> datagenConsumers;
     private final String namespace;
-
 
     public RegistryManager(String namespace) {
         this.namespace = namespace;
+        datagenConsumers = AlmostLib.INSTANCE.isDataGenEnabled() ? new ArrayList<>() : null;
         AlmostLib.LOG.info("RegistryManager created for '{}'", namespace);
     }
 
@@ -78,7 +79,6 @@ public abstract class RegistryManager {
     public <BE extends BlockEntity> BlockEntityBuilder<BE> blockEntity(String id, BiFunction<BlockPos, BlockState, BE> factory) {
         return new BlockEntityBuilder<>(id, factory, this, this::finalizeRegistration);
     }
-
 
     public <M extends AbstractContainerMenu, S extends AbstractContainerScreen<M>, BE extends BlockEntity> RegistryEntry<MenuType<M>> menuBlockEntity(String id,
                                                                                                                                                       MenuFactory.ForBlockEntityAndInventory<M, BE> menuFactory,
@@ -125,8 +125,14 @@ public abstract class RegistryManager {
                 builder.getName(),
                 builder::create);
         if (builder instanceof PostRegisterListener listener) {
+            //noinspection unchecked
             listener.onPostRegister(data.getRegistryEntry());
         }
+
+        if (datagenConsumers != null) {
+            datagenConsumers.add(new DataGeneratorManager.Entry<>(data.getRegistryEntry(), builder::onDataGen));
+        }
+
         return data.getRegistryEntry();
     }
 
@@ -200,4 +206,11 @@ public abstract class RegistryManager {
     }
 
     public abstract void initClient();
+
+    public void onDataGen(DataGenerator dataGenerator) {
+        DataGeneratorManager dataGeneratorManager = new DataGeneratorManager(getNamespace(), dataGenerator);
+        Objects.requireNonNull(datagenConsumers, "onDataGen was called outside of the data gen environment");
+        datagenConsumers.forEach(entry -> entry.invoke(dataGeneratorManager));
+        dataGeneratorManager.collectDataProvider(dataGenerator);
+    }
 }

@@ -17,6 +17,7 @@ import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraftforge.common.extensions.IForgeMenuType;
+import net.minecraftforge.data.loading.DatagenModLoader;
 import net.minecraftforge.fml.ModList;
 import net.minecraftforge.fml.loading.FMLLoader;
 import net.minecraftforge.gametest.ForgeGameTestHooks;
@@ -87,6 +88,11 @@ public class AlmostLibForgeImpl implements AlmostLib {
     @Override
     public boolean isGameTestMode() {
         return ForgeGameTestHooks.isGametestEnabled();
+    }
+
+    @Override
+    public boolean isDataGenEnabled() {
+        return DatagenModLoader.isRunningDataGen();
     }
 
 }

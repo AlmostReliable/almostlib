@@ -4,6 +4,12 @@ import com.github.almostreliable.lib.AlmostLib;
 import com.github.almostreliable.lib.registry.RegistryEntry;
 import com.github.almostreliable.lib.registry.RegistryManager;
 import net.minecraft.core.Registry;
+import net.minecraft.data.models.blockstates.MultiVariantGenerator;
+import net.minecraft.data.models.blockstates.Variant;
+import net.minecraft.data.models.blockstates.VariantProperties;
+import net.minecraft.data.models.model.ModelTemplates;
+import net.minecraft.data.models.model.TextureMapping;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.inventory.MenuType;
 import net.minecraft.world.item.*;
 import net.minecraft.world.level.block.entity.BannerBlockEntity;
@@ -35,13 +41,19 @@ public class TestRegistry {
                 .durability(3)
                 .tab(CreativeModeTab.TAB_COMBAT)
                 .register();
-
         TEST_BLOCK = REGISTRY
                 .block("test_block", Material.BAMBOO, TestBlock::new)
                 .strength(300)
                 .noDrops()
-                .noCollision()
-                .noOcclusion()
+                .blockstate((entry, provider) -> {
+                    ResourceLocation location = ModelTemplates.CUBE_ALL.create(entry.get(),
+                            TextureMapping.cube(entry.get()),
+                            provider.getModelConsumer());
+                    MultiVariantGenerator generator = MultiVariantGenerator.multiVariant(entry.get(),
+                            Variant.variant().with(
+                                    VariantProperties.MODEL, location));
+                    provider.addBlockState(generator);
+                })
                 .register();
 
         TEST_BLOCK_ITEM = REGISTRY.getLink(Registry.ITEM_REGISTRY, TEST_BLOCK);
@@ -49,10 +61,20 @@ public class TestRegistry {
         TEST_BLOCK_ENTITY = REGISTRY
                 .blockEntity("test_block_entity", TestBlockEntity::new)
                 .blocks(block -> block == TEST_BLOCK.get())
-//                .blocks(TEST_BLOCK)
                 .renderer(TestBlockEntityRenderer::new)
                 .register();
 
         TEST_MENU = REGISTRY.menu("test_menu", (id, inventory, buffer) -> new TestMenu(id), TestScreen::new);
+// return MultiVariantGenerator.multiVariant($$0).with(PropertyDispatch.property(BlockStateProperties.POWERED).select(false, Variant.variant().with(VariantProperties.MODEL, $$1)).select(true, Variant.variant().with(VariantProperties.MODEL, $$2))).with(PropertyDispatch.properties(BlockStateProperties.ATTACH_FACE, BlockStateProperties.HORIZONTAL_FACING).select(AttachFace.FLOOR, Direction.EAST, Variant.variant().with(VariantProperties.Y_ROT, VariantProperties.Rotation.R90)).select(AttachFace.FLOOR, Direction.WEST, Variant.variant().with(VariantProperties.Y_ROT, VariantProperties.Rotation.R270)).select(AttachFace.FLOOR, Direction.SOUTH, Variant.variant().with(VariantProperties.Y_ROT, VariantProperties.Rotation.R180)).select(AttachFace.FLOOR, Direction.NORTH, Variant.variant()).select(AttachFace.WALL, Direction.EAST, Variant.variant().with(VariantProperties.Y_ROT, VariantProperties.Rotation.R90).with(VariantProperties.X_ROT, VariantProperties.Rotation.R90).with(VariantProperties.UV_LOCK, true)).select(AttachFace.WALL, Direction.WEST, Variant.variant().with(VariantProperties.Y_ROT, VariantProperties.Rotation.R270).with(VariantProperties.X_ROT, VariantProperties.Rotation.R90).with(VariantProperties.UV_LOCK, true)).select(AttachFace.WALL, Direction.SOUTH, Variant.variant().with(VariantProperties.Y_ROT, VariantProperties.Rotation.R180).with(VariantProperties.X_ROT, VariantProperties.Rotation.R90).with(VariantProperties.UV_LOCK, true)).select(AttachFace.WALL, Direction.NORTH, Variant.variant().with(VariantProperties.X_ROT, VariantProperties.Rotation.R90).with(VariantProperties.UV_LOCK, true)).select(AttachFace.CEILING, Direction.EAST, Variant.variant().with(VariantProperties.Y_ROT, VariantProperties.Rotation.R270).with(VariantProperties.X_ROT, VariantProperties.Rotation.R180)).select(AttachFace.CEILING, Direction.WEST, Variant.variant().with(VariantProperties.Y_ROT, VariantProperties.Rotation.R90).with(VariantProperties.X_ROT, VariantProperties.Rotation.R180)).select(AttachFace.CEILING, Direction.SOUTH, Variant.variant().with(VariantProperties.X_ROT, VariantProperties.Rotation.R180)).select(AttachFace.CEILING, Direction.NORTH, Variant.variant().with(VariantProperties.Y_ROT, VariantProperties.Rotation.R180).with(VariantProperties.X_ROT, VariantProperties.Rotation.R180)));
+//
+//        REGISTRY.blockstate(blockStateContext -> {
+//            ResourceLocation modelLocation = ModelTemplates.CUBE.create(TEST_BLOCK.get(),
+//                    TextureMapping.cube(TEST_BLOCK.get()),
+//                    blockStateContext.getModelConsumer());
+//
+//            MultiVariantGenerator generator = MultiVariantGenerator.multiVariant(TEST_BLOCK.get(),
+//                    Variant.variant().with(VariantProperties.MODEL, modelLocation));
+//            blockStateContext.addBlockState(generator);
+//        });
     }
 }

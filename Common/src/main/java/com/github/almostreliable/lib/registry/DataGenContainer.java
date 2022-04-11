@@ -1,13 +1,15 @@
 package com.github.almostreliable.lib.registry;
 
+import net.minecraft.data.models.blockstates.BlockStateGenerator;
+
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.function.Function;
 
 public class DataGenContainer<T> {
-    final Map<Function<T, String>, Function<T, String>> langProviders = new HashMap<>();
+    final List<BlockStateGenerator> blockstates = new ArrayList<>();
 
-    public void lang(Function<T, String> keyProvider, Function<T, String> valueProvider) {
-        langProviders.put(keyProvider, valueProvider);
-    }
+
 }

@@ -55,4 +55,6 @@ public interface AlmostLib {
     }
 
     boolean isGameTestMode();
+
+    boolean isDataGenEnabled();
 }

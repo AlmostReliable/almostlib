@@ -1,13 +1,15 @@
 package com.github.almostreliable.lib.registry.builders;
 
 import com.github.almostreliable.lib.Utils;
-import com.github.almostreliable.lib.registry.DataGenContainer;
+import com.github.almostreliable.lib.datagen.DataGeneratorManager;
 import com.github.almostreliable.lib.registry.RegisterCallback;
 import com.github.almostreliable.lib.registry.RegistryEntry;
 import com.github.almostreliable.lib.registry.RegistryManager;
 import org.apache.commons.lang3.StringUtils;
 
 import java.util.Arrays;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
@@ -16,13 +18,12 @@ public abstract class AbstractEntryBuilder<T, BASE, SELF extends AbstractEntryBu
     protected final String name;
     protected final RegisterCallback registerCallback;
     protected final RegistryManager manager;
-    protected final DataGenContainer<T> dataGenContainer;
+    protected final Map<Function<T, String>, Function<T, String>> langProviders = new HashMap<>();
 
     public AbstractEntryBuilder(String name, RegistryManager manager, RegisterCallback registerCallback) {
         this.name = name;
         this.registerCallback = registerCallback;
         this.manager = manager;
-        this.dataGenContainer = new DataGenContainer<>();
     }
 
     public RegistryEntry<T> register() {
@@ -35,7 +36,7 @@ public abstract class AbstractEntryBuilder<T, BASE, SELF extends AbstractEntryBu
     }
 
     public SELF lang(Function<T, String> keyProvider, Function<T, String> valueProvider) {
-        dataGenContainer.lang(keyProvider, valueProvider);
+        langProviders.put(keyProvider, valueProvider);
         return Utils.cast(this);
     }
 
@@ -51,7 +52,11 @@ public abstract class AbstractEntryBuilder<T, BASE, SELF extends AbstractEntryBu
                 .collect(Collectors.joining(" "));
     }
 
-    public DataGenContainer<T> getDataGenData() {
-        return dataGenContainer;
+    @Override
+    public void onDataGen(RegistryEntry<T> registryEntry, DataGeneratorManager dataGenManager) {
+        T entry = registryEntry.get();
+        langProviders.forEach((key, value) -> {
+            dataGenManager.getLangProvider().addLang(key.apply(entry), value.apply(entry));
+        });
     }
 }

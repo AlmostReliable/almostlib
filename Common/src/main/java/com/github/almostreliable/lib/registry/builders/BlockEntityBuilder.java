@@ -23,7 +23,7 @@ import java.util.stream.Collectors;
 
 public class BlockEntityBuilder<BE extends BlockEntity>
         extends AbstractEntryBuilder<BlockEntityType<BE>, BlockEntityType<?>, BlockEntityBuilder<BE>>
-        implements PostRegisterListener {
+        implements PostRegisterListener<BE> {
 
     private final BiFunction<BlockPos, BlockState, BE> factory;
     @Nullable
@@ -85,7 +85,7 @@ public class BlockEntityBuilder<BE extends BlockEntity>
     }
 
     @Override
-    public <T> void onPostRegister(RegistryEntry<T> registryEntry) {
+    public void onPostRegister(RegistryEntry<BE> registryEntry) {
         if (rendererProvider != null) {
             manager.registerRenderer(Utils.cast(registryEntry), rendererProvider);
         }

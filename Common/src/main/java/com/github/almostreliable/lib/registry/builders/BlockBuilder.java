@@ -1,6 +1,8 @@
 package com.github.almostreliable.lib.registry.builders;
 
 import com.github.almostreliable.lib.Utils;
+import com.github.almostreliable.lib.datagen.BlockStateProvider;
+import com.github.almostreliable.lib.datagen.DataGeneratorManager;
 import com.github.almostreliable.lib.registry.RegisterCallback;
 import com.github.almostreliable.lib.registry.RegistryEntry;
 import com.github.almostreliable.lib.registry.RegistryManager;
@@ -16,20 +18,20 @@ import net.minecraft.world.level.material.MaterialColor;
 
 import javax.annotation.Nullable;
 import java.util.Objects;
-import java.util.function.Consumer;
-import java.util.function.Function;
-import java.util.function.Supplier;
-import java.util.function.ToIntFunction;
+import java.util.function.*;
 
+@SuppressWarnings("UnusedReturnValue")
 public class BlockBuilder<B extends Block, I extends BlockItem>
         extends AbstractEntryBuilder<B, Block, BlockBuilder<B, I>>
-        implements PostRegisterListener {
+        implements PostRegisterListener<B> {
     protected final Function<BlockBehaviour.Properties, B> factory;
     protected BlockBehaviour.Properties properties;
-    @Nullable
-    protected ItemBuilder<I> itemBuilder;
+    protected boolean noItem;
+    protected Consumer<ItemBuilder<I>> itemBuilderConsumer;
     @Nullable
     protected CreativeModeTab creativeTab;
+    @Nullable
+    protected BiConsumer<RegistryEntry<B>, BlockStateProvider> blockstateGeneratorCallback;
 
     public BlockBuilder(String id, BlockBehaviour.Properties properties, Function<BlockBehaviour.Properties, B> factory, RegistryManager manager, RegisterCallback registerCallback) {
         super(id, manager, registerCallback);
@@ -39,15 +41,20 @@ public class BlockBuilder<B extends Block, I extends BlockItem>
     }
 
     public BlockBuilder<B, I> noItem() {
-        itemBuilder = null;
+        noItem = true;
         return this;
     }
 
-    public BlockBuilder<B, I> item(Consumer<ItemBuilder<I>> callback) {
-        itemBuilder = new ItemBuilder<I>(name,
-                manager,
-                registerCallback).tab(CreativeModeTab.TAB_BUILDING_BLOCKS);
-        callback.accept(itemBuilder);
+    public BlockBuilder<B, I> item(Consumer<ItemBuilder<I>> item) {
+        Objects.requireNonNull(item);
+        if (noItem) {
+            throw new IllegalArgumentException("noItem() were set. It's not possible to create an item");
+        }
+
+//        itemBuilder = new ItemBuilder<I>(name,
+//                manager,
+//                registerCallback).tab(CreativeModeTab.TAB_BUILDING_BLOCKS);
+        itemBuilderConsumer = item;
         return this;
     }
 
@@ -147,12 +154,17 @@ public class BlockBuilder<B extends Block, I extends BlockItem>
         return this;
     }
 
+    public BlockBuilder<B, I> blockstate(BiConsumer<RegistryEntry<B>, BlockStateProvider> callback) {
+        this.blockstateGeneratorCallback = callback;
+        return this;
+    }
+
     public BlockBuilder<B, I> defaultLang(String value) {
         return lang(Block::getDescriptionId, $ -> value);
     }
 
     public BlockBuilder<B, I> defaultLang() {
-        return lang(Block::getDescriptionId, $ -> nameToLang());
+        return defaultLang(nameToLang());
     }
 
     @Override
@@ -166,12 +178,22 @@ public class BlockBuilder<B extends Block, I extends BlockItem>
     }
 
     @Override
-    public <T> void onPostRegister(RegistryEntry<T> registryEntry) {
-        if (itemBuilder != null) {
-            if (creativeTab != null) {
-                itemBuilder.tab(creativeTab);
-            }
-            itemBuilder.setFactory(p -> Utils.cast(new BlockItem(Utils.cast(registryEntry.get()), p)));
+    public void onDataGen(RegistryEntry<B> registryEntry, DataGeneratorManager dataGenManager) {
+        super.onDataGen(registryEntry, dataGenManager);
+        if (blockstateGeneratorCallback != null) {
+            blockstateGeneratorCallback.accept(registryEntry, dataGenManager.getBlockStateProvider());
+        }
+    }
+
+    @Override
+    public void onPostRegister(RegistryEntry<B> registryEntry) {
+        if (!noItem) {
+            ItemBuilder<I> itemBuilder = new ItemBuilder<I>(name,
+                    properties1 -> Utils.cast(new BlockItem(registryEntry.get(), properties1)),
+                    manager,
+                    registerCallback)
+                    .defaultBlockItemModel(registryEntry)
+                    .tab(creativeTab == null ? CreativeModeTab.TAB_BUILDING_BLOCKS : creativeTab);
             itemBuilder.register();
         }
     }

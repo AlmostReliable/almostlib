@@ -1,0 +1,7 @@
+{
+  "variants": {
+    "": {
+      "model": "almostlib:block/test_block"
+    }
+  }
+}

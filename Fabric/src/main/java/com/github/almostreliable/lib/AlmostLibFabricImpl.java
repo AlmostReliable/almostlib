@@ -102,4 +102,9 @@ public class AlmostLibFabricImpl implements AlmostLib {
     public boolean isGameTestMode() {
         return FabricGameTestHelper.ENABLED;
     }
+
+    @Override
+    public boolean isDataGenEnabled() {
+        return System.getProperty("fabric-api.datagen") != null;
+    }
 }
