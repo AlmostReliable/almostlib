@@ -28,7 +28,7 @@ public class RegistryManagerFabric extends RegistryManager {
     @Override
     public void initClient() {
         registeredBlockEntityRendererFactories.forEach((registryEntry, provider) -> {
-            BlockEntityRendererRegistry.register(registryEntry.get(), Utils.cast(provider));
+            BlockEntityRendererRegistry.register(Utils.cast(registryEntry.get()), provider.get()::apply);
         });
 
         registeredScreenFactories.forEach((registryEntry, screenFactory) -> {
