@@ -1,0 +1,28 @@
+{
+  "schemaVersion": 1,
+  "id": "${testmod_id}",
+  "version": "${version}",
+  "name": "AlmostReliable Testmod",
+  "description": "AlmostReliable Testmod",
+  "authors": [
+    "${mod_author}"
+  ],
+  "contact": {
+    "homepage": "https://github.com/${github_user}",
+    "sources": "https://github.com/${github_user}/${github_repo}",
+    "issues": "https://github.com/${github_user}/${github_repo}/issues"
+  },
+  "license": "${license}",
+  "icon": "assets/testmod/icon.png",
+  "environment": "*",
+  "entrypoints": {
+    "main": [
+      "com.github.almostreliable.testmod.TestModFabric"
+    ]
+  },
+  "depends": {
+    "fabric": "*",
+    "minecraft": ">=${minecraft_version}",
+    "java": ">=17"
+  }
+}

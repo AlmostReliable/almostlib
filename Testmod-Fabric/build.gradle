@@ -1,0 +1,82 @@
+plugins {
+    id 'fabric-loom' version '0.11-SNAPSHOT'
+    id 'maven-publish'
+    id 'idea'
+}
+
+archivesBaseName = "${mod_name}-testmod-fabric-${minecraft_version}"
+
+dependencies {
+    minecraft "com.mojang:minecraft:${minecraft_version}"
+    mappings loom.officialMojangMappings()
+    modImplementation "net.fabricmc:fabric-loader:${fabric_loader_version}"
+    modImplementation "net.fabricmc.fabric-api:fabric-api:${fabric_version}"
+    implementation group: 'com.google.code.findbugs', name: 'jsr305', version: '3.0.1'
+    implementation project(":Common")
+    implementation project(path: ':Fabric', configuration: 'namedElements')
+    implementation project(":Testmod-Common")
+}
+
+loom {
+    runs {
+        gametest {
+            server()
+            setConfigName("Gametest Server")
+            vmArg "-Dfabric-api.gametest=1"
+        }
+        client {
+            client()
+            setConfigName("Client")
+        }
+        server {
+            server()
+            setConfigName("Server")
+        }
+        datagen {
+            client()
+            setConfigName("Datagen")
+            vmArg "-Dfabric-api.datagen"
+            vmArg "-Dfabric-api.datagen.modid=${mod_id}_testmod"
+            vmArg "-Dfabric-api.datagen.output-dir=${file("src/generated/resources")}"
+        }
+        configureEach {
+            runDir "run"
+            ideConfigGenerated(true)
+        }
+    }
+}
+
+sourceSets.main.resources {
+    srcDir 'src/generated/resources'
+}
+
+processResources {
+    from project(":Testmod-Common").sourceSets.main.resources
+}
+
+tasks.withType(JavaCompile) {
+//    source(project(":Common").sourceSets.main.allSource)
+}
+
+jar {
+    from("LICENSE") {
+        rename { "${it}_${mod_name}" }
+    }
+}
+
+publishing {
+    publications {
+        mavenJava(MavenPublication) {
+            groupId project.group
+            artifactId project.archivesBaseName
+            version project.version
+            from components.java
+        }
+    }
+
+    repositories {
+        maven {
+            url "file://" + System.getenv("local_maven")
+        }
+    }
+}

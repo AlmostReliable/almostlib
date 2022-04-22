@@ -65,7 +65,8 @@ subprojects {
                 mod_description     : mod_description,
                 forge_loader_version: forge_loader_version,
                 github_user         : github_user,
-                github_repo         : github_repo]
+                github_repo         : github_repo,
+                testmod_id          : testmod_id]
 
         inputs.properties replaceProperties
         replaceProperties.put 'project', project

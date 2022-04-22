@@ -5,16 +5,14 @@ buildscript {
     }
     dependencies {
         classpath group: 'net.minecraftforge.gradle', name: 'ForgeGradle', version: '5.1.+', changing: true
-        classpath group: 'org.spongepowered', name: 'mixingradle', version: '0.7.+'
     }
 }
 apply plugin: 'java'
 apply plugin: 'net.minecraftforge.gradle'
-apply plugin: 'org.spongepowered.mixin'
 apply plugin: 'eclipse'
 apply plugin: 'maven-publish'
 
-archivesBaseName = "${mod_name}-forge-${minecraft_version}"
+archivesBaseName = "${testmod_id}-forge-${minecraft_version}"
 
 minecraft {
     mappings channel: 'official', version: minecraft_version
@@ -36,7 +34,7 @@ minecraft {
 
         data {
             taskName 'Data'
-            args '--mod', mod_id, '--all', '--output', file('src/generated/resources/'), '--existing', file('src/main/resources/')
+            args '--mod', testmod_id, '--all', '--output', file('src/generated/resources/'), '--existing', file('src/main/resources/')
         }
 
         configureEach {
@@ -46,8 +44,12 @@ minecraft {
             property 'mixin.env.remapRefMap', 'true'
             property 'mixin.env.refMapRemappingFile', "${projectDir}/build/createSrgToMcp/output.srg"
             mods {
-                "${mod_id}" {
+                "${testmod_id}" {
                     source sourceSets.main
+                    source project(":Testmod-Common").sourceSets.main
+                }
+                almostlib {
+                    source project(":Forge").sourceSets.main
                     source project(":Common").sourceSets.main
                 }
             }
@@ -57,24 +59,19 @@ minecraft {
 
 sourceSets.main.resources.srcDir 'src/generated/resources'
 
-mixin {
-    add sourceSets.main, "${mod_id}.refmap.json"
-    config "${mod_id}-forge.mixins.json"
-}
-
 dependencies {
     minecraft "net.minecraftforge:forge:${minecraft_version}-${forge_version}"
     compileOnly project(":Common")
-    annotationProcessor "org.spongepowered:mixin:${mixin_version}:processor"
-
+    implementation project(":Forge")
+    implementation project(":Testmod-Common")
 }
 
 tasks.withType(JavaCompile) {
-    source(project(":Common").sourceSets.main.allSource)
+//    source(project(":Common").sourceSets.main.allSource)
 }
 
 processResources {
-    from project(":Common").sourceSets.main.resources
+    from project(":Testmod-Common").sourceSets.main.resources
 }
 
 
