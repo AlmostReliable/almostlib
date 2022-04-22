@@ -10,6 +10,7 @@ import com.mojang.datafixers.util.Function4;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
 import net.minecraft.client.gui.screens.inventory.MenuAccess;
+import net.minecraft.client.renderer.blockentity.BlockEntityRenderer;
 import net.minecraft.client.renderer.blockentity.BlockEntityRendererProvider;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Registry;
@@ -36,8 +37,8 @@ import java.util.function.Supplier;
 
 public abstract class RegistryManager {
     protected final LinkedHashMap<ResourceKey<?>, RegistryDelegate<?>> registries = new LinkedHashMap<>();
-    protected final Map<RegistryEntry<? extends BlockEntityType<? extends BlockEntity>>, BlockEntityRendererProvider<? extends BlockEntity>> registeredBlockEntityRendererFactories = new ConcurrentHashMap<>();
-    protected final Map<RegistryEntry<? extends MenuType<?>>, ScreenFactory<?, ?>> registeredScreenFactories = new ConcurrentHashMap<>();
+    protected final Map<RegistryEntry<? extends BlockEntityType<?>>, Supplier<Function<BlockEntityRendererProvider.Context, BlockEntityRenderer<?>>>> registeredBlockEntityRendererFactories = new ConcurrentHashMap<>();
+    protected final Map<RegistryEntry<? extends MenuType<?>>, Supplier<? extends ScreenFactory<?, ?>>> registeredScreenFactories = new ConcurrentHashMap<>();
     @Nullable
     protected final List<DataGeneratorManager.Entry<?>> datagenConsumers;
     private final String namespace;
@@ -82,7 +83,7 @@ public abstract class RegistryManager {
 
     public <M extends AbstractContainerMenu, S extends AbstractContainerScreen<M>, BE extends BlockEntity> RegistryEntry<MenuType<M>> menuBlockEntity(String id,
                                                                                                                                                       MenuFactory.ForBlockEntityAndInventory<M, BE> menuFactory,
-                                                                                                                                                      ScreenFactory<M, S> screenFactory) {
+                                                                                                                                                      Supplier<ScreenFactory<M, S>> screenFactory) {
         return menu(id, (windowId, inventory, buffer) -> {
             BE entity = Utils.nullableCast(inventory.player.level.getBlockEntity(buffer.readBlockPos()));
             if (entity == null) {
@@ -95,7 +96,7 @@ public abstract class RegistryManager {
 
     public <M extends AbstractContainerMenu, S extends AbstractContainerScreen<M>, BE extends BlockEntity> RegistryEntry<MenuType<M>> menuBlockEntity(String id,
                                                                                                                                                       MenuFactory.ForBlockEntity<M, BE> menuFactory,
-                                                                                                                                                      ScreenFactory<M, S> screenFactory) {
+                                                                                                                                                      Supplier<ScreenFactory<M, S>> screenFactory) {
         return menu(id, (windowId, inventory, buffer) -> {
             BE entity = Utils.nullableCast(inventory.player.level.getBlockEntity(buffer.readBlockPos()));
             if (entity == null) {
@@ -108,7 +109,7 @@ public abstract class RegistryManager {
 
     public <M extends AbstractContainerMenu, S extends AbstractContainerScreen<M>> RegistryEntry<MenuType<M>> menu(String id,
                                                                                                                    MenuFactory<M> menuFactory,
-                                                                                                                   ScreenFactory<M, S> screenFactory) {
+                                                                                                                   Supplier<ScreenFactory<M, S>> screenFactory) {
         RegistryEntryData<MenuType<M>> data = createRegistryEntryData(Registry.MENU_REGISTRY,
                 id,
                 () -> AlmostLib.INSTANCE.createMenuType(menuFactory));
@@ -170,11 +171,11 @@ public abstract class RegistryManager {
         return Utils.cast(registryEntry);
     }
 
-    public <T extends BlockEntity> void registerRenderer(RegistryEntry<? extends BlockEntityType<? extends T>> blockEntityType, BlockEntityRendererProvider<T> provider) {
+    public <T extends BlockEntity> void registerRenderer(RegistryEntry<BlockEntityType<T>> blockEntityType, Supplier<Function<BlockEntityRendererProvider.Context, BlockEntityRenderer<?>>>  provider) {
         registeredBlockEntityRendererFactories.put(blockEntityType, provider);
     }
 
-    public <M extends AbstractContainerMenu, S extends Screen & MenuAccess<M>> void registerScreen(RegistryEntry<? extends MenuType<? extends M>> menuType, ScreenFactory<M, S> screenFactory) {
+    public <M extends AbstractContainerMenu, S extends Screen & MenuAccess<M>> void registerScreen(RegistryEntry<? extends MenuType<? extends M>> menuType, Supplier<ScreenFactory<M, S>> screenFactory) {
         registeredScreenFactories.put(menuType, screenFactory);
     }
 

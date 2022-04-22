@@ -32,7 +32,7 @@ public class RegistryManagerFabric extends RegistryManager {
         });
 
         registeredScreenFactories.forEach((registryEntry, screenFactory) -> {
-            MenuScreens.register(Utils.cast(registryEntry.get()), screenFactory::create);
+            MenuScreens.register(Utils.cast(registryEntry.get()), screenFactory.get()::create);
         });
     }
 

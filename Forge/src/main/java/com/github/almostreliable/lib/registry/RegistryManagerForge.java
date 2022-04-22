@@ -40,14 +40,14 @@ public class RegistryManagerForge extends RegistryManager {
     private void handleFMLClient(FMLClientSetupEvent event) {
         event.enqueueWork(() -> {
             registeredScreenFactories.forEach((registryEntry, screenConstructor) -> {
-                MenuScreens.register(Utils.cast(registryEntry.get()), screenConstructor::create);
+                MenuScreens.register(Utils.cast(registryEntry.get()), screenConstructor.get()::create);
             });
         });
     }
 
     private void handleBlockEntityRenderers(EntityRenderersEvent.RegisterRenderers event) {
         for (var entry : registeredBlockEntityRendererFactories.entrySet()) {
-            event.registerBlockEntityRenderer(entry.getKey().get(), Utils.cast(entry.getValue()));
+            event.registerBlockEntityRenderer(Utils.cast(entry.getKey().get()), entry.getValue().get()::apply);
         }
     }
 }

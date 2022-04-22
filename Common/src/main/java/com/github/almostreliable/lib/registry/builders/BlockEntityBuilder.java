@@ -5,6 +5,7 @@ import com.github.almostreliable.lib.Utils;
 import com.github.almostreliable.lib.registry.RegisterCallback;
 import com.github.almostreliable.lib.registry.RegistryEntry;
 import com.github.almostreliable.lib.registry.RegistryManager;
+import net.minecraft.client.renderer.blockentity.BlockEntityRenderer;
 import net.minecraft.client.renderer.blockentity.BlockEntityRendererProvider;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Registry;
@@ -17,13 +18,14 @@ import net.minecraft.world.level.block.state.BlockState;
 import javax.annotation.Nullable;
 import java.util.*;
 import java.util.function.BiFunction;
+import java.util.function.Function;
 import java.util.function.Predicate;
 import java.util.function.Supplier;
 import java.util.stream.Collectors;
 
 public class BlockEntityBuilder<BE extends BlockEntity>
         extends AbstractEntryBuilder<BlockEntityType<BE>, BlockEntityType<?>, BlockEntityBuilder<BE>>
-        implements PostRegisterListener<BE> {
+        implements PostRegisterListener<BlockEntityType<BE>> {
 
     private final BiFunction<BlockPos, BlockState, BE> factory;
     @Nullable
@@ -31,7 +33,7 @@ public class BlockEntityBuilder<BE extends BlockEntity>
     @Nullable
     private List<Supplier<? extends Block>> blocksSuppliers;
     @Nullable
-    private BlockEntityRendererProvider<?> rendererProvider;
+    private Supplier<Function<BlockEntityRendererProvider.Context, BlockEntityRenderer<? extends BE>>> rendererProvider;
 
     public BlockEntityBuilder(String name, BiFunction<BlockPos, BlockState, BE> factory, RegistryManager manager, RegisterCallback registerCallback) {
         super(name, manager, registerCallback);
@@ -53,7 +55,7 @@ public class BlockEntityBuilder<BE extends BlockEntity>
         return this;
     }
 
-    public BlockEntityBuilder<BE> renderer(BlockEntityRendererProvider<BE> rendererProvider) {
+    public BlockEntityBuilder<BE> renderer(Supplier<Function<BlockEntityRendererProvider.Context, BlockEntityRenderer<? extends BE>>> rendererProvider) {
         this.rendererProvider = rendererProvider;
         return this;
     }
@@ -85,9 +87,10 @@ public class BlockEntityBuilder<BE extends BlockEntity>
     }
 
     @Override
-    public void onPostRegister(RegistryEntry<BE> registryEntry) {
+    public void onPostRegister(RegistryEntry<BlockEntityType<BE>> registryEntry) {
         if (rendererProvider != null) {
-            manager.registerRenderer(Utils.cast(registryEntry), rendererProvider);
+//            var renderer = rendererProvider.get()
+            manager.registerRenderer(Utils.cast(registryEntry), Utils.cast(rendererProvider));
         }
     }
 }
