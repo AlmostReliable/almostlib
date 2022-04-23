@@ -1,4 +1,4 @@
-package com.github.almostreliable.lib.test;
+package com.github.almostreliable.testmod;
 
 import com.mojang.blaze3d.vertex.PoseStack;
 import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;

@@ -3,9 +3,9 @@ package com.github.almostreliable.lib.registry.builders;
 import com.github.almostreliable.lib.Utils;
 import com.github.almostreliable.lib.datagen.BlockStateProvider;
 import com.github.almostreliable.lib.datagen.DataGeneratorManager;
+import com.github.almostreliable.lib.registry.AlmostManager;
 import com.github.almostreliable.lib.registry.RegisterCallback;
 import com.github.almostreliable.lib.registry.RegistryEntry;
-import com.github.almostreliable.lib.registry.RegistryManager;
 import net.minecraft.core.Registry;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.world.item.BlockItem;
@@ -33,7 +33,7 @@ public class BlockBuilder<B extends Block, I extends BlockItem>
     @Nullable
     protected BiConsumer<RegistryEntry<B>, BlockStateProvider> blockstateGeneratorCallback;
 
-    public BlockBuilder(String id, BlockBehaviour.Properties properties, Function<BlockBehaviour.Properties, B> factory, RegistryManager manager, RegisterCallback registerCallback) {
+    public BlockBuilder(String id, BlockBehaviour.Properties properties, Function<BlockBehaviour.Properties, B> factory, AlmostManager manager, RegisterCallback registerCallback) {
         super(id, manager, registerCallback);
         this.factory = factory;
         this.properties = properties;

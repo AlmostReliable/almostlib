@@ -1,18 +1,15 @@
 package com.github.almostreliable.lib.registry;
 
-import com.github.almostreliable.lib.Utils;
-import net.minecraft.client.gui.screens.MenuScreens;
 import net.minecraft.core.Registry;
 import net.minecraft.resources.ResourceKey;
-import net.minecraftforge.client.event.EntityRenderersEvent;
-import net.minecraftforge.fml.event.lifecycle.FMLClientSetupEvent;
+import net.minecraftforge.fml.event.lifecycle.FMLCommonSetupEvent;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
 import net.minecraftforge.registries.ForgeRegistry;
 
 import java.util.Objects;
 
-public class RegistryManagerForge extends RegistryManager {
-    public RegistryManagerForge(String namespace) {
+public class AlmostManagerForge extends AlmostManager {
+    public AlmostManagerForge(String namespace) {
         super(namespace);
     }
 
@@ -33,21 +30,13 @@ public class RegistryManagerForge extends RegistryManager {
     @Override
     public void initClient() {
         var eventBus = FMLJavaModLoadingContext.get().getModEventBus();
-        eventBus.addListener(this::handleFMLClient);
-        eventBus.addListener(this::handleBlockEntityRenderers);
-    }
-
-    private void handleFMLClient(FMLClientSetupEvent event) {
-        event.enqueueWork(() -> {
-            registeredScreenFactories.forEach((registryEntry, screenConstructor) -> {
-                MenuScreens.register(Utils.cast(registryEntry.get()), screenConstructor.get()::create);
-            });
+        eventBus.addListener((FMLCommonSetupEvent event) -> {
+            super.initClient();
         });
     }
 
-    private void handleBlockEntityRenderers(EntityRenderersEvent.RegisterRenderers event) {
-        for (var entry : registeredBlockEntityRendererFactories.entrySet()) {
-            event.registerBlockEntityRenderer(Utils.cast(entry.getKey().get()), entry.getValue().get()::apply);
-        }
+    @Override
+    protected ClientManager createClientManager() {
+        return new ClientManagerForge();
     }
 }

@@ -4,7 +4,7 @@ import com.github.almostreliable.lib.AlmostLib;
 import com.github.almostreliable.lib.Utils;
 import com.github.almostreliable.lib.registry.RegisterCallback;
 import com.github.almostreliable.lib.registry.RegistryEntry;
-import com.github.almostreliable.lib.registry.RegistryManager;
+import com.github.almostreliable.lib.registry.AlmostManager;
 import net.minecraft.client.renderer.blockentity.BlockEntityRenderer;
 import net.minecraft.client.renderer.blockentity.BlockEntityRendererProvider;
 import net.minecraft.core.BlockPos;
@@ -33,9 +33,9 @@ public class BlockEntityBuilder<BE extends BlockEntity>
     @Nullable
     private List<Supplier<? extends Block>> blocksSuppliers;
     @Nullable
-    private Supplier<Function<BlockEntityRendererProvider.Context, BlockEntityRenderer<? extends BE>>> rendererProvider;
+    private Supplier<Function<BlockEntityRendererProvider.Context, BlockEntityRenderer<BE>>> rendererProvider;
 
-    public BlockEntityBuilder(String name, BiFunction<BlockPos, BlockState, BE> factory, RegistryManager manager, RegisterCallback registerCallback) {
+    public BlockEntityBuilder(String name, BiFunction<BlockPos, BlockState, BE> factory, AlmostManager manager, RegisterCallback registerCallback) {
         super(name, manager, registerCallback);
         this.factory = factory;
     }
@@ -55,7 +55,7 @@ public class BlockEntityBuilder<BE extends BlockEntity>
         return this;
     }
 
-    public BlockEntityBuilder<BE> renderer(Supplier<Function<BlockEntityRendererProvider.Context, BlockEntityRenderer<? extends BE>>> rendererProvider) {
+    public BlockEntityBuilder<BE> renderer(Supplier<Function<BlockEntityRendererProvider.Context, BlockEntityRenderer<BE>>> rendererProvider) {
         this.rendererProvider = rendererProvider;
         return this;
     }
@@ -89,8 +89,11 @@ public class BlockEntityBuilder<BE extends BlockEntity>
     @Override
     public void onPostRegister(RegistryEntry<BlockEntityType<BE>> registryEntry) {
         if (rendererProvider != null) {
+            manager.onClientInit(clientManager -> {
+                clientManager.registerBlockEntityRenderer(registryEntry.get(), rendererProvider.get());
+            });
 //            var renderer = rendererProvider.get()
-            manager.registerRenderer(Utils.cast(registryEntry), Utils.cast(rendererProvider));
+//            manager.registerRenderer(Utils.cast(registryEntry), Utils.cast(rendererProvider));
         }
     }
 }

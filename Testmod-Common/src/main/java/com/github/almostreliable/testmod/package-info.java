@@ -1,5 +1,5 @@
 @ParametersAreNonnullByDefault @MethodsReturnNonnullByDefault
-package com.github.almostreliable.lib.test;
+package com.github.almostreliable.testmod;
 
 import net.minecraft.MethodsReturnNonnullByDefault;
 

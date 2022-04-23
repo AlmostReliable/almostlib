@@ -2,9 +2,9 @@ package com.github.almostreliable.lib.registry.builders;
 
 import com.github.almostreliable.lib.datagen.DataGeneratorManager;
 import com.github.almostreliable.lib.datagen.ItemModelProvider;
+import com.github.almostreliable.lib.registry.AlmostManager;
 import com.github.almostreliable.lib.registry.RegisterCallback;
 import com.github.almostreliable.lib.registry.RegistryEntry;
-import com.github.almostreliable.lib.registry.RegistryManager;
 import com.google.gson.JsonObject;
 import net.minecraft.core.Registry;
 import net.minecraft.data.models.model.ModelTemplate;
@@ -32,7 +32,7 @@ public class ItemBuilder<I extends Item> extends AbstractEntryBuilder<I, Item, I
     private final List<BiConsumer<RegistryEntry<I>, ItemModelProvider>> itemModelGenerators;
     private Item.Properties properties;
 
-    public ItemBuilder(String id, Function<Item.Properties, ? extends I> factory, RegistryManager manager, RegisterCallback registerCallback) {
+    public ItemBuilder(String id, Function<Item.Properties, ? extends I> factory, AlmostManager manager, RegisterCallback registerCallback) {
         super(id, manager, registerCallback);
         this.factory = factory;
         this.properties = new Item.Properties();

@@ -1,4 +1,4 @@
-package com.github.almostreliable.lib.test;
+package com.github.almostreliable.testmod;
 
 import com.github.almostreliable.lib.AlmostLib;
 import net.minecraft.core.BlockPos;
@@ -42,7 +42,6 @@ public class TestBlock extends Block implements EntityBlock {
                     return new TextComponent("Yeet");
                 }
 
-                @Nullable
                 @Override
                 public AbstractContainerMenu createMenu(int id, Inventory inventory, Player player) {
                     return new TestMenu(id);

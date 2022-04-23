@@ -2,9 +2,9 @@ package com.github.almostreliable.lib.registry.builders;
 
 import com.github.almostreliable.lib.Utils;
 import com.github.almostreliable.lib.datagen.DataGeneratorManager;
+import com.github.almostreliable.lib.registry.AlmostManager;
 import com.github.almostreliable.lib.registry.RegisterCallback;
 import com.github.almostreliable.lib.registry.RegistryEntry;
-import com.github.almostreliable.lib.registry.RegistryManager;
 import org.apache.commons.lang3.StringUtils;
 
 import java.util.Arrays;
@@ -17,10 +17,10 @@ public abstract class AbstractEntryBuilder<T, BASE, SELF extends AbstractEntryBu
         implements RegistryEntryBuilder<T, BASE> {
     protected final String name;
     protected final RegisterCallback registerCallback;
-    protected final RegistryManager manager;
+    protected final AlmostManager manager;
     protected final Map<Function<T, String>, Function<T, String>> langProviders = new HashMap<>();
 
-    public AbstractEntryBuilder(String name, RegistryManager manager, RegisterCallback registerCallback) {
+    public AbstractEntryBuilder(String name, AlmostManager manager, RegisterCallback registerCallback) {
         this.name = name;
         this.registerCallback = registerCallback;
         this.manager = manager;

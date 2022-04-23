@@ -1,7 +1,7 @@
 package com.github.almostreliable.lib;
 
 import com.github.almostreliable.lib.client.MenuFactory;
-import com.github.almostreliable.lib.registry.RegistryManager;
+import com.github.almostreliable.lib.registry.AlmostManager;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.resources.ResourceLocation;
@@ -38,9 +38,11 @@ public interface AlmostLib {
 
     boolean isDevelopmentEnvironment();
 
+    boolean isClient();
+
     CreativeModeTab createCreativeTab(ResourceLocation location, Supplier<ItemStack> supplier);
 
-    RegistryManager createRegistry(String namespace);
+    AlmostManager createManager(String namespace);
 
     <T extends BlockEntity> BlockEntityType<T> createBlockEntityType(BiFunction<BlockPos, BlockState, T> factory, Block... blocks);
 

@@ -1,8 +1,9 @@
 package com.github.almostreliable.lib;
 
 import com.github.almostreliable.lib.client.MenuFactory;
-import com.github.almostreliable.lib.registry.RegistryManager;
-import com.github.almostreliable.lib.registry.RegistryManagerFabric;
+import com.github.almostreliable.lib.registry.AlmostManager;
+import com.github.almostreliable.lib.registry.AlmostManagerFabric;
+import net.fabricmc.api.EnvType;
 import net.fabricmc.fabric.api.client.itemgroup.FabricItemGroupBuilder;
 import net.fabricmc.fabric.api.object.builder.v1.block.entity.FabricBlockEntityTypeBuilder;
 import net.fabricmc.fabric.api.screenhandler.v1.ExtendedScreenHandlerFactory;
@@ -51,15 +52,18 @@ public class AlmostLibFabricImpl implements AlmostLib {
     }
 
     @Override
+    public boolean isClient() {
+        return FabricLoader.getInstance().getEnvironmentType() == EnvType.CLIENT;
+    }
+
+    @Override
     public CreativeModeTab createCreativeTab(ResourceLocation location, Supplier<ItemStack> supplier) {
         return FabricItemGroupBuilder.build(location, supplier);
     }
 
     @Override
-    public RegistryManager createRegistry(String namespace) {
-        RegistryManagerFabric manager = new RegistryManagerFabric(namespace);
-        AlmostLibCommon.MANAGERS.add(manager);
-        return manager;
+    public AlmostManager createManager(String namespace) {
+        return new AlmostManagerFabric(namespace);
     }
 
     @Override

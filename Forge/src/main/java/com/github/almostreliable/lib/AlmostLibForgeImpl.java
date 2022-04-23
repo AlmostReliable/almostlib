@@ -1,8 +1,8 @@
 package com.github.almostreliable.lib;
 
 import com.github.almostreliable.lib.client.MenuFactory;
-import com.github.almostreliable.lib.registry.RegistryManager;
-import com.github.almostreliable.lib.registry.RegistryManagerForge;
+import com.github.almostreliable.lib.registry.AlmostManager;
+import com.github.almostreliable.lib.registry.AlmostManagerForge;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.resources.ResourceLocation;
@@ -16,6 +16,7 @@ import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
+import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.common.extensions.IForgeMenuType;
 import net.minecraftforge.data.loading.DatagenModLoader;
 import net.minecraftforge.fml.ModList;
@@ -48,6 +49,11 @@ public class AlmostLibForgeImpl implements AlmostLib {
     }
 
     @Override
+    public boolean isClient() {
+        return FMLLoader.getDist() == Dist.CLIENT;
+    }
+
+    @Override
     public CreativeModeTab createCreativeTab(ResourceLocation location, Supplier<ItemStack> supplier) {
         return new CreativeModeTab(location.toString()) {
             @Override
@@ -58,10 +64,8 @@ public class AlmostLibForgeImpl implements AlmostLib {
     }
 
     @Override
-    public RegistryManager createRegistry(String namespace) {
-        RegistryManagerForge manager = new RegistryManagerForge(namespace);
-        AlmostLibCommon.MANAGERS.add(manager);
-        return manager;
+    public AlmostManager createManager(String namespace) {
+        return new AlmostManagerForge(namespace);
     }
 
     @Override

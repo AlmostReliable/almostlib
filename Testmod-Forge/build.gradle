@@ -5,10 +5,12 @@ buildscript {
     }
     dependencies {
         classpath group: 'net.minecraftforge.gradle', name: 'ForgeGradle', version: '5.1.+', changing: true
+        classpath group: 'org.spongepowered', name: 'mixingradle', version: '0.7.+'
     }
 }
 apply plugin: 'java'
 apply plugin: 'net.minecraftforge.gradle'
+apply plugin: 'org.spongepowered.mixin'
 apply plugin: 'eclipse'
 apply plugin: 'maven-publish'
 
@@ -57,6 +59,10 @@ minecraft {
     }
 }
 
+mixin {
+    add project(":Forge").sourceSets.main, "${mod_id}.refmap.json"
+}
+
 sourceSets.main.resources.srcDir 'src/generated/resources'
 
 dependencies {
@@ -64,6 +70,7 @@ dependencies {
     compileOnly project(":Common")
     implementation project(":Forge")
     implementation project(":Testmod-Common")
+    annotationProcessor "org.spongepowered:mixin:${mixin_version}:processor"
 }
 
 tasks.withType(JavaCompile) {

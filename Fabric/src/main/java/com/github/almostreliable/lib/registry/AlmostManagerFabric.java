@@ -1,16 +1,13 @@
 package com.github.almostreliable.lib.registry;
 
-import com.github.almostreliable.lib.Utils;
-import net.fabricmc.fabric.api.client.rendering.v1.BlockEntityRendererRegistry;
-import net.minecraft.client.gui.screens.MenuScreens;
 import net.minecraft.core.Registry;
 import net.minecraft.resources.ResourceKey;
 
 import java.util.Objects;
 
-public class RegistryManagerFabric extends RegistryManager {
+public class AlmostManagerFabric extends AlmostManager {
 
-    public RegistryManagerFabric(String namespace) {
+    public AlmostManagerFabric(String namespace) {
         super(namespace);
     }
 
@@ -26,14 +23,8 @@ public class RegistryManagerFabric extends RegistryManager {
     }
 
     @Override
-    public void initClient() {
-        registeredBlockEntityRendererFactories.forEach((registryEntry, provider) -> {
-            BlockEntityRendererRegistry.register(Utils.cast(registryEntry.get()), provider.get()::apply);
-        });
-
-        registeredScreenFactories.forEach((registryEntry, screenFactory) -> {
-            MenuScreens.register(Utils.cast(registryEntry.get()), screenFactory.get()::create);
-        });
+    protected ClientManager createClientManager() {
+        return new ClientManagerFabric();
     }
 
 }

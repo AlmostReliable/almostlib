@@ -7,11 +7,7 @@ import com.github.almostreliable.lib.client.ScreenFactory;
 import com.github.almostreliable.lib.datagen.DataGeneratorManager;
 import com.github.almostreliable.lib.registry.builders.*;
 import com.mojang.datafixers.util.Function4;
-import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
-import net.minecraft.client.gui.screens.inventory.MenuAccess;
-import net.minecraft.client.renderer.blockentity.BlockEntityRenderer;
-import net.minecraft.client.renderer.blockentity.BlockEntityRendererProvider;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Registry;
 import net.minecraft.data.DataGenerator;
@@ -22,7 +18,6 @@ import net.minecraft.world.inventory.MenuType;
 import net.minecraft.world.item.*;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.entity.BlockEntity;
-import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockBehaviour;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.material.Material;
@@ -30,23 +25,27 @@ import net.minecraft.world.level.material.MaterialColor;
 
 import javax.annotation.Nullable;
 import java.util.*;
-import java.util.concurrent.ConcurrentHashMap;
 import java.util.function.BiFunction;
+import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.function.Supplier;
 
-public abstract class RegistryManager {
+public abstract class AlmostManager {
     protected final LinkedHashMap<ResourceKey<?>, RegistryDelegate<?>> registries = new LinkedHashMap<>();
-    protected final Map<RegistryEntry<? extends BlockEntityType<?>>, Supplier<Function<BlockEntityRendererProvider.Context, BlockEntityRenderer<?>>>> registeredBlockEntityRendererFactories = new ConcurrentHashMap<>();
-    protected final Map<RegistryEntry<? extends MenuType<?>>, Supplier<? extends ScreenFactory<?, ?>>> registeredScreenFactories = new ConcurrentHashMap<>();
     @Nullable
     protected final List<DataGeneratorManager.Entry<?>> datagenConsumers;
+    @Nullable
+    protected final List<Consumer<ClientManager>> clientConsumers;
+    @Nullable
+    protected final ClientManager clientManager;
     private final String namespace;
 
-    public RegistryManager(String namespace) {
+    public AlmostManager(String namespace) {
         this.namespace = namespace;
+        AlmostLib.LOG.info("AlmostManager created for '{}'", namespace);
         datagenConsumers = AlmostLib.INSTANCE.isDataGenEnabled() ? new ArrayList<>() : null;
-        AlmostLib.LOG.info("RegistryManager created for '{}'", namespace);
+        clientConsumers = AlmostLib.INSTANCE.isClient() ? new ArrayList<>() : null;
+        clientManager = AlmostLib.INSTANCE.isClient() ? createClientManager() : null;
     }
 
     public String getNamespace() {
@@ -113,7 +112,7 @@ public abstract class RegistryManager {
         RegistryEntryData<MenuType<M>> data = createRegistryEntryData(Registry.MENU_REGISTRY,
                 id,
                 () -> AlmostLib.INSTANCE.createMenuType(menuFactory));
-        registerScreen(data.getRegistryEntry(), screenFactory);
+        onClientInit(cm -> cm.registerScreen(data.getRegistryEntry().get(), screenFactory.get()));
         return data.getRegistryEntry();
     }
 
@@ -171,12 +170,10 @@ public abstract class RegistryManager {
         return Utils.cast(registryEntry);
     }
 
-    public <T extends BlockEntity> void registerRenderer(RegistryEntry<BlockEntityType<T>> blockEntityType, Supplier<Function<BlockEntityRendererProvider.Context, BlockEntityRenderer<?>>>  provider) {
-        registeredBlockEntityRendererFactories.put(blockEntityType, provider);
-    }
-
-    public <M extends AbstractContainerMenu, S extends Screen & MenuAccess<M>> void registerScreen(RegistryEntry<? extends MenuType<? extends M>> menuType, Supplier<ScreenFactory<M, S>> screenFactory) {
-        registeredScreenFactories.put(menuType, screenFactory);
+    public void onClientInit(Consumer<ClientManager> consumer) {
+        if (clientConsumers != null) {
+            clientConsumers.add(consumer);
+        }
     }
 
     public void init() {
@@ -206,7 +203,14 @@ public abstract class RegistryManager {
         }
     }
 
-    public abstract void initClient();
+    public void initClient() {
+        if (clientConsumers != null && clientManager != null) {
+            clientConsumers.forEach(consumer -> consumer.accept(clientManager));
+            clientManager.init();
+        }
+    }
+
+    protected abstract ClientManager createClientManager();
 
     public void onDataGen(DataGenerator dataGenerator) {
         DataGeneratorManager dataGeneratorManager = new DataGeneratorManager(getNamespace(), dataGenerator);
