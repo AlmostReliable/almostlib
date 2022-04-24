@@ -17,11 +17,6 @@ dependencies {
 
 loom {
     runs {
-        gametest {
-            server()
-            setConfigName("Gametest Server")
-            vmArg "-Dfabric-api.gametest=1"
-        }
         client {
             client()
             setConfigName("Client")
@@ -29,13 +24,6 @@ loom {
         server {
             server()
             setConfigName("Server")
-        }
-        datagen {
-            client()
-            setConfigName("Datagen")
-            vmArg "-Dfabric-api.datagen"
-            vmArg "-Dfabric-api.datagen.modid=${mod_id}"
-            vmArg "-Dfabric-api.datagen.output-dir=${file("src/generated/resources")}"
         }
         configureEach {
             runDir "run"

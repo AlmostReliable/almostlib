@@ -29,16 +29,6 @@ minecraft {
             taskName 'Server'
         }
 
-        gameTestServer {
-            property 'forge.logging.markers', 'REGISTRIES'
-            property 'forge.enabledGameTestNamespaces', "minecraft"
-        }
-
-        data {
-            taskName 'Data'
-            args '--mod', mod_id, '--all', '--output', file('src/generated/resources/'), '--existing', file('src/main/resources/')
-        }
-
         configureEach {
             workingDirectory project.file('run')
             ideaModule "${rootProject.name}.${project.name}.main"

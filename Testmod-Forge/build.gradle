@@ -30,6 +30,7 @@ minecraft {
         }
 
         gameTestServer {
+            taskName 'GameTest Server'
             property 'forge.logging.markers', 'REGISTRIES'
             property 'forge.enabledGameTestNamespaces', "minecraft"
         }
@@ -61,6 +62,8 @@ minecraft {
 
 mixin {
     add project(":Forge").sourceSets.main, "${mod_id}.refmap.json"
+
+    config "${mod_id}-forge.mixins.json"
 }
 
 sourceSets.main.resources.srcDir 'src/generated/resources'
@@ -74,7 +77,7 @@ dependencies {
 }
 
 tasks.withType(JavaCompile) {
-//    source(project(":Common").sourceSets.main.allSource)
+    source(project(":Testmod-Common").sourceSets.main.allSource)
 }
 
 processResources {

@@ -18,6 +18,9 @@
   "entrypoints": {
     "main": [
       "com.github.almostreliable.testmod.TestModFabric"
+    ],
+    "fabric-datagen": [
+      "com.github.almostreliable.testmod.RegistryGameTest"
     ]
   },
   "depends": {
