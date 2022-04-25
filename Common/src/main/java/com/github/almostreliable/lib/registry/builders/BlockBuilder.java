@@ -2,6 +2,7 @@ package com.github.almostreliable.lib.registry.builders;
 
 import com.github.almostreliable.lib.Utils;
 import com.github.almostreliable.lib.datagen.BlockStateProvider;
+import com.github.almostreliable.lib.datagen.LootTableProvider;
 import com.github.almostreliable.lib.registry.AlmostManager;
 import com.github.almostreliable.lib.registry.RegisterCallback;
 import com.github.almostreliable.lib.registry.RegistryEntry;
@@ -9,11 +10,13 @@ import net.minecraft.core.Registry;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.item.CreativeModeTab;
+import net.minecraft.world.level.ItemLike;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.SoundType;
 import net.minecraft.world.level.block.state.BlockBehaviour;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.material.MaterialColor;
+import net.minecraft.world.level.storage.loot.LootTable;
 
 import javax.annotation.Nullable;
 import java.util.Objects;
@@ -30,6 +33,8 @@ public class BlockBuilder<B extends Block, I extends BlockItem>
     protected CreativeModeTab creativeTab;
     @Nullable
     protected BiConsumer<RegistryEntry<B>, BlockStateProvider> blockstateGeneratorCallback;
+    @Nullable
+    protected BiConsumer<B, LootTableProvider> lootTableCallback;
 
     public BlockBuilder(String id, BlockBehaviour.Properties properties, Function<BlockBehaviour.Properties, B> factory, AlmostManager manager, RegisterCallback registerCallback) {
         super(id, manager, registerCallback);
@@ -48,10 +53,6 @@ public class BlockBuilder<B extends Block, I extends BlockItem>
         if (noItem) {
             throw new IllegalArgumentException("noItem() were set. It's not possible to create an item");
         }
-
-//        itemBuilder = new ItemBuilder<I>(name,
-//                manager,
-//                registerCallback).tab(CreativeModeTab.TAB_BUILDING_BLOCKS);
         itemBuilderConsumer = item;
         return this;
     }
@@ -157,6 +158,32 @@ public class BlockBuilder<B extends Block, I extends BlockItem>
         return this;
     }
 
+    public BlockBuilder<B, I> dropOther(Supplier<ItemLike> supplier) {
+        checkLootTwice();
+        this.lootTableCallback = (block, provider) -> {
+            provider.dropOther(block, supplier.get());
+        };
+        return this;
+    }
+
+    public BlockBuilder<B, I> dropSelf() {
+        checkLootTwice();
+        this.lootTableCallback = (block, provider) -> {
+            provider.dropSelf(block);
+        };
+        return this;
+    }
+
+    public BlockBuilder<B, I> loot(BiConsumer<B, LootTable.Builder> callback) {
+        checkLootTwice();
+        this.lootTableCallback = (block, provider) -> {
+            LootTable.Builder builder = LootTable.lootTable();
+            callback.accept(block, builder);
+            provider.add(block, builder);
+        };
+        return this;
+    }
+
     public BlockBuilder<B, I> defaultLang(String value) {
         return lang(Block::getDescriptionId, $ -> value);
     }
@@ -185,6 +212,12 @@ public class BlockBuilder<B extends Block, I extends BlockItem>
             });
         }
 
+        if (lootTableCallback != null) {
+            manager.addOnDataGen(dataGenManager -> {
+                lootTableCallback.accept(registryEntry.get(), dataGenManager.getLootTableProvider());
+            });
+        }
+
         if (!noItem) {
             ItemBuilder<I> itemBuilder = new ItemBuilder<I>(name,
                     properties1 -> Utils.cast(new BlockItem(registryEntry.get(), properties1)),
@@ -194,5 +227,9 @@ public class BlockBuilder<B extends Block, I extends BlockItem>
                     .tab(creativeTab == null ? CreativeModeTab.TAB_BUILDING_BLOCKS : creativeTab);
             itemBuilder.register();
         }
+    }
+
+    private void checkLootTwice() {
+        if (lootTableCallback != null) throw new IllegalArgumentException("Cannot set loot table twice");
     }
 }

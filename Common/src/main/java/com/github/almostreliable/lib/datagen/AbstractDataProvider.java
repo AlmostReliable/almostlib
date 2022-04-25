@@ -25,4 +25,8 @@ public abstract class AbstractDataProvider implements DataProvider {
     protected Path getAssetsPath() {
         return dataGenerator.getOutputFolder().resolve("assets/");
     }
+
+    protected Path getDataPath() {
+        return dataGenerator.getOutputFolder().resolve("data/");
+    }
 }

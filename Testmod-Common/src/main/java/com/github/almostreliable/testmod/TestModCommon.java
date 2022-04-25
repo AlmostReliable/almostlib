@@ -68,7 +68,6 @@ public class TestModCommon {
     public static final RegistryEntry<TestBlock> TEST_BLOCK = MANAGER
             .block("test_block", Material.BAMBOO, TestBlock::new)
             .strength(300)
-            .noDrops()
             .blockstate((entry, provider) -> {
                 ResourceLocation location = ModelTemplates.CUBE_ALL.create(entry.get(),
                         TextureMapping.cube(entry.get()),
@@ -77,6 +76,7 @@ public class TestModCommon {
                         Variant.variant().with(VariantProperties.MODEL, location));
                 provider.addBlockState(generator);
             })
+            .dropSelf()
             .tab(TAB)
             .defaultLang()
             .register();
