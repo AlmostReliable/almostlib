@@ -2,7 +2,7 @@ package com.github.almostreliable.lib.registry;
 
 import net.minecraft.core.Registry;
 import net.minecraft.resources.ResourceKey;
-import net.minecraftforge.fml.event.lifecycle.FMLCommonSetupEvent;
+import net.minecraftforge.fml.event.lifecycle.FMLClientSetupEvent;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
 import net.minecraftforge.registries.ForgeRegistry;
 
@@ -28,15 +28,13 @@ public class AlmostManagerForge extends AlmostManager {
     }
 
     @Override
-    public void initClient() {
+    public void registerClientManager() {
         var eventBus = FMLJavaModLoadingContext.get().getModEventBus();
-        eventBus.addListener((FMLCommonSetupEvent event) -> {
-            super.initClient();
+        eventBus.addListener((FMLClientSetupEvent event) -> {
+            if (clientConsumers != null) {
+                ClientManager clientManager = new ClientManagerForge();
+                clientConsumers.forEach(consumer -> consumer.accept(clientManager));
+            }
         });
-    }
-
-    @Override
-    protected ClientManager createClientManager() {
-        return new ClientManagerForge();
     }
 }

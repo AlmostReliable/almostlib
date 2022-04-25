@@ -1,7 +1,6 @@
 package com.github.almostreliable.lib.registry.builders;
 
 import com.github.almostreliable.lib.Utils;
-import com.github.almostreliable.lib.datagen.DataGeneratorManager;
 import com.github.almostreliable.lib.registry.AlmostManager;
 import com.github.almostreliable.lib.registry.RegisterCallback;
 import com.github.almostreliable.lib.registry.RegistryEntry;
@@ -52,11 +51,12 @@ public abstract class AbstractEntryBuilder<T, BASE, SELF extends AbstractEntryBu
                 .collect(Collectors.joining(" "));
     }
 
-    @Override
-    public void onDataGen(RegistryEntry<T> registryEntry, DataGeneratorManager dataGenManager) {
-        T entry = registryEntry.get();
-        langProviders.forEach((key, value) -> {
-            dataGenManager.getLangProvider().addLang(key.apply(entry), value.apply(entry));
+    public void onRegister(RegistryEntry<T> registryEntry) {
+        manager.addOnDataGen(dataGenManager -> {
+            T entry = registryEntry.get();
+            langProviders.forEach((key, value) -> dataGenManager
+                    .getLangProvider()
+                    .addLang(key.apply(entry), value.apply(entry)));
         });
     }
 }

@@ -1,0 +1,7 @@
+{
+  "variants": {
+    "": {
+      "model": "almostreliable_testmod:block/test_block"
+    }
+  }
+}

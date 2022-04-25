@@ -5,12 +5,12 @@ import net.minecraft.data.DataGenerator;
 
 import java.util.function.BiConsumer;
 
-public class DataGeneratorManager {
+public class DataGenManager {
     private final BlockStateProvider blockStateProvider;
     private final LangProvider langProvider;
     private final ItemModelProvider itemModelProvider;
 
-    public DataGeneratorManager(String modID, DataGenerator dataGenerator) {
+    public DataGenManager(String modID, DataGenerator dataGenerator) {
         this.blockStateProvider = new BlockStateProvider(modID, dataGenerator);
         this.langProvider = new LangProvider(modID, dataGenerator);
         this.itemModelProvider = new ItemModelProvider(modID, dataGenerator);
@@ -34,15 +34,15 @@ public class DataGeneratorManager {
 
     public static class Entry<T> {
         private final RegistryEntry<T> registryEntry;
-        private final BiConsumer<RegistryEntry<T>, DataGeneratorManager> callback;
+        private final BiConsumer<RegistryEntry<T>, DataGenManager> callback;
 
-        public Entry(RegistryEntry<T> registryEntry, BiConsumer<RegistryEntry<T>, DataGeneratorManager> callback) {
+        public Entry(RegistryEntry<T> registryEntry, BiConsumer<RegistryEntry<T>, DataGenManager> callback) {
             this.registryEntry = registryEntry;
             this.callback = callback;
         }
 
-        public void invoke(DataGeneratorManager dataGeneratorManager) {
-            callback.accept(registryEntry, dataGeneratorManager);
+        public void invoke(DataGenManager dataGenManager) {
+            callback.accept(registryEntry, dataGenManager);
         }
     }
 

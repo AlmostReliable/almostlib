@@ -11,7 +11,6 @@ public class AlmostManagerFabric extends AlmostManager {
         super(namespace);
     }
 
-
     @Override
     @SuppressWarnings({ "unchecked" })
     protected <T> RegistryDelegate<T> getOrCreateDelegate(ResourceKey<Registry<T>> resourceKey) {
@@ -23,8 +22,10 @@ public class AlmostManagerFabric extends AlmostManager {
     }
 
     @Override
-    protected ClientManager createClientManager() {
-        return new ClientManagerFabric();
+    public void registerClientManager() {
+        if (clientConsumers != null) {
+            ClientManager clientManager = new ClientManagerFabric();
+            clientConsumers.forEach(consumer -> consumer.accept(clientManager));
+        }
     }
-
 }

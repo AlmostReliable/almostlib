@@ -4,8 +4,11 @@ import com.github.almostreliable.lib.AlmostLib;
 import com.github.almostreliable.lib.Utils;
 import com.github.almostreliable.lib.client.MenuFactory;
 import com.github.almostreliable.lib.client.ScreenFactory;
-import com.github.almostreliable.lib.datagen.DataGeneratorManager;
-import com.github.almostreliable.lib.registry.builders.*;
+import com.github.almostreliable.lib.datagen.DataGenManager;
+import com.github.almostreliable.lib.registry.builders.BlockBuilder;
+import com.github.almostreliable.lib.registry.builders.BlockEntityBuilder;
+import com.github.almostreliable.lib.registry.builders.ItemBuilder;
+import com.github.almostreliable.lib.registry.builders.RegistryEntryBuilder;
 import com.mojang.datafixers.util.Function4;
 import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
 import net.minecraft.core.BlockPos;
@@ -33,19 +36,17 @@ import java.util.function.Supplier;
 public abstract class AlmostManager {
     protected final LinkedHashMap<ResourceKey<?>, RegistryDelegate<?>> registries = new LinkedHashMap<>();
     @Nullable
-    protected final List<DataGeneratorManager.Entry<?>> datagenConsumers;
-    @Nullable
     protected final List<Consumer<ClientManager>> clientConsumers;
     @Nullable
-    protected final ClientManager clientManager;
+    protected final List<Consumer<DataGenManager>> datagenConsumers;
+
     private final String namespace;
 
     public AlmostManager(String namespace) {
         this.namespace = namespace;
         AlmostLib.LOG.info("AlmostManager created for '{}'", namespace);
-        datagenConsumers = AlmostLib.INSTANCE.isDataGenEnabled() ? new ArrayList<>() : null;
         clientConsumers = AlmostLib.INSTANCE.isClient() ? new ArrayList<>() : null;
-        clientManager = AlmostLib.INSTANCE.isClient() ? createClientManager() : null;
+        datagenConsumers = AlmostLib.INSTANCE.isDataGenEnabled() ? new ArrayList<>() : null;
     }
 
     public String getNamespace() {
@@ -57,7 +58,7 @@ public abstract class AlmostManager {
     }
 
     public <I extends Item> ItemBuilder<I> item(String id, Function<Item.Properties, I> factory) {
-        return new ItemBuilder<I>(id, factory, this, this::finalizeRegistration);
+        return new ItemBuilder<I>(id, factory, this, this::onRegisterEntry);
     }
 
     public <B extends Block, I extends BlockItem> BlockBuilder<B, I> block(String id, Material material, Function<BlockBehaviour.Properties, B> factory) {
@@ -73,11 +74,11 @@ public abstract class AlmostManager {
     }
 
     public <B extends Block, I extends BlockItem> BlockBuilder<B, I> block(String id, BlockBehaviour.Properties properties, Function<BlockBehaviour.Properties, B> factory) {
-        return new BlockBuilder<>(id, properties, factory, this, this::finalizeRegistration);
+        return new BlockBuilder<>(id, properties, factory, this, this::onRegisterEntry);
     }
 
     public <BE extends BlockEntity> BlockEntityBuilder<BE> blockEntity(String id, BiFunction<BlockPos, BlockState, BE> factory) {
-        return new BlockEntityBuilder<>(id, factory, this, this::finalizeRegistration);
+        return new BlockEntityBuilder<>(id, factory, this, this::onRegisterEntry);
     }
 
     public <M extends AbstractContainerMenu, S extends AbstractContainerScreen<M>, BE extends BlockEntity> RegistryEntry<MenuType<M>> menuBlockEntity(String id,
@@ -112,27 +113,18 @@ public abstract class AlmostManager {
         RegistryEntryData<MenuType<M>> data = createRegistryEntryData(Registry.MENU_REGISTRY,
                 id,
                 () -> AlmostLib.INSTANCE.createMenuType(menuFactory));
-        onClientInit(cm -> cm.registerScreen(data.getRegistryEntry().get(), screenFactory.get()));
+        addOnClientInit(cm -> cm.registerScreen(data.getRegistryEntry().get(), screenFactory.get()));
         return data.getRegistryEntry();
     }
 
 
     protected abstract <T> RegistryDelegate<T> getOrCreateDelegate(ResourceKey<Registry<T>> resourceKey);
 
-    // I hate generics...
-    protected <E, BASE> RegistryEntry<E> finalizeRegistration(RegistryEntryBuilder<E, BASE> builder) {
+    protected <E, BASE> RegistryEntry<E> onRegisterEntry(RegistryEntryBuilder<E, BASE> builder) {
         RegistryEntryData<E> data = createRegistryEntryData(builder.getRegistryKey(),
                 builder.getName(),
                 builder::create);
-        if (builder instanceof PostRegisterListener listener) {
-            //noinspection unchecked
-            listener.onPostRegister(data.getRegistryEntry());
-        }
-
-        if (datagenConsumers != null) {
-            datagenConsumers.add(new DataGeneratorManager.Entry<>(data.getRegistryEntry(), builder::onDataGen));
-        }
-
+        builder.onRegister(data.getRegistryEntry());
         return data.getRegistryEntry();
     }
 
@@ -170,13 +162,19 @@ public abstract class AlmostManager {
         return Utils.cast(registryEntry);
     }
 
-    public void onClientInit(Consumer<ClientManager> consumer) {
+    public void addOnClientInit(Consumer<ClientManager> consumer) {
         if (clientConsumers != null) {
             clientConsumers.add(consumer);
         }
     }
 
-    public void init() {
+    public void addOnDataGen(Consumer<DataGenManager> consumer) {
+        if (datagenConsumers != null) {
+            datagenConsumers.add(consumer);
+        }
+    }
+
+    public void registerManager() {
         List<ResourceKey<?>> priority = List.of(
                 Registry.BLOCK_REGISTRY,
                 Registry.FLUID_REGISTRY,
@@ -203,19 +201,12 @@ public abstract class AlmostManager {
         }
     }
 
-    public void initClient() {
-        if (clientConsumers != null && clientManager != null) {
-            clientConsumers.forEach(consumer -> consumer.accept(clientManager));
-            clientManager.init();
-        }
-    }
+    public abstract void registerClientManager();
 
-    protected abstract ClientManager createClientManager();
-
-    public void onDataGen(DataGenerator dataGenerator) {
-        DataGeneratorManager dataGeneratorManager = new DataGeneratorManager(getNamespace(), dataGenerator);
-        Objects.requireNonNull(datagenConsumers, "onDataGen was called outside of the data gen environment");
-        datagenConsumers.forEach(entry -> entry.invoke(dataGeneratorManager));
-        dataGeneratorManager.collectDataProvider(dataGenerator);
+    public void registerDataGen(DataGenerator dataGenerator) {
+        Objects.requireNonNull(datagenConsumers, "registerDataGen was called outside of the data gen environment");
+        DataGenManager dataGenManager = new DataGenManager(getNamespace(), dataGenerator);
+        datagenConsumers.forEach(consumer -> consumer.accept(dataGenManager));
+        dataGenManager.collectDataProvider(dataGenerator);
     }
 }

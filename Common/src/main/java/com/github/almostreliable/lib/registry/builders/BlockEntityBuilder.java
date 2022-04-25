@@ -2,9 +2,9 @@ package com.github.almostreliable.lib.registry.builders;
 
 import com.github.almostreliable.lib.AlmostLib;
 import com.github.almostreliable.lib.Utils;
+import com.github.almostreliable.lib.registry.AlmostManager;
 import com.github.almostreliable.lib.registry.RegisterCallback;
 import com.github.almostreliable.lib.registry.RegistryEntry;
-import com.github.almostreliable.lib.registry.AlmostManager;
 import net.minecraft.client.renderer.blockentity.BlockEntityRenderer;
 import net.minecraft.client.renderer.blockentity.BlockEntityRendererProvider;
 import net.minecraft.core.BlockPos;
@@ -24,8 +24,7 @@ import java.util.function.Supplier;
 import java.util.stream.Collectors;
 
 public class BlockEntityBuilder<BE extends BlockEntity>
-        extends AbstractEntryBuilder<BlockEntityType<BE>, BlockEntityType<?>, BlockEntityBuilder<BE>>
-        implements PostRegisterListener<BlockEntityType<BE>> {
+        extends AbstractEntryBuilder<BlockEntityType<BE>, BlockEntityType<?>, BlockEntityBuilder<BE>> {
 
     private final BiFunction<BlockPos, BlockState, BE> factory;
     @Nullable
@@ -87,13 +86,11 @@ public class BlockEntityBuilder<BE extends BlockEntity>
     }
 
     @Override
-    public void onPostRegister(RegistryEntry<BlockEntityType<BE>> registryEntry) {
+    public void onRegister(RegistryEntry<BlockEntityType<BE>> registryEntry) {
         if (rendererProvider != null) {
-            manager.onClientInit(clientManager -> {
+            manager.addOnClientInit(clientManager -> {
                 clientManager.registerBlockEntityRenderer(registryEntry.get(), rendererProvider.get());
             });
-//            var renderer = rendererProvider.get()
-//            manager.registerRenderer(Utils.cast(registryEntry), Utils.cast(rendererProvider));
         }
     }
 }

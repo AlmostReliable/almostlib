@@ -2,7 +2,6 @@ package com.github.almostreliable.lib.registry.builders;
 
 import com.github.almostreliable.lib.Utils;
 import com.github.almostreliable.lib.datagen.BlockStateProvider;
-import com.github.almostreliable.lib.datagen.DataGeneratorManager;
 import com.github.almostreliable.lib.registry.AlmostManager;
 import com.github.almostreliable.lib.registry.RegisterCallback;
 import com.github.almostreliable.lib.registry.RegistryEntry;
@@ -22,8 +21,7 @@ import java.util.function.*;
 
 @SuppressWarnings("UnusedReturnValue")
 public class BlockBuilder<B extends Block, I extends BlockItem>
-        extends AbstractEntryBuilder<B, Block, BlockBuilder<B, I>>
-        implements PostRegisterListener<B> {
+        extends AbstractEntryBuilder<B, Block, BlockBuilder<B, I>> {
     protected final Function<BlockBehaviour.Properties, B> factory;
     protected BlockBehaviour.Properties properties;
     protected boolean noItem;
@@ -178,15 +176,15 @@ public class BlockBuilder<B extends Block, I extends BlockItem>
     }
 
     @Override
-    public void onDataGen(RegistryEntry<B> registryEntry, DataGeneratorManager dataGenManager) {
-        super.onDataGen(registryEntry, dataGenManager);
-        if (blockstateGeneratorCallback != null) {
-            blockstateGeneratorCallback.accept(registryEntry, dataGenManager.getBlockStateProvider());
-        }
-    }
+    public void onRegister(RegistryEntry<B> registryEntry) {
+        super.onRegister(registryEntry);
 
-    @Override
-    public void onPostRegister(RegistryEntry<B> registryEntry) {
+        if (blockstateGeneratorCallback != null) {
+            manager.addOnDataGen(dataGenManager -> {
+                blockstateGeneratorCallback.accept(registryEntry, dataGenManager.getBlockStateProvider());
+            });
+        }
+
         if (!noItem) {
             ItemBuilder<I> itemBuilder = new ItemBuilder<I>(name,
                     properties1 -> Utils.cast(new BlockItem(registryEntry.get(), properties1)),

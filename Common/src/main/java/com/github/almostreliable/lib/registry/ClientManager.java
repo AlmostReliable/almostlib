@@ -17,21 +17,7 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.function.Function;
 
 public abstract class ClientManager {
-    protected static final List<BlockEntityRendererHolder<?>> blockEntityRenderers = new ArrayList<>();
-    protected final Map<MenuType<?>, ScreenFactory<?, ?>> screens = new ConcurrentHashMap<>();
+    public abstract <BE extends BlockEntity> void registerBlockEntityRenderer(BlockEntityType<BE> type, Function<BlockEntityRendererProvider.Context, BlockEntityRenderer<BE>> renderer);
 
-    public <BE extends BlockEntity> void registerBlockEntityRenderer(BlockEntityType<BE> type, Function<BlockEntityRendererProvider.Context, BlockEntityRenderer<BE>> renderer) {
-        BlockEntityRendererHolder<BE> blockEntityRendererHolder = new BlockEntityRendererHolder<>(type, renderer);
-        blockEntityRenderers.add(blockEntityRendererHolder);
-    }
-
-    public <M extends AbstractContainerMenu, S extends Screen & MenuAccess<M>> void registerScreen(MenuType<? extends M> menuType, ScreenFactory<M, S> screenFactory) {
-        screens.put(menuType, screenFactory);
-    }
-
-    protected abstract void init();
-
-    protected record BlockEntityRendererHolder<BE extends BlockEntity>(
-            BlockEntityType<BE> type,
-            Function<BlockEntityRendererProvider.Context, BlockEntityRenderer<BE>> provider) {}
+    public abstract <M extends AbstractContainerMenu, S extends Screen & MenuAccess<M>> void registerScreen(MenuType<? extends M> menuType, ScreenFactory<M, S> screenFactory);
 }

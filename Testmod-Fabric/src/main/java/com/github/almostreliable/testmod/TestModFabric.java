@@ -8,12 +8,12 @@ import net.fabricmc.fabric.api.datagen.v1.FabricDataGenerator;
 public class TestModFabric implements ModInitializer, ClientModInitializer, DataGeneratorEntrypoint {
     @Override
     public void onInitialize() {
-        TestModCommon.MANAGER.init();
+        TestModCommon.MANAGER.registerManager();
     }
 
     @Override
     public void onInitializeClient() {
-        TestModCommon.MANAGER.initClient();
+        TestModCommon.MANAGER.registerClientManager();
     }
 
     @Override

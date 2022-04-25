@@ -1,6 +1,5 @@
 package com.github.almostreliable.lib.registry.builders;
 
-import com.github.almostreliable.lib.datagen.DataGeneratorManager;
 import com.github.almostreliable.lib.datagen.ItemModelProvider;
 import com.github.almostreliable.lib.registry.AlmostManager;
 import com.github.almostreliable.lib.registry.RegisterCallback;
@@ -147,10 +146,12 @@ public class ItemBuilder<I extends Item> extends AbstractEntryBuilder<I, Item, I
     }
 
     @Override
-    public void onDataGen(RegistryEntry<I> registryEntry, DataGeneratorManager dataGenManager) {
-        super.onDataGen(registryEntry, dataGenManager);
-        itemModelGenerators.forEach(consumer -> {
-            consumer.accept(registryEntry, dataGenManager.getItemModelProvider());
+    public void onRegister(RegistryEntry<I> registryEntry) {
+        super.onRegister(registryEntry);
+        manager.addOnDataGen(dataGenManager -> {
+            itemModelGenerators.forEach(consumer -> {
+                consumer.accept(registryEntry, dataGenManager.getItemModelProvider());
+            });
         });
     }
 }
