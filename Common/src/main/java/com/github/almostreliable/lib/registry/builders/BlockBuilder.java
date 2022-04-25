@@ -3,13 +3,16 @@ package com.github.almostreliable.lib.registry.builders;
 import com.github.almostreliable.lib.Utils;
 import com.github.almostreliable.lib.datagen.BlockStateProvider;
 import com.github.almostreliable.lib.datagen.LootTableProvider;
+import com.github.almostreliable.lib.datagen.TagsProvider;
 import com.github.almostreliable.lib.registry.AlmostManager;
 import com.github.almostreliable.lib.registry.RegisterCallback;
 import com.github.almostreliable.lib.registry.RegistryEntry;
 import net.minecraft.core.Registry;
 import net.minecraft.resources.ResourceKey;
+import net.minecraft.tags.TagKey;
 import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.item.CreativeModeTab;
+import net.minecraft.world.item.Item;
 import net.minecraft.world.level.ItemLike;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.SoundType;
@@ -19,13 +22,18 @@ import net.minecraft.world.level.material.MaterialColor;
 import net.minecraft.world.level.storage.loot.LootTable;
 
 import javax.annotation.Nullable;
+import java.util.Arrays;
+import java.util.HashSet;
 import java.util.Objects;
+import java.util.Set;
 import java.util.function.*;
 
 @SuppressWarnings("UnusedReturnValue")
 public class BlockBuilder<B extends Block, I extends BlockItem>
         extends AbstractEntryBuilder<B, Block, BlockBuilder<B, I>> {
     protected final Function<BlockBehaviour.Properties, B> factory;
+    private final Set<TagKey<Block>> blockTags = new HashSet<>();
+    private final Set<TagKey<Item>> itemTags = new HashSet<>();
     protected BlockBehaviour.Properties properties;
     protected boolean noItem;
     protected Consumer<ItemBuilder<I>> itemBuilderConsumer;
@@ -184,6 +192,18 @@ public class BlockBuilder<B extends Block, I extends BlockItem>
         return this;
     }
 
+    @SafeVarargs
+    public final BlockBuilder<B, I> blockTags(TagKey<Block>... tags) {
+        blockTags.addAll(Arrays.asList(tags));
+        return this;
+    }
+
+    @SafeVarargs
+    public final BlockBuilder<B, I> itemTags(TagKey<Item>... tags) {
+        itemTags.addAll(Arrays.asList(tags));
+        return this;
+    }
+
     public BlockBuilder<B, I> defaultLang(String value) {
         return lang(Block::getDescriptionId, $ -> value);
     }
@@ -206,17 +226,20 @@ public class BlockBuilder<B extends Block, I extends BlockItem>
     public void onRegister(RegistryEntry<B> registryEntry) {
         super.onRegister(registryEntry);
 
-        if (blockstateGeneratorCallback != null) {
-            manager.addOnDataGen(dataGenManager -> {
+        manager.addOnDataGen(dataGenManager -> {
+            if (blockstateGeneratorCallback != null) {
                 blockstateGeneratorCallback.accept(registryEntry, dataGenManager.getBlockStateProvider());
-            });
-        }
+            }
 
-        if (lootTableCallback != null) {
-            manager.addOnDataGen(dataGenManager -> {
+            if (lootTableCallback != null) {
                 lootTableCallback.accept(registryEntry.get(), dataGenManager.getLootTableProvider());
-            });
-        }
+            }
+
+            TagsProvider<Block> tagsProvider = dataGenManager.getTagsProvider(Registry.BLOCK);
+            for (TagKey<Block> blockTag : blockTags) {
+                tagsProvider.tag(blockTag).add(registryEntry.get());
+            }
+        });
 
         if (!noItem) {
             ItemBuilder<I> itemBuilder = new ItemBuilder<I>(name,
@@ -225,6 +248,7 @@ public class BlockBuilder<B extends Block, I extends BlockItem>
                     registerCallback)
                     .defaultBlockItemModel(registryEntry)
                     .tab(creativeTab == null ? CreativeModeTab.TAB_BUILDING_BLOCKS : creativeTab);
+            itemTags.forEach(itemBuilder::tags);
             itemBuilder.register();
         }
     }

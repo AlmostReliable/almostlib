@@ -1,0 +1,5 @@
+accessWidener v1 named
+# AW/AT must be duplicated for the loaders too, if they are not already modified.
+
+accessible method net/minecraft/data/tags/TagsProvider$TagAppender <init> (Lnet/minecraft/tags/Tag$Builder;Lnet/minecraft/core/Registry;Ljava/lang/String;)V
+accessible field net/minecraft/data/tags/TagsProvider builders Ljava/util/Map;

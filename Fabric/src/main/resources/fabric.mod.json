@@ -18,20 +18,12 @@
   "entrypoints": {
     "main": [
       "com.github.almostreliable.lib.AlmostLibFabric"
-    ],
-    "client": [
-      "com.github.almostreliable.lib.AlmostLibFabric"
-    ],
-    "fabric-gametest": [
-      "com.github.almostreliable.testmod.RegistryGameTest"
-    ],
-    "fabric-datagen": [
-      "com.github.almostreliable.lib.AlmostLibFabric"
     ]
   },
   "mixins": [
     "almostlib.mixins.json"
   ],
+  "accessWidener": "almostlib.accesswidener",
   "depends": {
     "fabric": "*",
     "minecraft": ">=${minecraft_version}",

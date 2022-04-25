@@ -11,6 +11,7 @@ import net.minecraft.data.models.blockstates.VariantProperties;
 import net.minecraft.data.models.model.ModelTemplates;
 import net.minecraft.data.models.model.TextureMapping;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.tags.ItemTags;
 import net.minecraft.world.inventory.MenuType;
 import net.minecraft.world.item.*;
 import net.minecraft.world.level.block.Blocks;
@@ -78,6 +79,7 @@ public class TestModCommon {
             })
             .dropSelf()
             .tab(TAB)
+            .itemTags(ItemTags.CANDLES)
             .defaultLang()
             .register();
 

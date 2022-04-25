@@ -1,6 +1,7 @@
 package com.github.almostreliable.lib.registry.builders;
 
 import com.github.almostreliable.lib.datagen.ItemModelProvider;
+import com.github.almostreliable.lib.datagen.TagsProvider;
 import com.github.almostreliable.lib.registry.AlmostManager;
 import com.github.almostreliable.lib.registry.RegisterCallback;
 import com.github.almostreliable.lib.registry.RegistryEntry;
@@ -11,6 +12,7 @@ import net.minecraft.data.models.model.ModelTemplates;
 import net.minecraft.data.models.model.TextureMapping;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.tags.TagKey;
 import net.minecraft.world.food.FoodProperties;
 import net.minecraft.world.item.CreativeModeTab;
 import net.minecraft.world.item.Item;
@@ -19,9 +21,7 @@ import net.minecraft.world.item.Rarity;
 import net.minecraft.world.level.ItemLike;
 import net.minecraft.world.level.block.Block;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Objects;
+import java.util.*;
 import java.util.function.BiConsumer;
 import java.util.function.Function;
 import java.util.function.Supplier;
@@ -29,6 +29,7 @@ import java.util.function.Supplier;
 public class ItemBuilder<I extends Item> extends AbstractEntryBuilder<I, Item, ItemBuilder<I>> {
     private final Function<Item.Properties, ? extends I> factory;
     private final List<BiConsumer<RegistryEntry<I>, ItemModelProvider>> itemModelGenerators;
+    private final Set<TagKey<Item>> itemTags = new HashSet<>();
     private Item.Properties properties;
 
     public ItemBuilder(String id, Function<Item.Properties, ? extends I> factory, AlmostManager manager, RegisterCallback registerCallback) {
@@ -135,6 +136,12 @@ public class ItemBuilder<I extends Item> extends AbstractEntryBuilder<I, Item, I
         return this;
     }
 
+    @SafeVarargs
+    public final ItemBuilder<I> tags(TagKey<Item>... tags) {
+        itemTags.addAll(Arrays.asList(tags));
+        return this;
+    }
+
     @Override
     public I create() {
         return factory.apply(properties);
@@ -152,6 +159,11 @@ public class ItemBuilder<I extends Item> extends AbstractEntryBuilder<I, Item, I
             itemModelGenerators.forEach(consumer -> {
                 consumer.accept(registryEntry, dataGenManager.getItemModelProvider());
             });
+
+            TagsProvider<Item> tagsProvider = dataGenManager.getTagsProvider(Registry.ITEM);
+            for (TagKey<Item> tag : itemTags) {
+                tagsProvider.tag(tag).add(registryEntry.get());
+            }
         });
     }
 }
