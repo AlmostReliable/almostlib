@@ -37,7 +37,7 @@ minecraft {
 
         data {
             taskName 'Data'
-            args '--mod', testmod_id, '--all', '--output', file('src/generated/resources/'), '--existing', file('src/main/resources/')
+            args '--mod', testmod_id, '--all', '--output', file('../Testmod-Common/src/generated/resources/'), '--existing', file('../Testmod-Common/src/main/resources/')
         }
 
         configureEach {
