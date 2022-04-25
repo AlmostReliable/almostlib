@@ -29,6 +29,7 @@ public class TestModCommon {
             .itemSword("dummy_sword", Tiers.GOLD, 3, 1, SwordItem::new)
             .durability(3)
             .tab(CreativeModeTab.TAB_COMBAT)
+            .defaultLang()
             .register();
 
     public static final RegistryEntry<TestBlock> TEST_BLOCK = MANAGER
@@ -44,6 +45,7 @@ public class TestModCommon {
                                 VariantProperties.MODEL, location));
                 provider.addBlockState(generator);
             })
+            .defaultLang()
             .register();
 
     public static final RegistryEntry<BlockItem> TEST_BLOCK_ITEM = MANAGER.getLink(Registry.ITEM_REGISTRY, TEST_BLOCK);

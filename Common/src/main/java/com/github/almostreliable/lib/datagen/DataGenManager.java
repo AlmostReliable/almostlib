@@ -1,9 +1,6 @@
 package com.github.almostreliable.lib.datagen;
 
-import com.github.almostreliable.lib.registry.RegistryEntry;
 import net.minecraft.data.DataGenerator;
-
-import java.util.function.BiConsumer;
 
 public class DataGenManager {
     private final BlockStateProvider blockStateProvider;
@@ -30,20 +27,7 @@ public class DataGenManager {
 
     public void collectDataProvider(DataGenerator dataGenerator) {
         dataGenerator.addProvider(blockStateProvider);
+        dataGenerator.addProvider(langProvider);
+        dataGenerator.addProvider(itemModelProvider);
     }
-
-    public static class Entry<T> {
-        private final RegistryEntry<T> registryEntry;
-        private final BiConsumer<RegistryEntry<T>, DataGenManager> callback;
-
-        public Entry(RegistryEntry<T> registryEntry, BiConsumer<RegistryEntry<T>, DataGenManager> callback) {
-            this.registryEntry = registryEntry;
-            this.callback = callback;
-        }
-
-        public void invoke(DataGenManager dataGenManager) {
-            callback.accept(registryEntry, dataGenManager);
-        }
-    }
-
 }

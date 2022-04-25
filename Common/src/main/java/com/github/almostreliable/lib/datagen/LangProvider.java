@@ -1,9 +1,12 @@
 package com.github.almostreliable.lib.datagen;
 
+import com.google.gson.JsonObject;
 import net.minecraft.data.DataGenerator;
+import net.minecraft.data.DataProvider;
 import net.minecraft.data.HashCache;
 
 import java.io.IOException;
+import java.nio.file.Path;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -17,7 +20,9 @@ public class LangProvider extends AbstractDataProvider {
 
     @Override
     public void run(HashCache var1) throws IOException {
-
+        JsonObject data = new JsonObject();
+        langs.forEach(data::addProperty);
+        DataProvider.save(GSON, var1, data, getLangPath("en_us"));
     }
 
     public void addLang(String key, String value) {
@@ -27,4 +32,9 @@ public class LangProvider extends AbstractDataProvider {
 
         langs.put(key, value);
     }
+
+    private Path getLangPath(String lang) {
+        return getAssetsPath().resolve(modId + "/lang/" + lang + ".json");
+    }
+
 }
