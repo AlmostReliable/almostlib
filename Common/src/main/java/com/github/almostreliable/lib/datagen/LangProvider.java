@@ -7,8 +7,7 @@ import net.minecraft.data.HashCache;
 
 import java.io.IOException;
 import java.nio.file.Path;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.*;
 
 public class LangProvider extends AbstractDataProvider {
     private final Map<String, String> langs;
@@ -21,7 +20,9 @@ public class LangProvider extends AbstractDataProvider {
     @Override
     public void run(HashCache var1) throws IOException {
         JsonObject data = new JsonObject();
-        langs.forEach(data::addProperty);
+        SortedMap<String, String> sorted = new TreeMap<>(Comparator.naturalOrder());
+        sorted.putAll(langs);
+        sorted.forEach(data::addProperty);
         DataProvider.save(GSON, var1, data, getLangPath("en_us"));
     }
 

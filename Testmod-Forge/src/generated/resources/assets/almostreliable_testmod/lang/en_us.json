@@ -1,9 +1,9 @@
 {
-  "item.almostreliable_testmod.dummy_sword": "Dummy Sword",
-  "item.almostreliable_testmod.dummy_shovel": "Dummy Shovel",
-  "itemGroup.almostreliable_testmod.items": "Test Items",
   "block.almostreliable_testmod.test_block": "Test Block",
-  "item.almostreliable_testmod.dummy_pickaxe": "Dummy Pickaxe",
   "item.almostreliable_testmod.dummy_axe": "Dummy Axe",
-  "item.almostreliable_testmod.dummy_hoe": "Dummy Hoe"
+  "item.almostreliable_testmod.dummy_hoe": "Dummy Hoe",
+  "item.almostreliable_testmod.dummy_pickaxe": "Dummy Pickaxe",
+  "item.almostreliable_testmod.dummy_shovel": "Dummy Shovel",
+  "item.almostreliable_testmod.dummy_sword": "Dummy Sword",
+  "itemGroup.almostreliable_testmod.items": "Test Items"
 }
