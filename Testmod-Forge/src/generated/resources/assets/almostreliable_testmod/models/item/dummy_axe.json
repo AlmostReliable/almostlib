@@ -1,0 +1,6 @@
+{
+  "parent": "minecraft:item/handheld",
+  "textures": {
+    "layer0": "almostreliable_testmod:item/dummy_axe"
+  }
+}

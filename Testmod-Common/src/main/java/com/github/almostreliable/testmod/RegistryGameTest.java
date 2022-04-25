@@ -5,7 +5,7 @@ import com.github.almostreliable.lib.registry.RegistryEntry;
 import net.minecraft.gametest.framework.GameTest;
 import net.minecraft.gametest.framework.GameTestHelper;
 
-@AlmostGameTest(TestModCommon.MODID)
+@AlmostGameTest(TestModCommon.MOD_ID)
 public class RegistryGameTest {
     public static final String EMPTY_STRUCTURE = "almostlib:empty_structure";
 

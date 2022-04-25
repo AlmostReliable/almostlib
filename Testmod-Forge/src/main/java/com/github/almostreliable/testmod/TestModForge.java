@@ -4,7 +4,7 @@ import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
 import net.minecraftforge.forge.event.lifecycle.GatherDataEvent;
 
-@Mod(TestModCommon.MODID)
+@Mod(TestModCommon.MOD_ID)
 public class TestModForge {
     public TestModForge() {
         TestModCommon.MANAGER.registerManager();

@@ -53,7 +53,22 @@ public abstract class AlmostManager {
         return this.namespace;
     }
 
+    public CreativeModeTab tab(String id, Supplier<ItemStack> iconSupplier) {
+        return AlmostLib.INSTANCE.createCreativeTab(new ResourceLocation(namespace, id), iconSupplier);
+    }
+
+    public CreativeModeTab tab(String id, String translation, Supplier<ItemStack> iconSupplier) {
+        addOnDataGen(manager -> {
+            manager.getLangProvider().addLang("itemGroup." + namespace + "." + id, translation);
+        });
+        return AlmostLib.INSTANCE.createCreativeTab(new ResourceLocation(namespace, id), iconSupplier);
+    }
+
     public <I extends SwordItem> ItemBuilder<I> itemSword(String id, Tier tier, int atkDamage, int atkSpeed, Function4<Tier, Integer, Integer, Item.Properties, I> factory) {
+        return item(id, properties -> factory.apply(tier, atkDamage, atkSpeed, properties));
+    }
+
+    public <I extends DiggerItem> ItemBuilder<I> itemTool(String id, Tier tier, int atkDamage, int atkSpeed, Function4<Tier, Integer, Integer, Item.Properties, I> factory) {
         return item(id, properties -> factory.apply(tier, atkDamage, atkSpeed, properties));
     }
 
