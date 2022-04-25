@@ -147,6 +147,14 @@ public abstract class AlmostManager {
         return Utils.nullableCast(delegate.find(new ResourceLocation(getNamespace(), id)));
     }
 
+    /**
+     * Get the linked entry from a different registry. Can be used to find the corresponding {@link BlockItem} for a {@link Block}.
+     * Matching links is based on entry id.
+     *
+     * @param resourceKey the registry to lookup
+     * @param link        the linked entry to use for the lookup
+     * @return the entry which matches the link
+     */
     public <E1 extends BASE, E2, BASE> RegistryEntry<E1> getLink(ResourceKey<Registry<BASE>> resourceKey, RegistryEntry<E2> link) {
         RegistryDelegate<?> delegate = registries.get(resourceKey);
         if (delegate == null) {
@@ -162,18 +170,33 @@ public abstract class AlmostManager {
         return Utils.cast(registryEntry);
     }
 
+    /**
+     * Register consumer to be called when client is initialized.
+     *
+     * @param consumer consumer to be called
+     */
     public void addOnClientInit(Consumer<ClientManager> consumer) {
         if (clientConsumers != null) {
             clientConsumers.add(consumer);
         }
     }
 
+    /**
+     * Register consumer to be called when data gen happens
+     *
+     * @param consumer consumer to be called
+     */
     public void addOnDataGen(Consumer<DataGenManager> consumer) {
         if (datagenConsumers != null) {
             datagenConsumers.add(consumer);
         }
     }
 
+    /**
+     * Fabric: Call this in your "onInitialize" by implementing ModInitializer.
+     * <p>
+     * Forge: Call this in your mod constructor. The manager will register the events automatically.
+     */
     public void registerManager() {
         List<ResourceKey<?>> priority = List.of(
                 Registry.BLOCK_REGISTRY,
@@ -201,8 +224,20 @@ public abstract class AlmostManager {
         }
     }
 
+    /**
+     * Fabric: Call this in your "onInitializeClient" by implementing ClientModInitializer.
+     * <p>
+     * Forge: Call this in your mod constructor. The manager will register the events automatically.
+     */
     public abstract void registerClientManager();
 
+    /**
+     * Fabric: Call this in your "onInitializeDataGenerator" by implementing DataGeneratorEntrypoint.
+     * <p>
+     * Forge: Call this in your "GatherDataEvent" event.
+     *
+     * @param dataGenerator The data generator to use
+     */
     public void registerDataGen(DataGenerator dataGenerator) {
         Objects.requireNonNull(datagenConsumers, "registerDataGen was called outside of the data gen environment");
         DataGenManager dataGenManager = new DataGenManager(getNamespace(), dataGenerator);
