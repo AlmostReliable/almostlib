@@ -12,6 +12,7 @@ import net.minecraft.data.models.model.ModelTemplates;
 import net.minecraft.data.models.model.TextureMapping;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.tags.ItemTags;
+import net.minecraft.tags.TagKey;
 import net.minecraft.world.inventory.MenuType;
 import net.minecraft.world.item.*;
 import net.minecraft.world.level.block.Blocks;
@@ -22,6 +23,8 @@ public class TestModCommon {
     public static final String MOD_ID = "almostreliable_testmod";
     public static final AlmostManager MANAGER = AlmostLib.INSTANCE.createManager(MOD_ID);
     public static final CreativeModeTab TAB = MANAGER.tab("items", "Test Items", () -> new ItemStack(Blocks.ANVIL));
+
+    public static final TagKey<Item> TEST_TAG = TagKey.create(Registry.ITEM_REGISTRY, new ResourceLocation(MOD_ID, "test_tag"));
 
     public static final RegistryEntry<CompassItem> DUMMY_ITEM = MANAGER
             .item("dummy_item", CompassItem::new)
@@ -36,6 +39,7 @@ public class TestModCommon {
             .tab(TAB)
             .defaultLang()
             .defaultHandheldModel()
+            .tags(TEST_TAG)
             .register();
 
     public static final RegistryEntry<ToolItems.ShovelItem> DUMMY_SHOVEL = MANAGER
