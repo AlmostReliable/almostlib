@@ -55,7 +55,8 @@ public class AlmostLibForgeImpl implements AlmostLib {
 
     @Override
     public CreativeModeTab createCreativeTab(ResourceLocation location, Supplier<ItemStack> supplier) {
-        return new CreativeModeTab(location.toString()) {
+        String string = String.format("%s.%s", location.getNamespace(), location.getPath());
+        return new CreativeModeTab(string) {
             @Override
             public ItemStack makeIcon() {
                 return supplier.get();

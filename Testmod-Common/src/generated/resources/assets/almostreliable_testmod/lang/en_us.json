@@ -5,5 +5,5 @@
   "item.almostreliable_testmod.dummy_pickaxe": "Dummy Pickaxe",
   "item.almostreliable_testmod.dummy_shovel": "Dummy Shovel",
   "item.almostreliable_testmod.dummy_sword": "Dummy Sword",
-  "itemGroup.almostreliable_testmod.items": "Test Items"
+  "itemGroup.almostreliable_testmod.testmoditems": "Testmod Items"
 }

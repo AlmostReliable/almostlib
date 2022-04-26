@@ -22,7 +22,7 @@ import net.minecraft.world.level.material.Material;
 public class TestModCommon {
     public static final String MOD_ID = "almostreliable_testmod";
     public static final AlmostManager MANAGER = AlmostLib.INSTANCE.createManager(MOD_ID);
-    public static final CreativeModeTab TAB = MANAGER.tab("items", "Test Items", () -> new ItemStack(Blocks.ANVIL));
+    public static final CreativeModeTab TAB = MANAGER.tab("Testmod Items", () -> new ItemStack(Blocks.ANVIL));
 
     public static final TagKey<Item> TEST_TAG = TagKey.create(Registry.ITEM_REGISTRY, new ResourceLocation(MOD_ID, "test_tag"));
 
