@@ -23,10 +23,22 @@ minecraft {
     runs {
         client {
             taskName 'Client'
+            mods {
+                "${mod_id}" {
+                    source sourceSets.main
+                    source project(":Common").sourceSets.main
+                }
+            }
         }
 
         server {
             taskName 'Server'
+            mods {
+                "${mod_id}" {
+                    source sourceSets.main
+                    source project(":Common").sourceSets.main
+                }
+            }
         }
 
         configureEach {
@@ -35,12 +47,6 @@ minecraft {
             property 'forge.logging.console.level', 'debug'
             property 'mixin.env.remapRefMap', 'true'
             property 'mixin.env.refMapRemappingFile', "${projectDir}/build/createSrgToMcp/output.srg"
-            mods {
-                "${mod_id}" {
-                    source sourceSets.main
-                    source project(":Common").sourceSets.main
-                }
-            }
         }
     }
 }
@@ -50,13 +56,13 @@ sourceSets.main.resources.srcDir 'src/generated/resources'
 mixin {
     add sourceSets.main, "${mod_id}.refmap.json"
     config "${mod_id}-forge.mixins.json"
+    config "${mod_id}-common.mixins.json"
 }
 
 dependencies {
     minecraft "net.minecraftforge:forge:${minecraft_version}-${forge_version}"
     compileOnly project(":Common")
     annotationProcessor "org.spongepowered:mixin:${mixin_version}:processor"
-
 }
 
 tasks.withType(JavaCompile) {
@@ -66,7 +72,6 @@ tasks.withType(JavaCompile) {
 processResources {
     from project(":Common").sourceSets.main.resources
 }
-
 
 jar.finalizedBy('reobfJar')
 

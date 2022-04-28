@@ -6,6 +6,8 @@ subprojects {
     java.withSourcesJar()
     java.withJavadocJar()
 
+    version = "${mod_version}" // TODO add build number
+
     jar {
         manifest {
             attributes([

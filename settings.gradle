@@ -14,7 +14,4 @@ pluginManagement {
 
 rootProject.name = 'AlmostReliableLib'
 include("Common", "Fabric", "Forge")
-include 'Testmod-Fabric'
-include 'Testmod-Common'
-include 'Testmod-Forge'
 

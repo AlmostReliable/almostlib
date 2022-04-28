@@ -17,11 +17,12 @@
   "environment": "*",
   "entrypoints": {
     "main": [
-      "com.github.almostreliable.lib.AlmostLibFabric"
+      "com.almostreliable.lib.AlmostLibFabric"
     ]
   },
   "mixins": [
-    "almostlib.mixins.json"
+    "almostlib.mixins.json",
+    "almostlib-common.mixins.json"
   ],
   "accessWidener": "almostlib.accesswidener",
   "depends": {
