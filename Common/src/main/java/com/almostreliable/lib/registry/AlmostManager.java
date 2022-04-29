@@ -1,14 +1,17 @@
 package com.almostreliable.lib.registry;
 
+import com.almostreliable.lib.AlmostLib;
+import com.almostreliable.lib.Platform;
 import com.almostreliable.lib.Utils;
 import com.almostreliable.lib.client.MenuFactory;
 import com.almostreliable.lib.client.ScreenFactory;
 import com.almostreliable.lib.datagen.DataGenManager;
+import com.almostreliable.lib.registry.builders.BlockBuilder;
 import com.almostreliable.lib.registry.builders.BlockEntityBuilder;
 import com.almostreliable.lib.registry.builders.ItemBuilder;
-import com.almostreliable.lib.AlmostLib;
-import com.almostreliable.lib.registry.builders.BlockBuilder;
 import com.almostreliable.lib.registry.builders.RegistryEntryBuilder;
+import com.google.common.collect.ArrayListMultimap;
+import com.google.common.collect.Multimap;
 import com.mojang.datafixers.util.Function4;
 import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
 import net.minecraft.core.BlockPos;
@@ -16,6 +19,8 @@ import net.minecraft.core.Registry;
 import net.minecraft.data.DataGenerator;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.tags.TagKey;
+import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.inventory.AbstractContainerMenu;
 import net.minecraft.world.inventory.MenuType;
 import net.minecraft.world.item.*;
@@ -34,11 +39,12 @@ import java.util.function.Function;
 import java.util.function.Supplier;
 
 public abstract class AlmostManager {
+    public static final String ALMOST_DATAGEN_PLATFORM = "almost.datagen.platform";
     protected final LinkedHashMap<ResourceKey<?>, RegistryDelegate<?>> registries = new LinkedHashMap<>();
     @Nullable
     protected final List<Consumer<ClientManager>> clientConsumers;
     @Nullable
-    protected final List<Consumer<DataGenManager>> datagenConsumers;
+    protected final Multimap<Enum<Platform>, Consumer<DataGenManager>> datagenConsumers;
 
     private final String namespace;
 
@@ -46,7 +52,7 @@ public abstract class AlmostManager {
         this.namespace = namespace;
         AlmostLib.LOG.info("AlmostManager created for '{}'", namespace);
         clientConsumers = AlmostLib.INSTANCE.isClient() ? new ArrayList<>() : null;
-        datagenConsumers = AlmostLib.INSTANCE.isDataGenEnabled() ? new ArrayList<>() : null;
+        datagenConsumers = AlmostLib.INSTANCE.isDataGenEnabled() ? ArrayListMultimap.create() : null;
     }
 
     public String getNamespace() {
@@ -54,7 +60,7 @@ public abstract class AlmostManager {
     }
 
     public CreativeModeTab tab(String translation, Supplier<ItemStack> iconSupplier) {
-        String translationKey = translation.toLowerCase(Locale.ENGLISH).replaceAll("\\s+",  "");
+        String translationKey = translation.toLowerCase(Locale.ENGLISH).replaceAll("\\s+", "");
         addOnDataGen(manager -> {
             manager.getLangProvider().addLang("itemGroup." + namespace + "." + translationKey, translation);
         });
@@ -105,6 +111,21 @@ public abstract class AlmostManager {
         }, screenFactory);
     }
 
+    public TagKey<Item> createItemTag(String tag) {
+        return createTag(Registry.ITEM_REGISTRY, tag);
+    }
+
+    public TagKey<Block> createBlockTag(String tag) {
+        return createTag(Registry.BLOCK_REGISTRY, tag);
+    }
+
+    public TagKey<EntityType<?>> createEntityTag(String tag) {
+        return createTag(Registry.ENTITY_TYPE_REGISTRY, tag);
+    }
+
+    public <T> TagKey<T> createTag(ResourceKey<? extends Registry<T>> resourceKey, String tag) {
+        return TagKey.create(resourceKey, new ResourceLocation(namespace, tag));
+    }
 
     public <M extends AbstractContainerMenu, S extends AbstractContainerScreen<M>, BE extends BlockEntity> RegistryEntry<MenuType<M>> menuBlockEntity(String id,
                                                                                                                                                       MenuFactory.ForBlockEntity<M, BE> menuFactory,
@@ -196,11 +217,23 @@ public abstract class AlmostManager {
     /**
      * Register consumer to be called when data gen happens
      *
+     * @param platform the platform to register for
+     * @param consumer consumer to be called
+     */
+    public void addOnDataGen(Platform platform, Consumer<DataGenManager> consumer) {
+        if (datagenConsumers != null) {
+            datagenConsumers.put(platform, consumer);
+        }
+    }
+
+    /**
+     * Register consumer to be called when data gen happens
+     *
      * @param consumer consumer to be called
      */
     public void addOnDataGen(Consumer<DataGenManager> consumer) {
         if (datagenConsumers != null) {
-            datagenConsumers.add(consumer);
+            datagenConsumers.put(Platform.COMMON, consumer);
         }
     }
 
@@ -253,7 +286,28 @@ public abstract class AlmostManager {
     public void registerDataGen(DataGenerator dataGenerator) {
         Objects.requireNonNull(datagenConsumers, "registerDataGen was called outside of the data gen environment");
         DataGenManager dataGenManager = new DataGenManager(getNamespace(), dataGenerator);
-        datagenConsumers.forEach(consumer -> consumer.accept(dataGenManager));
+
+        String property = System.getProperty(ALMOST_DATAGEN_PLATFORM);
+        Platform platform = switch (property != null ? property : "common") {
+            case "common" -> Platform.COMMON;
+            case "fabric" -> Platform.FABRIC;
+            case "forge" -> Platform.FORGE;
+            default -> throw new IllegalStateException("Unknown platform: " + property);
+        };
+
+        switch (platform) {
+            case FABRIC -> {
+                datagenConsumers.get(Platform.FABRIC).forEach(consumer -> consumer.accept(dataGenManager));
+                datagenConsumers.get(Platform.LOADER).forEach(consumer -> consumer.accept(dataGenManager));
+            }
+            case FORGE -> {
+                datagenConsumers.get(Platform.FORGE).forEach(consumer -> consumer.accept(dataGenManager));
+                datagenConsumers.get(Platform.LOADER).forEach(consumer -> consumer.accept(dataGenManager));
+            }
+            case COMMON -> datagenConsumers.get(Platform.COMMON).forEach(consumer -> consumer.accept(dataGenManager));
+        }
+
         dataGenManager.collectDataProvider(dataGenerator);
     }
+
 }

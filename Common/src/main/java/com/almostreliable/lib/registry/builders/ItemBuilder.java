@@ -1,10 +1,11 @@
 package com.almostreliable.lib.registry.builders;
 
-import com.almostreliable.lib.datagen.TagsProvider;
-import com.almostreliable.lib.registry.RegistryEntry;
+import com.almostreliable.lib.Platform;
 import com.almostreliable.lib.datagen.ItemModelProvider;
+import com.almostreliable.lib.datagen.TagsProvider;
 import com.almostreliable.lib.registry.AlmostManager;
 import com.almostreliable.lib.registry.RegisterCallback;
+import com.almostreliable.lib.registry.RegistryEntry;
 import com.google.gson.JsonObject;
 import net.minecraft.core.Registry;
 import net.minecraft.data.models.model.ModelTemplate;
@@ -159,7 +160,9 @@ public class ItemBuilder<I extends Item> extends AbstractEntryBuilder<I, Item, I
             itemModelGenerators.forEach(consumer -> {
                 consumer.accept(registryEntry, dataGenManager.getItemModelProvider());
             });
+        });
 
+        manager.addOnDataGen(Platform.LOADER, dataGenManager -> {
             TagsProvider<Item> tagsProvider = dataGenManager.getTagsProvider(Registry.ITEM);
             for (TagKey<Item> tag : itemTags) {
                 tagsProvider.tag(tag).add(registryEntry.get());

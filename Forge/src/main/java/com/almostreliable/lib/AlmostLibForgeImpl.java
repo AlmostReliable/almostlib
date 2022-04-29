@@ -4,9 +4,12 @@ import com.almostreliable.lib.client.MenuFactory;
 import com.almostreliable.lib.registry.AlmostManager;
 import com.almostreliable.lib.registry.AlmostManagerForge;
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.Registry;
 import net.minecraft.network.FriendlyByteBuf;
+import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.tags.TagKey;
 import net.minecraft.world.MenuProvider;
 import net.minecraft.world.inventory.AbstractContainerMenu;
 import net.minecraft.world.inventory.MenuType;
@@ -32,6 +35,11 @@ import java.util.function.Supplier;
 import java.util.stream.Stream;
 
 public class AlmostLibForgeImpl implements AlmostLib {
+    @Override
+    public Platform getPlatform() {
+        return Platform.FORGE;
+    }
+
     @Override
     public String getPlatformName() {
         return "Forge";
@@ -99,4 +107,8 @@ public class AlmostLibForgeImpl implements AlmostLib {
         return DatagenModLoader.isRunningDataGen();
     }
 
+    @Override
+    public <T> TagKey<T> createTag(ResourceKey<Registry<T>> resourceKey, String tag) {
+        return TagKey.create(resourceKey, new ResourceLocation("forge", tag));
+    }
 }

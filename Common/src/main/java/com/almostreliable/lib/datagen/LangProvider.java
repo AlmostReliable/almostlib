@@ -23,7 +23,10 @@ public class LangProvider extends AbstractDataProvider {
         SortedMap<String, String> sorted = new TreeMap<>(Comparator.naturalOrder());
         sorted.putAll(langs);
         sorted.forEach(data::addProperty);
-        DataProvider.save(GSON, var1, data, getLangPath("en_us"));
+
+        if (!sorted.isEmpty()) {
+            DataProvider.save(GSON, var1, data, getLangPath("en_us"));
+        }
     }
 
     public void addLang(String key, String value) {

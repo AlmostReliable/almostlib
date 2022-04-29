@@ -14,8 +14,10 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.core.Registry;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.network.chat.Component;
+import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.tags.TagKey;
 import net.minecraft.world.MenuProvider;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
@@ -35,6 +37,11 @@ import java.util.function.Supplier;
 import java.util.stream.Stream;
 
 public class AlmostLibFabricImpl implements AlmostLib {
+
+    @Override
+    public Platform getPlatform() {
+        return Platform.FABRIC;
+    }
 
     @Override
     public String getPlatformName() {
@@ -110,5 +117,11 @@ public class AlmostLibFabricImpl implements AlmostLib {
     @Override
     public boolean isDataGenEnabled() {
         return System.getProperty("fabric-api.datagen") != null;
+    }
+
+    @Override
+    public <T> TagKey<T> createTag(ResourceKey<Registry<T>> resourceKey, String tag) {
+        return TagKey.create(resourceKey, new ResourceLocation("c", tag));
+
     }
 }

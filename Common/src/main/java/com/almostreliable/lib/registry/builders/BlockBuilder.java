@@ -1,12 +1,13 @@
 package com.almostreliable.lib.registry.builders;
 
+import com.almostreliable.lib.Platform;
 import com.almostreliable.lib.Utils;
 import com.almostreliable.lib.datagen.BlockStateProvider;
+import com.almostreliable.lib.datagen.LootTableProvider;
 import com.almostreliable.lib.datagen.TagsProvider;
 import com.almostreliable.lib.registry.AlmostManager;
-import com.almostreliable.lib.registry.RegistryEntry;
-import com.almostreliable.lib.datagen.LootTableProvider;
 import com.almostreliable.lib.registry.RegisterCallback;
+import com.almostreliable.lib.registry.RegistryEntry;
 import net.minecraft.core.Registry;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.tags.TagKey;
@@ -234,7 +235,9 @@ public class BlockBuilder<B extends Block, I extends BlockItem>
             if (lootTableCallback != null) {
                 lootTableCallback.accept(registryEntry.get(), dataGenManager.getLootTableProvider());
             }
+        });
 
+        manager.addOnDataGen(Platform.LOADER, dataGenManager -> {
             TagsProvider<Block> tagsProvider = dataGenManager.getTagsProvider(Registry.BLOCK);
             for (TagKey<Block> blockTag : blockTags) {
                 tagsProvider.tag(blockTag).add(registryEntry.get());

@@ -6,7 +6,7 @@ subprojects {
     java.withSourcesJar()
     java.withJavadocJar()
 
-    version = "${mod_version}" // TODO add build number
+    version = "${mod_version}.${mod_build}" // TODO add build number
 
     jar {
         manifest {
@@ -67,8 +67,7 @@ subprojects {
                 mod_description     : mod_description,
                 forge_loader_version: forge_loader_version,
                 github_user         : github_user,
-                github_repo         : github_repo,
-                testmod_id          : testmod_id]
+                github_repo         : github_repo]
 
         inputs.properties replaceProperties
         replaceProperties.put 'project', project
