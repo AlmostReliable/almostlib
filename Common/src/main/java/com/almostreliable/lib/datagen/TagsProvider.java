@@ -4,6 +4,7 @@ import com.google.common.collect.Maps;
 import com.google.gson.JsonObject;
 import net.minecraft.core.Registry;
 import net.minecraft.data.DataGenerator;
+import net.minecraft.data.DataProvider;
 import net.minecraft.data.HashCache;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.tags.Tag;
@@ -38,7 +39,7 @@ public class TagsProvider<T> extends AbstractDataProvider {
             }
 
             JsonObject jsonObject = entry.getValue().serializeToJson();
-            save(GSON, hashCache, jsonObject, getTagPath(entry.getKey()));
+            DataProvider.save(GSON, hashCache, jsonObject, getTagPath(entry.getKey()));
         }
     }
 

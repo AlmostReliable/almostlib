@@ -2,6 +2,7 @@ package com.almostreliable.lib.datagen;
 
 import com.google.gson.JsonElement;
 import net.minecraft.data.DataGenerator;
+import net.minecraft.data.DataProvider;
 import net.minecraft.data.HashCache;
 import net.minecraft.resources.ResourceLocation;
 
@@ -24,7 +25,7 @@ public class ItemModelProvider extends AbstractDataProvider {
     public void run(HashCache var1) throws IOException {
         for (var entry : modelGenerators.entrySet()) {
             Path modelPath = getModelPath(entry.getKey());
-            save(GSON, var1, entry.getValue().get(), modelPath);
+            DataProvider.save(GSON, var1, entry.getValue().get(), modelPath);
         }
     }
 

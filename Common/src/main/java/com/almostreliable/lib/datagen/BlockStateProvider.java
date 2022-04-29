@@ -3,6 +3,7 @@ package com.almostreliable.lib.datagen;
 import com.google.gson.JsonElement;
 import net.minecraft.core.Registry;
 import net.minecraft.data.DataGenerator;
+import net.minecraft.data.DataProvider;
 import net.minecraft.data.HashCache;
 import net.minecraft.data.models.blockstates.BlockStateGenerator;
 import net.minecraft.resources.ResourceLocation;
@@ -30,12 +31,12 @@ public class BlockStateProvider extends AbstractDataProvider {
     public void run(HashCache var1) throws IOException {
         for (var generator : blockStateGenerators) {
             Path path = getBlockStatePath(generator);
-            save(GSON, var1, generator.get(), path);
+            DataProvider.save(GSON, var1, generator.get(), path);
         }
 
         for (var entry : modelGenerators.entrySet()) {
             Path path = getModelPath(entry.getKey());
-            save(GSON, var1, entry.getValue().get(), path);
+            DataProvider.save(GSON, var1, entry.getValue().get(), path);
         }
     }
 

@@ -2,6 +2,7 @@ package com.almostreliable.lib.datagen;
 
 import com.google.gson.JsonObject;
 import net.minecraft.data.DataGenerator;
+import net.minecraft.data.DataProvider;
 import net.minecraft.data.HashCache;
 
 import java.io.IOException;
@@ -22,7 +23,7 @@ public class LangProvider extends AbstractDataProvider {
         SortedMap<String, String> sorted = new TreeMap<>(Comparator.naturalOrder());
         sorted.putAll(langs);
         sorted.forEach(data::addProperty);
-        save(GSON, var1, data, getLangPath("en_us"));
+        DataProvider.save(GSON, var1, data, getLangPath("en_us"));
     }
 
     public void addLang(String key, String value) {
