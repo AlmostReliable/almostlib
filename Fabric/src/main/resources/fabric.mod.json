@@ -1,16 +1,16 @@
 {
   "schemaVersion": 1,
-  "id": "${mod_id}",
+  "id": "${modId}",
   "version": "${version}",
-  "name": "${mod_name}",
-  "description": "${mod_description}",
+  "name": "${modName}",
+  "description": "${modDescription}",
   "authors": [
-    "${mod_author}"
+    "${modAuthor}"
   ],
   "contact": {
-    "homepage": "https://github.com/${github_user}",
-    "sources": "https://github.com/${github_user}/${github_repo}",
-    "issues": "https://github.com/${github_user}/${github_repo}/issues"
+    "homepage": "https://github.com/${githubUser}",
+    "sources": "https://github.com/${githubUser}/${githubRepo}",
+    "issues": "https://github.com/${githubUser}/${githubRepo}/issues"
   },
   "license": "${license}",
   "icon": "assets/universalpipeline/icon.png",
@@ -27,7 +27,7 @@
   "accessWidener": "almostlib.accesswidener",
   "depends": {
     "fabric": "*",
-    "minecraft": ">=${minecraft_version}",
+    "minecraft": ">=${minecraftVersion}",
     "java": ">=17"
   }
 }

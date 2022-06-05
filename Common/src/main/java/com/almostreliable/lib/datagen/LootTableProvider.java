@@ -1,6 +1,6 @@
 package com.almostreliable.lib.datagen;
 
-import com.almostreliable.lib.AlmostLib;
+import com.almostreliable.lib.Utils;
 import com.google.common.collect.Multimap;
 import net.minecraft.data.DataGenerator;
 import net.minecraft.data.DataProvider;
@@ -39,7 +39,7 @@ public class LootTableProvider extends AbstractDataProvider {
         Multimap<String, String> problems = validation.getProblems();
         if (!problems.isEmpty()) {
             problems.forEach((s1, s2) -> {
-                AlmostLib.LOG.warn("Loot table {} has problems: {}", s1, s2);
+                Utils.LOG.warn("Loot table {} has problems: {}", s1, s2);
             });
             throw new IllegalStateException("Loot table validation failed");
         }

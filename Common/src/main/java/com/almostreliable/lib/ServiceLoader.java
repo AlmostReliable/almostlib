@@ -5,7 +5,7 @@ public class ServiceLoader {
         final T loadedService = java.util.ServiceLoader.load(clazz)
                 .findFirst()
                 .orElseThrow(() -> new NullPointerException("Failed to load service for " + clazz.getName()));
-        AlmostLib.LOG.debug("Loaded {} for service {}", loadedService, clazz);
+        Utils.LOG.debug("Loaded {} for service {}", loadedService, clazz);
         return loadedService;
     }
 }

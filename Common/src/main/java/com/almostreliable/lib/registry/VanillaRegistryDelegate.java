@@ -1,6 +1,6 @@
 package com.almostreliable.lib.registry;
 
-import com.almostreliable.lib.AlmostLib;
+import com.almostreliable.lib.Utils;
 import net.minecraft.core.Registry;
 
 public class VanillaRegistryDelegate<T> extends RegistryDelegate<T> {
@@ -13,14 +13,14 @@ public class VanillaRegistryDelegate<T> extends RegistryDelegate<T> {
     @Override
     public void init() {
         // TODO Check how to set the logger for .debug in fabric
-        AlmostLib.LOG.debug("Initialize vanilla registry {}", registry);
+        Utils.LOG.debug("Initialize vanilla registry {}", registry);
         for (var entry : entries.entrySet()) {
             RegistryEntryData<T> data = entry.getValue();
             T createdValue = data.getFactory().get();
             RegistryEntry<T> registryEntry = data.getRegistryEntry();
             registryEntry.updateReference(createdValue);
             Registry.register(registry, registryEntry.getRegistryName(), registryEntry.get());
-            AlmostLib.LOG.debug(" - Object '{}' got registered", registryEntry.getRegistryName());
+            Utils.LOG.debug(" - Object '{}' got registered", registryEntry.getRegistryName());
         }
     }
 

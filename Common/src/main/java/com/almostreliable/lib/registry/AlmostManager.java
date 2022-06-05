@@ -50,7 +50,7 @@ public abstract class AlmostManager {
 
     public AlmostManager(String namespace) {
         this.namespace = namespace;
-        AlmostLib.LOG.info("AlmostManager created for '{}'", namespace);
+        Utils.LOG.info("AlmostManager created for '{}'", namespace);
         clientConsumers = AlmostLib.INSTANCE.isClient() ? new ArrayList<>() : null;
         datagenConsumers = AlmostLib.INSTANCE.isDataGenEnabled() ? ArrayListMultimap.create() : null;
     }
