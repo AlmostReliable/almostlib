@@ -31,6 +31,7 @@ import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
 import org.jetbrains.annotations.Nullable;
 
+import java.nio.file.Path;
 import java.util.function.BiFunction;
 import java.util.function.Consumer;
 import java.util.function.Supplier;
@@ -117,6 +118,16 @@ public class AlmostLibFabricImpl implements AlmostLib {
     @Override
     public boolean isDataGenEnabled() {
         return System.getProperty("fabric-api.datagen") != null;
+    }
+
+    @Override
+    public Path getConfigPath() {
+        return FabricLoader.getInstance().getConfigDir();
+    }
+
+    @Override
+    public Path getRootPath() {
+        return FabricLoader.getInstance().getGameDir();
     }
 
     @Override

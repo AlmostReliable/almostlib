@@ -24,11 +24,13 @@ import net.minecraftforge.common.extensions.IForgeMenuType;
 import net.minecraftforge.data.loading.DatagenModLoader;
 import net.minecraftforge.fml.ModList;
 import net.minecraftforge.fml.loading.FMLLoader;
+import net.minecraftforge.fml.loading.FMLPaths;
 import net.minecraftforge.gametest.ForgeGameTestHooks;
 import net.minecraftforge.network.NetworkHooks;
 import net.minecraftforge.registries.ForgeRegistries;
 
 import javax.annotation.Nonnull;
+import java.nio.file.Path;
 import java.util.function.BiFunction;
 import java.util.function.Consumer;
 import java.util.function.Supplier;
@@ -105,6 +107,16 @@ public class AlmostLibForgeImpl implements AlmostLib {
     @Override
     public boolean isDataGenEnabled() {
         return DatagenModLoader.isRunningDataGen();
+    }
+
+    @Override
+    public Path getConfigPath() {
+        return FMLPaths.CONFIGDIR.get();
+    }
+
+    @Override
+    public Path getRootPath() {
+        return FMLPaths.GAMEDIR.get();
     }
 
     @Override

@@ -21,6 +21,7 @@ import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
 
+import java.nio.file.Path;
 import java.util.function.BiFunction;
 import java.util.function.Consumer;
 import java.util.function.Supplier;
@@ -58,6 +59,10 @@ public interface AlmostLib {
     boolean isGameTestMode();
 
     boolean isDataGenEnabled();
+
+    Path getConfigPath();
+
+    Path getRootPath();
 
     /**
      * Creates a platform-specific tag.
