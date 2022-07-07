@@ -17,6 +17,10 @@ plugins {
 }
 
 allprojects {
+    if (System.getenv("BUILD_NUMBER") != null) {
+        version = version.toString() + "." + System.getenv("BUILD_NUMBER")
+    }
+
     repositories {
         mavenCentral()
         maven("https://repo.spongepowered.org/repository/maven-public/")
