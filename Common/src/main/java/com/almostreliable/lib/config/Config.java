@@ -8,7 +8,6 @@ import com.google.common.collect.ImmutableSet;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.JsonObject;
-import org.jetbrains.annotations.NotNull;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -131,7 +130,7 @@ public class Config<T> {
         }
     }
 
-    @NotNull
+    @Nonnull
     private Gson createGson(BooleanRef errorHappened) {
         ConfigTypeAdapterFactory factory = new ConfigTypeAdapterFactory(getName(), collectedClasses, errorHappened);
         return new GsonBuilder()

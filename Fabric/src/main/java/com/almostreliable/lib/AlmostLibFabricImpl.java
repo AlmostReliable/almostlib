@@ -29,8 +29,8 @@ import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
-import org.jetbrains.annotations.Nullable;
 
+import javax.annotation.Nullable;
 import java.nio.file.Path;
 import java.util.function.BiFunction;
 import java.util.function.Consumer;
