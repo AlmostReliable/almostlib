@@ -40,6 +40,8 @@ dependencies {
 
     modCompileOnlyApi("mezz.jei:jei-${minecraftVersion}-common-api:${jeiVersion}")
 
+    modApi("dev.latvian.mods:kubejs-fabric:${kubejsVersion}")
+
     /**
      * DON'T USE THIS! NEEDED TO COMPILE THIS PROJECT
      */

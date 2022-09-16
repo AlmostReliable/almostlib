@@ -28,6 +28,7 @@ allprojects {
         maven("https://repo.spongepowered.org/repository/maven-public/")
         maven("https://maven.shedaniel.me")
         maven("https://dvs1.progwml6.com/files/maven/")
+        maven("https://maven.saps.dev/minecraft")
     }
 
     tasks.withType<GenerateModuleMetadata> {
