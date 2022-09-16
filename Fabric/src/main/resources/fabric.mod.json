@@ -1,0 +1,30 @@
+{
+  "schemaVersion": 1,
+  "id": "${modId}",
+  "version": "${version}",
+  "name": "${modName}",
+  "description": "${modDescription}",
+  "authors": [
+    "${modAuthor}"
+  ],
+  "contact": {
+    "homepage": "https://almostreliable.com/",
+    "sources": "https://github.com/${githubUser}/${githubRepo}"
+  },
+  "license": "${license}",
+  "icon": "logo.png",
+  "environment": "*",
+  "entrypoints": {
+    "main": [
+      "com.almostreliable.almostlib.FabricEntry"
+    ]
+  },
+  "mixins": [
+    "almostlib-common.mixins.json"
+  ],
+  "depends": {
+    "fabric": "*",
+    "minecraft": ">=${minecraftVersion}",
+    "java": ">=17"
+  }
+}
