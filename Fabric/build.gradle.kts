@@ -35,7 +35,7 @@ dependencies {
     modCompileOnly("me.shedaniel:RoughlyEnoughItems-api-fabric:${reiVersion}")
     modRuntimeOnly("me.shedaniel:RoughlyEnoughItems-fabric:${reiVersion}")
 
-    implementation(project(":Common"))
+    implementation(project(":Common", "namedElements"))
 }
 
 loom {
