@@ -58,14 +58,14 @@ public class TagsProvider<T> extends AbstractDataProvider {
         return namespace + " " + getClass().getSimpleName();
     }
 
-    public CoolerTagAppender<T> tag(TagKey<T> tagKey) {
+    public TagAppender<T> tag(TagKey<T> tagKey) {
         Tag.Builder builder = this.builders.computeIfAbsent(tagKey.location(), ($) -> new Tag.Builder());
-        return new CoolerTagAppender<>(builder, this.registry, namespace);
+        return new TagAppender<>(builder, this.registry, namespace);
     }
 
-    public record CoolerTagAppender<T>(Tag.Builder builder, Registry<T> registry, String namespace) {
+    public record TagAppender<T>(Tag.Builder builder, Registry<T> registry, String namespace) {
         @SafeVarargs
-        public final CoolerTagAppender<T> add(T... entries) {
+        public final TagAppender<T> add(T... entries) {
             for (T entry : entries) {
                 builder.addElement(Objects.requireNonNull(registry.getKey(entry)), namespace);
             }
@@ -73,24 +73,24 @@ public class TagsProvider<T> extends AbstractDataProvider {
         }
 
         @SafeVarargs
-        public final CoolerTagAppender<T> add(RegistryEntry<T>... entries) {
+        public final TagAppender<T> add(RegistryEntry<T>... entries) {
             for (RegistryEntry<T> entry : entries) {
                 builder.addElement(entry.getId(), namespace);
             }
             return this;
         }
 
-        public CoolerTagAppender<T> addOptional(ResourceLocation id) {
+        public TagAppender<T> addOptional(ResourceLocation id) {
             builder.addOptionalElement(id, namespace);
             return this;
         }
 
-        public CoolerTagAppender<T> addTag(TagKey<T> tag) {
+        public TagAppender<T> addTag(TagKey<T> tag) {
             builder.addTag(tag.location(), namespace);
             return this;
         }
 
-        public CoolerTagAppender<T> addOptionalTag(ResourceLocation tag) {
+        public TagAppender<T> addOptionalTag(ResourceLocation tag) {
             builder.addOptionalTag(tag, namespace);
             return this;
         }
