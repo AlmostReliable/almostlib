@@ -1,6 +1,7 @@
 package com.almostreliable.almostlib;
 
 import com.almostreliable.almostlib.client.MenuFactory;
+import com.almostreliable.almostlib.registry.Registration;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Registry;
 import net.minecraft.network.FriendlyByteBuf;
@@ -91,4 +92,6 @@ public interface AlmostLibPlatform {
     default TagKey<EntityType<?>> createEntityTag(String tag) {
         return this.createTag(Registry.ENTITY_TYPE_REGISTRY, tag);
     }
+
+    <T> void initRegistration(Registration<T, ?> registration);
 }

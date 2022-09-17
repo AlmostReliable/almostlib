@@ -13,6 +13,7 @@ val mappingsChannel: String by project
 val mappingsVersion: String by project
 val extraModsDirectory: String by project
 val reiVersion: String by project
+val kubejsVersion: String by project
 
 val baseArchiveName = "${modId}-fabric-${minecraftVersion}"
 
@@ -22,10 +23,7 @@ base {
 
 dependencies {
     minecraft("com.mojang:minecraft:${minecraftVersion}")
-    mappings(loom.layered {
-        officialMojangMappings()
-        parchment("org.parchmentmc.data:${mappingsChannel}-${minecraftVersion}:${mappingsVersion}@zip")
-    })
+    mappings(loom.officialMojangMappings())
     implementation("com.google.code.findbugs:jsr305:3.0.2")
 
     modImplementation("net.fabricmc:fabric-loader:${fabricLoaderVersion}")
@@ -35,7 +33,9 @@ dependencies {
     modCompileOnly("me.shedaniel:RoughlyEnoughItems-api-fabric:${reiVersion}")
     modRuntimeOnly("me.shedaniel:RoughlyEnoughItems-fabric:${reiVersion}")
 
-    implementation(project(":Common", "namedElements"))
+    modApi("dev.latvian.mods:kubejs-fabric:${kubejsVersion}")
+
+    implementation(project(":Common"))
 }
 
 loom {
@@ -45,14 +45,14 @@ loom {
             configName = "Fabric Client"
             ideConfigGenerated(true)
             runDir("../run")
-            vmArgs("-XX:+AllowEnhancedClassRedefinition -XX:+IgnoreUnrecognizedVMOptions")
+            vmArgs("-XX:+AllowEnhancedClassRedefinition",  "-XX:+IgnoreUnrecognizedVMOptions")
         }
         named("server") {
             server()
             configName = "Fabric Server"
             ideConfigGenerated(true)
             runDir("../run")
-            vmArgs("-XX:+AllowEnhancedClassRedefinition -XX:+IgnoreUnrecognizedVMOptions")
+            vmArgs("-XX:+AllowEnhancedClassRedefinition", "-XX:+IgnoreUnrecognizedVMOptions")
         }
     }
 

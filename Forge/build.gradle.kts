@@ -15,6 +15,9 @@ val mappingsChannel: String by project
 val mappingsVersion: String by project
 val extraModsDirectory: String by project
 val jeiVersion: String by project
+val kubejsVersion: String by project
+val rhinoVersion: String by project
+val architecturyVersion: String by project
 
 val baseArchiveName = "${modId}-forge-${minecraftVersion}"
 
@@ -32,7 +35,7 @@ minecraft {
             taskName("Client")
             property("mixin.env.remapRefMap", "true")
             property("mixin.env.refMapRemappingFile", "${projectDir}/build/createSrgToMcp/output.srg")
-            jvmArg("-XX:+AllowEnhancedClassRedefinition -XX:+IgnoreUnrecognizedVMOptions")
+            jvmArgs("-XX:+AllowEnhancedClassRedefinition", "-XX:+IgnoreUnrecognizedVMOptions")
             mods {
                 create(modId) {
                     source(sourceSets.main.get())
@@ -67,6 +70,10 @@ dependencies {
     compileOnly(fg.deobf("mezz.jei:jei-${minecraftVersion}-common-api:${jeiVersion}"))
     compileOnly(fg.deobf("mezz.jei:jei-${minecraftVersion}-forge-api:${jeiVersion}"))
     runtimeOnly(fg.deobf("mezz.jei:jei-${minecraftVersion}-forge:${jeiVersion}"))
+
+    implementation(fg.deobf("dev.latvian.mods:kubejs-forge:${kubejsVersion}"))
+    implementation(fg.deobf("dev.latvian.mods:rhino-forge:${rhinoVersion}"))
+    implementation(fg.deobf("dev.architectury:architectury-forge:${architecturyVersion}"))
 
     annotationProcessor("org.spongepowered:mixin:${mixinVersion}:processor")
 }

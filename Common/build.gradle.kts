@@ -1,6 +1,6 @@
 plugins {
     `maven-publish`
-    id("fabric-loom") version "0.12-SNAPSHOT"
+    id("org.spongepowered.gradle.vanilla") version "0.2.1-SNAPSHOT"
     id("com.github.gmazzo.buildconfig") version "3.0.3"
 }
 
@@ -22,30 +22,14 @@ base {
     archivesName.set(baseArchiveName)
 }
 
-loom {
-    remapArchives.set(false);
-    setupRemappedVariants.set(false);
-    runConfigs.configureEach {
-        ideConfigGenerated(false)
-    }
+minecraft {
+    version(minecraftVersion)
 }
 
 dependencies {
-    minecraft("com.mojang:minecraft:${minecraftVersion}")
-    mappings(loom.layered {
-        officialMojangMappings()
-        parchment("org.parchmentmc.data:${mappingsChannel}-${minecraftVersion}:${mappingsVersion}@zip")
-    })
+    compileOnly("org.spongepowered:mixin:0.8.5")
     implementation("com.google.code.findbugs:jsr305:3.0.2")
-
-    modCompileOnlyApi("mezz.jei:jei-${minecraftVersion}-common-api:${jeiVersion}")
-
-    modApi("dev.latvian.mods:kubejs-fabric:${kubejsVersion}")
-
-    /**
-     * DON'T USE THIS! NEEDED TO COMPILE THIS PROJECT
-     */
-    modCompileOnly("net.fabricmc:fabric-loader:${fabricLoaderVersion}")
+    compileOnly("dev.latvian.mods:kubejs:${kubejsVersion}")
 }
 
 tasks.processResources {

@@ -1,6 +1,7 @@
 package com.almostreliable.almostlib;
 
 import com.almostreliable.almostlib.client.MenuFactory;
+import com.almostreliable.almostlib.registry.Registration;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.fabric.api.client.itemgroup.FabricItemGroupBuilder;
 import net.fabricmc.fabric.api.object.builder.v1.block.entity.FabricBlockEntityTypeBuilder;
@@ -109,5 +110,11 @@ public class AlmostLibPlatformFabric implements AlmostLibPlatform {
     @Override
     public <T> TagKey<T> createTag(ResourceKey<Registry<T>> resourceKey, String tag) {
         return TagKey.create(resourceKey, new ResourceLocation("c", tag));
+    }
+
+    @Override
+    public <T> void initRegistration(Registration<T, ?> registration) {
+        Registry<T> registry = registration.getRegistry();
+        registration.applyRegister((id, entry) -> Registry.register(registry, id, entry));
     }
 }

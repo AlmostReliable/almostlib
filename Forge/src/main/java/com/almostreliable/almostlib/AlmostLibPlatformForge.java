@@ -1,6 +1,8 @@
 package com.almostreliable.almostlib;
 
 import com.almostreliable.almostlib.client.MenuFactory;
+import com.almostreliable.almostlib.registry.Registration;
+import com.almostreliable.almostlib.util.AlmostUtils;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Registry;
 import net.minecraft.network.FriendlyByteBuf;
@@ -20,10 +22,15 @@ import net.minecraft.world.level.block.state.BlockState;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.common.extensions.IForgeMenuType;
 import net.minecraftforge.data.loading.DatagenModLoader;
+import net.minecraftforge.event.RegistryEvent;
 import net.minecraftforge.fml.ModList;
+import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
 import net.minecraftforge.fml.loading.FMLLoader;
 import net.minecraftforge.fml.loading.FMLPaths;
 import net.minecraftforge.network.NetworkHooks;
+import net.minecraftforge.registries.ForgeRegistry;
+import net.minecraftforge.registries.IForgeRegistryEntry;
+import net.minecraftforge.registries.RegistryManager;
 
 import javax.annotation.Nonnull;
 import java.nio.file.Path;
@@ -99,5 +106,30 @@ public class AlmostLibPlatformForge implements AlmostLibPlatform {
     @Override
     public <T> TagKey<T> createTag(ResourceKey<Registry<T>> resourceKey, String tag) {
         return TagKey.create(resourceKey, new ResourceLocation("forge", tag));
+    }
+
+    @Override
+    public <T> void initRegistration(Registration<T, ?> registration) {
+        //noinspection rawtypes
+        ForgeRegistry r = RegistryManager.ACTIVE.getRegistry(registration.getRegistry().key().location());
+        if (r == null) {
+            // TODO Handle this? Need to check
+            throw new IllegalArgumentException(
+                    "Registry " + registration.getRegistry().key().location() + " does not exist for Forge");
+        }
+        //noinspection unchecked
+        FMLJavaModLoadingContext
+                .get()
+                .getModEventBus()
+                .addGenericListener(r.getRegistrySuperType(), (RegistryEvent.Register<?> event) -> {
+                    registration.applyRegister((id, entry) -> {
+                        if (!(entry instanceof IForgeRegistryEntry<?> s)) {
+                            AlmostLib.LOGGER.error("Entry {} is not an IForgeRegistryEntry", entry);
+                            return;
+                        }
+                        s.setRegistryName(id);
+                        event.getRegistry().register(AlmostUtils.cast(s));
+                    });
+                });
     }
 }
