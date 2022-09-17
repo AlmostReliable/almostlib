@@ -25,6 +25,10 @@ public abstract class Registration<S, RE extends RegistryEntry<? extends S>> {
         return new GenericRegistration<>(namespace, registry);
     }
 
+    public static BlockEntityRegistration blockEntities(String namespace) {
+        return new BlockEntityRegistration(namespace, Registry.BLOCK_ENTITY_TYPE);
+    }
+
     private final String namespace;
     private final Registry<S> registry;
 
