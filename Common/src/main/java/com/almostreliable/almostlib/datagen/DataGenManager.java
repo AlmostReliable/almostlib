@@ -1,56 +1,110 @@
 package com.almostreliable.almostlib.datagen;
 
-import com.almostreliable.almostlib.util.AlmostUtils;
+import com.almostreliable.almostlib.AlmostLib;
+import com.almostreliable.almostlib.Platform;
 import net.minecraft.core.Registry;
 import net.minecraft.data.DataGenerator;
 
-import java.util.HashMap;
-import java.util.Map;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.function.Consumer;
 
 public class DataGenManager {
-    private final BlockStateProvider blockStateProvider;
-    private final LangProvider langProvider;
-    private final ItemModelProvider itemModelProvider;
-    private final LootTableProvider lootTableProvider;
-    private final Map<Registry<?>, TagsProvider<?>> tagsProviderMap = new HashMap<>();
+    private static final Queue EMPTY = new Queue() {};
+    public static final String ALMOST_DATA_GEN_PLATFORM = "almost.datagen.platform";
+
+    private final Queue commonQueue;
+    private final Queue forgeQueue;
+    private final Queue fabricQueue;
     private final String namespace;
-    private final DataGenerator dataGenerator;
 
-    public DataGenManager(String namespace, DataGenerator dataGenerator) {
+    private DataGenManager(String namespace) {
         this.namespace = namespace;
-        this.dataGenerator = dataGenerator;
-        this.blockStateProvider = new BlockStateProvider(namespace, dataGenerator);
-        this.langProvider = new LangProvider(namespace, dataGenerator);
-        this.itemModelProvider = new ItemModelProvider(namespace, dataGenerator);
-        this.lootTableProvider = new LootTableProvider(namespace, dataGenerator);
+        boolean enabled = AlmostLib.PLATFORM.isDataGenEnabled();
+        commonQueue = enabled ? new ExistingQueue() : EMPTY;
+        forgeQueue = enabled ? new ExistingQueue() : EMPTY;
+        fabricQueue = enabled ? new ExistingQueue() : EMPTY;
     }
 
-    public <T> TagsProvider<T> getTagsProvider(Registry<T> registry) {
-        return AlmostUtils.cast(tagsProviderMap.computeIfAbsent(registry,
-                r -> new TagsProvider<>(namespace, dataGenerator, r)));
+    public static DataGenManager create(String namespace) {
+        return new DataGenManager(namespace);
     }
 
-    public BlockStateProvider getBlockStateProvider() {
-        return blockStateProvider;
+    public Queue common() {
+        return commonQueue;
     }
 
-    public LangProvider getLangProvider() {
-        return langProvider;
+    public Queue forge() {
+        return forgeQueue;
     }
 
-    public ItemModelProvider getItemModelProvider() {
-        return itemModelProvider;
+    public Queue fabric() {
+        return fabricQueue;
     }
 
-    public LootTableProvider getLootTableProvider() {
-        return lootTableProvider;
+    public void collectProviders(DataGenerator generator) {
+        if (!AlmostLib.PLATFORM.isDataGenEnabled()) {
+            throw new IllegalStateException("DataGen is not enabled");
+        }
+
+        DataGenProviders providers = new DataGenProviders(namespace, generator);
+        Platform platform = readPlatform();
+
+        switch (platform) {
+            case FORGE -> forge().run(providers);
+            case FABRIC -> fabric().run(providers);
+            case COMMON -> common().run(providers);
+        }
     }
 
-    public void collectDataProvider(DataGenerator dataGenerator) {
-        dataGenerator.addProvider(blockStateProvider);
-        dataGenerator.addProvider(langProvider);
-        dataGenerator.addProvider(itemModelProvider);
-        dataGenerator.addProvider(lootTableProvider);
-        tagsProviderMap.forEach((registry, provider) -> dataGenerator.addProvider(provider));
+    private Platform readPlatform() {
+        String property = System.getProperty(ALMOST_DATA_GEN_PLATFORM);
+        return switch (property != null ? property : "common") {
+            case "common" -> Platform.COMMON;
+            case "fabric" -> Platform.FABRIC;
+            case "forge" -> Platform.FORGE;
+            default -> throw new IllegalStateException("Unknown platform: " + property);
+        };
+    }
+
+    public interface Queue {
+        default void add(Consumer<DataGenProviders> consumer) {}
+
+        default void loot(Consumer<LootTableProvider> consumer) {
+            add(p -> consumer.accept(p.getLootTableProvider()));
+        }
+
+        default void blockState(Consumer<BlockStateProvider> consumer) {
+            add(p -> consumer.accept(p.getBlockStateProvider()));
+        }
+
+        default <T> void tags(Registry<T> registry, Consumer<TagsProvider<T>> consumer) {
+            add(p -> consumer.accept(p.getTagsProvider(registry)));
+        }
+
+        default void itemModel(Consumer<ItemModelProvider> consumer) {
+            add(p -> consumer.accept(p.getItemModelProvider()));
+        }
+
+        default void lang(Consumer<LangProvider> consumer) {
+            add(p -> consumer.accept(p.getLangProvider()));
+        }
+
+        default void run(DataGenProviders providers) {}
+    }
+
+    private static class ExistingQueue implements Queue {
+        private final List<Consumer<DataGenProviders>> consumers = new ArrayList<>();
+
+        private ExistingQueue() {}
+
+        public void add(Consumer<DataGenProviders> consumer) {
+            consumers.add(consumer);
+        }
+
+        @Override
+        public void run(DataGenProviders providers) {
+            consumers.forEach(c -> c.accept(providers));
+        }
     }
 }

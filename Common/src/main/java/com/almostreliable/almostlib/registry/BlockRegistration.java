@@ -1,10 +1,15 @@
 package com.almostreliable.almostlib.registry;
 
+import com.almostreliable.almostlib.datagen.BlockStateProvider;
+import com.almostreliable.almostlib.datagen.DataGenManager;
+import com.almostreliable.almostlib.datagen.LootTableProvider;
+import com.almostreliable.almostlib.datagen.DataGenHolder;
 import net.minecraft.core.Registry;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.valueproviders.UniformInt;
 import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.item.DyeColor;
+import net.minecraft.world.level.ItemLike;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.OreBlock;
 import net.minecraft.world.level.block.SoundType;
@@ -12,17 +17,16 @@ import net.minecraft.world.level.block.state.BlockBehaviour;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.material.Material;
 import net.minecraft.world.level.material.MaterialColor;
+import net.minecraft.world.level.storage.loot.LootTable;
 
 import javax.annotation.Nullable;
 import java.util.Objects;
-import java.util.function.Consumer;
-import java.util.function.Function;
-import java.util.function.Supplier;
-import java.util.function.ToIntFunction;
+import java.util.function.*;
 
-public class BlockRegistration extends Registration<Block, BlockEntry<? extends Block>> {
+public class BlockRegistration extends Registration<Block, BlockEntry<? extends Block>> implements DataGenHolder {
 
     @Nullable private ItemRegistration itemRegistration;
+    @Nullable private DataGenManager dataGenManager;
 
     BlockRegistration(String namespace, Registry<Block> registry) {
         super(namespace, registry);
@@ -66,10 +70,24 @@ public class BlockRegistration extends Registration<Block, BlockEntry<? extends 
         return builder(name, material, properties -> new OreBlock(properties, xp));
     }
 
+    public BlockRegistration dataGen(DataGenManager dataGenManager) {
+        this.dataGenManager = dataGenManager;
+        return this;
+    }
+
+    @Override
+    @Nullable
+    public DataGenManager getDataGenManager() {
+        return dataGenManager;
+    }
+
     public class Builder<B extends Block> {
         private final String name;
         private BlockBehaviour.Properties properties;
         Function<BlockBehaviour.Properties, ? extends B> factory;
+
+        @Nullable protected BiConsumer<BlockEntry<B>, BlockStateProvider> blockstateGeneratorCallback;
+        @Nullable protected BiConsumer<BlockEntry<B>, LootTableProvider> lootTableCallback;
 
         /* Item Stuff */
         @Nullable Consumer<ItemRegistration.Builder<? extends BlockItem>> itemBuilderConsumer;
@@ -184,6 +202,32 @@ public class BlockRegistration extends Registration<Block, BlockEntry<? extends 
             return this;
         }
 
+        public Builder<B> dropOther(Supplier<ItemLike> supplier) {
+            checkLootTwice();
+            this.lootTableCallback = (entry, provider) -> {
+                provider.dropOther(entry.get(), supplier.get());
+            };
+            return this;
+        }
+
+        public Builder<B> dropSelf() {
+            checkLootTwice();
+            this.lootTableCallback = (entry, provider) -> {
+                provider.dropSelf(entry.get());
+            };
+            return this;
+        }
+
+        public Builder<B> loot(BiConsumer<BlockEntry<B>, LootTable.Builder> callback) {
+            checkLootTwice();
+            this.lootTableCallback = (entry, provider) -> {
+                LootTable.Builder builder = LootTable.lootTable();
+                callback.accept(entry, builder);
+                provider.add(entry.get(), builder);
+            };
+            return this;
+        }
+
         public BlockEntry<B> register() {
             BlockEntry<B> block = BlockRegistration.this.register(name, () -> factory.apply(properties));
 
@@ -198,7 +242,21 @@ public class BlockRegistration extends Registration<Block, BlockEntry<? extends 
                 itemBuilder.register();
             }
 
+            applyDataGen(dg -> {
+                if (blockstateGeneratorCallback != null) {
+                    dg.common().blockState(provider -> blockstateGeneratorCallback.accept(block, provider));
+                }
+
+                if (lootTableCallback != null) {
+                    dg.common().loot(provider -> lootTableCallback.accept(block, provider));
+                }
+            });
+
             return block;
+        }
+
+        private void checkLootTwice() {
+            if (lootTableCallback != null) throw new IllegalArgumentException("Cannot set loot table twice");
         }
     }
 }
