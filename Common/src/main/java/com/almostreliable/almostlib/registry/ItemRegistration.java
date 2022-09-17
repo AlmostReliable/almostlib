@@ -57,6 +57,10 @@ public class ItemRegistration extends Registration<Item, ItemEntry<? extends Ite
         return new Builder<>(name, factory);
     }
 
+    public Builder<Item> builder(String name) {
+        return new Builder<>(name, Item::new);
+    }
+
     public class Builder<I extends Item> {
         private final Function<Item.Properties, ? extends I> factory;
         private final String name;

@@ -2,9 +2,11 @@ package com.almostreliable.almostlib.registry;
 
 import net.minecraft.core.Registry;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.util.valueproviders.UniformInt;
 import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.item.DyeColor;
 import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.OreBlock;
 import net.minecraft.world.level.block.SoundType;
 import net.minecraft.world.level.block.state.BlockBehaviour;
 import net.minecraft.world.level.block.state.BlockState;
@@ -54,6 +56,14 @@ public class BlockRegistration extends Registration<Block, BlockEntry<? extends 
 
     public <B extends Block> Builder<B> builder(String name, Material material, Function<BlockBehaviour.Properties, ? extends B> factory) {
         return new Builder<>(name, BlockBehaviour.Properties.of(material), factory);
+    }
+
+    public Builder<Block> builder(String name, Material material) {
+        return builder(name, material, Block::new);
+    }
+
+    public Builder<Block> oreBuilder(String name, Material material, UniformInt xp) {
+        return builder(name, material, properties -> new OreBlock(properties, xp));
     }
 
     public class Builder<B extends Block> {
