@@ -92,7 +92,7 @@ public interface AlmostLibPlatform {
     default TagKey<EntityType<?>> createEntityTag(String tag) {
         return this.createTag(Registry.ENTITY_TYPE_REGISTRY, tag);
     }
-    
+
     <T> void initRegistration(Registration<T, ?> registration);
 
     /**
