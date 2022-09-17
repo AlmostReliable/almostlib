@@ -13,21 +13,21 @@ public class DataGenManager {
     private final ItemModelProvider itemModelProvider;
     private final LootTableProvider lootTableProvider;
     private final Map<Registry<?>, TagsProvider<?>> tagsProviderMap = new HashMap<>();
-    private final String modId;
+    private final String namespace;
     private final DataGenerator dataGenerator;
 
-    public DataGenManager(String modID, DataGenerator dataGenerator) {
-        this.modId = modID;
+    public DataGenManager(String namespace, DataGenerator dataGenerator) {
+        this.namespace = namespace;
         this.dataGenerator = dataGenerator;
-        this.blockStateProvider = new BlockStateProvider(modID, dataGenerator);
-        this.langProvider = new LangProvider(modID, dataGenerator);
-        this.itemModelProvider = new ItemModelProvider(modID, dataGenerator);
-        this.lootTableProvider = new LootTableProvider(modID, dataGenerator);
+        this.blockStateProvider = new BlockStateProvider(namespace, dataGenerator);
+        this.langProvider = new LangProvider(namespace, dataGenerator);
+        this.itemModelProvider = new ItemModelProvider(namespace, dataGenerator);
+        this.lootTableProvider = new LootTableProvider(namespace, dataGenerator);
     }
 
     public <T> TagsProvider<T> getTagsProvider(Registry<T> registry) {
         return AlmostUtils.cast(tagsProviderMap.computeIfAbsent(registry,
-                r -> new TagsProvider<>(modId, dataGenerator, r)));
+                r -> new TagsProvider<>(namespace, dataGenerator, r)));
     }
 
     public BlockStateProvider getBlockStateProvider() {
