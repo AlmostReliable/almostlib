@@ -92,6 +92,13 @@ public interface AlmostLibPlatform {
     default TagKey<EntityType<?>> createEntityTag(String tag) {
         return this.createTag(Registry.ENTITY_TYPE_REGISTRY, tag);
     }
-
+    
     <T> void initRegistration(Registration<T, ?> registration);
+
+    /**
+     * Init multiple registration at once. For Fabric, the lib will sort the registrations by priority. Forge does this automatically.
+     *
+     * @param registrations The registrations to init.
+     */
+    void initRegistrations(Registration<?, ?>... registrations);
 }

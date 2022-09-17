@@ -30,6 +30,9 @@ import net.minecraft.world.level.block.state.BlockState;
 
 import javax.annotation.Nullable;
 import java.nio.file.Path;
+import java.util.Arrays;
+import java.util.Comparator;
+import java.util.List;
 import java.util.function.BiFunction;
 import java.util.function.Consumer;
 import java.util.function.Supplier;
@@ -116,5 +119,30 @@ public class AlmostLibPlatformFabric implements AlmostLibPlatform {
     public <T> void initRegistration(Registration<T, ?> registration) {
         Registry<T> registry = registration.getRegistry();
         registration.applyRegister((id, entry) -> Registry.register(registry, id, entry));
+    }
+
+    @Override
+    public void initRegistrations(Registration<?, ?>... registrations) {
+        List<Registry<?>> priority = List.of(
+                Registry.BLOCK,
+                Registry.FLUID,
+                Registry.ITEM,
+                Registry.BLOCK_ENTITY_TYPE
+        );
+
+        List<Registration<?, ?>> sorted = Arrays
+                .stream(registrations)
+                .sorted((o1, o2) -> o1
+                        .getRegistry()
+                        .key()
+                        .location()
+                        .toString()
+                        .compareToIgnoreCase(o2.getRegistry().key().location().toString()))
+                .sorted(Comparator.comparingInt(r -> {
+                    int i = priority.indexOf(r.getRegistry());
+                    return i >= 0 ? i : priority.size();
+                })).toList();
+
+        sorted.forEach(this::initRegistration);
     }
 }

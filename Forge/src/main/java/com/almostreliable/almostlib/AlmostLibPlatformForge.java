@@ -132,4 +132,11 @@ public class AlmostLibPlatformForge implements AlmostLibPlatform {
                     });
                 });
     }
+
+    @Override
+    public void initRegistrations(Registration<?, ?>... registrations) {
+        for (Registration<?, ?> registration : registrations) {
+            initRegistration(registration);
+        }
+    }
 }
