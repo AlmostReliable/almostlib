@@ -1,4 +1,4 @@
-package com.almostreliable.almostlib.datagen;
+package com.almostreliable.almostlib.datagen.provider;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;

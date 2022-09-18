@@ -1,4 +1,4 @@
-package com.almostreliable.almostlib.datagen;
+package com.almostreliable.almostlib.datagen.provider;
 
 import com.almostreliable.almostlib.registry.RegistryEntry;
 import com.google.common.collect.Maps;
@@ -23,8 +23,8 @@ public class TagsProvider<T> extends AbstractDataProvider {
     public final Map<ResourceLocation, Tag.Builder> builders = Maps.newLinkedHashMap();
     private final Registry<T> registry;
 
-    protected TagsProvider(String modId, DataGenerator dataGenerator, Registry<T> registry) {
-        super(modId, dataGenerator);
+    public TagsProvider(String namespace, DataGenerator dataGenerator, Registry<T> registry) {
+        super(namespace, dataGenerator);
         this.registry = registry;
     }
 

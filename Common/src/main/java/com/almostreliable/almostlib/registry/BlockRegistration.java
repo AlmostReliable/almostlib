@@ -1,14 +1,16 @@
 package com.almostreliable.almostlib.registry;
 
-import com.almostreliable.almostlib.datagen.BlockStateProvider;
-import com.almostreliable.almostlib.datagen.DataGenManager;
-import com.almostreliable.almostlib.datagen.LootTableProvider;
+import com.almostreliable.almostlib.datagen.provider.BlockStateProvider;
 import com.almostreliable.almostlib.datagen.DataGenHolder;
+import com.almostreliable.almostlib.datagen.DataGenManager;
+import com.almostreliable.almostlib.datagen.provider.LootTableProvider;
 import net.minecraft.core.Registry;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.tags.TagKey;
 import net.minecraft.util.valueproviders.UniformInt;
 import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.item.DyeColor;
+import net.minecraft.world.item.Item;
 import net.minecraft.world.level.ItemLike;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.OreBlock;
@@ -20,7 +22,10 @@ import net.minecraft.world.level.material.MaterialColor;
 import net.minecraft.world.level.storage.loot.LootTable;
 
 import javax.annotation.Nullable;
+import java.util.Arrays;
+import java.util.HashSet;
 import java.util.Objects;
+import java.util.Set;
 import java.util.function.*;
 
 public class BlockRegistration extends Registration<Block, BlockEntry<? extends Block>> implements DataGenHolder {
@@ -88,9 +93,11 @@ public class BlockRegistration extends Registration<Block, BlockEntry<? extends 
 
         @Nullable protected BiConsumer<BlockEntry<B>, BlockStateProvider> blockstateGeneratorCallback;
         @Nullable protected BiConsumer<BlockEntry<B>, LootTableProvider> lootTableCallback;
+        private final Set<TagKey<Block>> blockTags = new HashSet<>();
 
         /* Item Stuff */
         @Nullable Consumer<ItemRegistration.Builder<? extends BlockItem>> itemBuilderConsumer;
+        private final Set<TagKey<Item>> itemTags = new HashSet<>();
 
         public Builder(String name, BlockBehaviour.Properties properties, Function<BlockBehaviour.Properties, ? extends B> factory) {
             this.name = name;
@@ -228,6 +235,18 @@ public class BlockRegistration extends Registration<Block, BlockEntry<? extends 
             return this;
         }
 
+        @SafeVarargs
+        public final Builder<B> blockTags(TagKey<Block>... tags) {
+            blockTags.addAll(Arrays.asList(tags));
+            return this;
+        }
+
+        @SafeVarargs
+        public final Builder<B> itemTags(TagKey<Item>... tags) {
+            itemTags.addAll(Arrays.asList(tags));
+            return this;
+        }
+
         public BlockEntry<B> register() {
             BlockEntry<B> block = BlockRegistration.this.register(name, () -> factory.apply(properties));
 
@@ -239,6 +258,7 @@ public class BlockRegistration extends Registration<Block, BlockEntry<? extends 
             if (itemBuilderConsumer != null) {
                 var itemBuilder = ir.builder(name, (props) -> new BlockItem(block.get(), props));
                 itemBuilderConsumer.accept(itemBuilder);
+                itemTags.forEach(itemBuilder::tags);
                 itemBuilder.register();
             }
 
@@ -246,10 +266,10 @@ public class BlockRegistration extends Registration<Block, BlockEntry<? extends 
                 if (blockstateGeneratorCallback != null) {
                     dg.common().blockState(provider -> blockstateGeneratorCallback.accept(block, provider));
                 }
-
                 if (lootTableCallback != null) {
                     dg.common().loot(provider -> lootTableCallback.accept(block, provider));
                 }
+                dg.platform().tags(Registry.BLOCK, p -> blockTags.forEach(tag -> p.tag(tag).add(block.get())));
             });
 
             return block;

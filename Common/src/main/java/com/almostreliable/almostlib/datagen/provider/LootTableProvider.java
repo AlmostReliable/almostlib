@@ -1,4 +1,4 @@
-package com.almostreliable.almostlib.datagen;
+package com.almostreliable.almostlib.datagen.provider;
 
 import com.almostreliable.almostlib.AlmostLib;
 import com.google.common.collect.Multimap;
@@ -22,8 +22,8 @@ import java.util.Map;
 public class LootTableProvider extends AbstractDataProvider {
     Map<ResourceLocation, LootTable> lootTables = new HashMap<>();
 
-    public LootTableProvider(String modId, DataGenerator dataGenerator) {
-        super(modId, dataGenerator);
+    public LootTableProvider(String namespace, DataGenerator dataGenerator) {
+        super(namespace, dataGenerator);
     }
 
     @Override

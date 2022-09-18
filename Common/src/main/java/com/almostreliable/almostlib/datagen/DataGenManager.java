@@ -2,6 +2,7 @@ package com.almostreliable.almostlib.datagen;
 
 import com.almostreliable.almostlib.AlmostLib;
 import com.almostreliable.almostlib.Platform;
+import com.almostreliable.almostlib.datagen.provider.*;
 import net.minecraft.core.Registry;
 import net.minecraft.data.DataGenerator;
 
@@ -32,6 +33,14 @@ public class DataGenManager {
 
     public Queue common() {
         return commonQueue;
+    }
+
+    public Queue platform() {
+        return switch (AlmostLib.PLATFORM.getPlatform()) {
+            case COMMON -> common();
+            case FORGE -> forge();
+            case FABRIC -> fabric();
+        };
     }
 
     public Queue forge() {

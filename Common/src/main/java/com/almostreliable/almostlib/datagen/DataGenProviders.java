@@ -1,5 +1,6 @@
 package com.almostreliable.almostlib.datagen;
 
+import com.almostreliable.almostlib.datagen.provider.*;
 import com.almostreliable.almostlib.util.AlmostUtils;
 import net.minecraft.core.Registry;
 import net.minecraft.data.DataGenerator;

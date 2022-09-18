@@ -1,4 +1,4 @@
-package com.almostreliable.almostlib.datagen;
+package com.almostreliable.almostlib.datagen.provider;
 
 import com.google.gson.JsonElement;
 import net.minecraft.data.DataGenerator;
@@ -16,8 +16,8 @@ import java.util.function.Supplier;
 public class ItemModelProvider extends AbstractDataProvider {
     private final Map<ResourceLocation, Supplier<JsonElement>> modelGenerators;
 
-    public ItemModelProvider(String modId, DataGenerator dataGenerator) {
-        super(modId, dataGenerator);
+    public ItemModelProvider(String namespace, DataGenerator dataGenerator) {
+        super(namespace, dataGenerator);
         modelGenerators = new HashMap<>();
     }
 

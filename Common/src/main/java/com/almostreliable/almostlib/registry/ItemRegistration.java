@@ -1,8 +1,14 @@
 package com.almostreliable.almostlib.registry;
 
+import com.almostreliable.almostlib.datagen.DataGenHolder;
+import com.almostreliable.almostlib.datagen.DataGenManager;
+import com.almostreliable.almostlib.datagen.provider.ItemModelProvider;
 import com.almostreliable.almostlib.mixin.ItemPropertiesAccessor;
 import net.minecraft.core.Registry;
+import net.minecraft.data.models.model.ModelTemplate;
+import net.minecraft.data.models.model.TextureMapping;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.tags.TagKey;
 import net.minecraft.world.food.FoodProperties;
 import net.minecraft.world.item.CreativeModeTab;
 import net.minecraft.world.item.Item;
@@ -10,13 +16,15 @@ import net.minecraft.world.item.Rarity;
 import net.minecraft.world.level.ItemLike;
 
 import javax.annotation.Nullable;
-import java.util.Objects;
+import java.util.*;
+import java.util.function.BiConsumer;
 import java.util.function.Function;
 import java.util.function.Supplier;
 
-public class ItemRegistration extends Registration<Item, ItemEntry<? extends Item>> {
+public class ItemRegistration extends Registration<Item, ItemEntry<? extends Item>> implements DataGenHolder {
 
     @Nullable private CreativeModeTab creativeTab;
+    private DataGenManager dataGenManager;
 
     ItemRegistration(String namespace, Registry<Item> registry) {
         super(namespace, registry);
@@ -61,10 +69,25 @@ public class ItemRegistration extends Registration<Item, ItemEntry<? extends Ite
         return new Builder<>(name, Item::new);
     }
 
+    public ItemRegistration dataGen(DataGenManager dataGenManager) {
+        this.dataGenManager = dataGenManager;
+        return this;
+    }
+
+    @Nullable
+    @Override
+    public DataGenManager getDataGenManager() {
+        return this.dataGenManager;
+    }
+
     public class Builder<I extends Item> {
         private final Function<Item.Properties, ? extends I> factory;
         private final String name;
         private Item.Properties properties;
+
+        private final List<BiConsumer<RegistryEntry<I>, ItemModelProvider>> itemModelGenerators = new ArrayList<>();
+
+        private final Set<TagKey<Item>> tags = new HashSet<>();
 
         public Builder(String name, Function<Item.Properties, ? extends I> factory) {
             this.name = name;
@@ -118,13 +141,38 @@ public class ItemRegistration extends Registration<Item, ItemEntry<? extends Ite
             return this;
         }
 
+        @SafeVarargs
+        public final Builder<I> tags(TagKey<Item>... tags) {
+            this.tags.addAll(Arrays.asList(tags));
+            return this;
+        }
+
+        public Builder<I> model(ModelTemplate template) {
+            itemModelGenerators.add((e, provider) -> template.create(e.getId(),
+                    TextureMapping.layer0(e.get()),
+                    provider.getModelConsumer()));
+            return this;
+        }
+
+        public Builder<I> model(BiConsumer<RegistryEntry<I>, ItemModelProvider> model) {
+            itemModelGenerators.add(model);
+            return this;
+        }
+
         public ItemEntry<I> register() {
             final CreativeModeTab tab = ((ItemPropertiesAccessor) properties).getCreativeTab();
             final CreativeModeTab defaultTab = ItemRegistration.this.getDefaultCreativeTab();
             if (defaultTab != null && tab == null) {
                 properties.tab(defaultTab);
             }
-            return ItemRegistration.this.register(name, () -> factory.apply(properties));
+            ItemEntry<I> item = ItemRegistration.this.register(name, () -> factory.apply(properties));
+
+            applyDataGen(dg -> {
+                dg.common().itemModel(p -> itemModelGenerators.forEach(c -> c.accept(item, p)));
+                dg.platform().tags(Registry.ITEM, p -> tags.forEach(t -> p.tag(t).add(item.get())));
+            });
+
+            return item;
         }
     }
 }

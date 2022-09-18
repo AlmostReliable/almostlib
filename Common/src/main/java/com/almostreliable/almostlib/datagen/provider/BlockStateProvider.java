@@ -1,4 +1,4 @@
-package com.almostreliable.almostlib.datagen;
+package com.almostreliable.almostlib.datagen.provider;
 
 import com.google.gson.JsonElement;
 import net.minecraft.core.Registry;
@@ -21,8 +21,8 @@ public class BlockStateProvider extends AbstractDataProvider {
     private final List<BlockStateGenerator> blockStateGenerators;
     private final Map<ResourceLocation, Supplier<JsonElement>> modelGenerators;
 
-    public BlockStateProvider(String modId, DataGenerator dataGenerator) {
-        super(modId, dataGenerator);
+    public BlockStateProvider(String namespace, DataGenerator dataGenerator) {
+        super(namespace, dataGenerator);
         blockStateGenerators = new ArrayList<>();
         modelGenerators = new HashMap<>();
     }
