@@ -1,9 +1,10 @@
 package com.almostreliable.almostlib.registry;
 
-import com.almostreliable.almostlib.datagen.provider.BlockStateProvider;
 import com.almostreliable.almostlib.datagen.DataGenHolder;
 import com.almostreliable.almostlib.datagen.DataGenManager;
+import com.almostreliable.almostlib.datagen.provider.BlockStateProvider;
 import com.almostreliable.almostlib.datagen.provider.LootTableProvider;
+import com.almostreliable.almostlib.util.AlmostUtils;
 import net.minecraft.core.Registry;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.tags.TagKey;
@@ -39,17 +40,7 @@ public class BlockRegistration extends Registration<Block, BlockEntry<? extends 
 
     @Override
     protected BlockEntry<? extends Block> createEntry(ResourceLocation id, Supplier<? extends Block> supplier) {
-        return new BlockEntry<>() {
-            @Override
-            public ResourceLocation getId() {
-                return id;
-            }
-
-            @Override
-            public Block get() {
-                return supplier.get();
-            }
-        };
+        return new BlockEntry<>(getRegistry(), id, AlmostUtils.cast(supplier));
     }
 
     public BlockRegistration itemRegistration(ItemRegistration itemRegistration) {
@@ -86,6 +77,7 @@ public class BlockRegistration extends Registration<Block, BlockEntry<? extends 
         return dataGenManager;
     }
 
+    @SuppressWarnings("unused")
     public class Builder<B extends Block> {
         private final String name;
         private BlockBehaviour.Properties properties;
@@ -211,17 +203,13 @@ public class BlockRegistration extends Registration<Block, BlockEntry<? extends 
 
         public Builder<B> dropOther(Supplier<ItemLike> supplier) {
             checkLootTwice();
-            this.lootTableCallback = (entry, provider) -> {
-                provider.dropOther(entry.get(), supplier.get());
-            };
+            this.lootTableCallback = (entry, provider) -> provider.dropOther(entry.get(), supplier.get());
             return this;
         }
 
         public Builder<B> dropSelf() {
             checkLootTwice();
-            this.lootTableCallback = (entry, provider) -> {
-                provider.dropSelf(entry.get());
-            };
+            this.lootTableCallback = (entry, provider) -> provider.dropSelf(entry.get());
             return this;
         }
 

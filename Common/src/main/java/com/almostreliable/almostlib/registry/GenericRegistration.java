@@ -1,5 +1,6 @@
 package com.almostreliable.almostlib.registry;
 
+import com.almostreliable.almostlib.util.AlmostUtils;
 import net.minecraft.core.Registry;
 import net.minecraft.resources.ResourceLocation;
 
@@ -12,16 +13,6 @@ public class GenericRegistration<S> extends Registration<S, RegistryEntry<? exte
 
     @Override
     protected RegistryEntry<? extends S> createEntry(ResourceLocation id, Supplier<? extends S> supplier) {
-        return new RegistryEntry<>() {
-            @Override
-            public ResourceLocation getId() {
-                return id;
-            }
-
-            @Override
-            public S get() {
-                return supplier.get();
-            }
-        };
+        return new RegistryEntryImpl<>(getRegistry(), id, AlmostUtils.cast(supplier));
     }
 }

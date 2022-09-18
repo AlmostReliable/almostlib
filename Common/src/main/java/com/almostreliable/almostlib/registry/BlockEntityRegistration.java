@@ -16,7 +16,7 @@ import java.util.function.Supplier;
 
 public class BlockEntityRegistration extends GenericRegistration<BlockEntityType<? extends BlockEntity>> {
 
-    BlockEntityRegistration(String namespace, Registry<BlockEntityType<? extends BlockEntity>> registry) {
+    BlockEntityRegistration(String namespace, Registry<BlockEntityType<?>> registry) {
         super(namespace, registry);
     }
 

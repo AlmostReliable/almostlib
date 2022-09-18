@@ -1,5 +1,7 @@
 package com.almostreliable.almostlib.registry;
 
+import net.minecraft.core.Registry;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
@@ -7,24 +9,29 @@ import net.minecraft.world.level.ItemLike;
 import net.minecraft.world.level.block.Block;
 
 import javax.annotation.Nullable;
+import java.util.function.Supplier;
 
-public interface ItemEntry<I extends Item> extends RegistryEntry<I>, ItemLike {
+public class ItemEntry<I extends Item> extends RegistryEntryImpl<I> implements ItemLike {
+
+    public ItemEntry(Registry<I> registry, ResourceLocation id, Supplier<I> supplier) {
+        super(registry, id, supplier);
+    }
 
     @Override
-    default I asItem() {
+    public I asItem() {
         return get();
     }
 
-    default ItemStack asStack() {
+    public ItemStack asStack() {
         return new ItemStack(get());
     }
 
-    default ItemStack asStack(int count) {
+    public ItemStack asStack(int count) {
         return new ItemStack(get(), count);
     }
 
     @Nullable
-    default Block asBlock() {
+    public Block asBlock() {
         if (get() instanceof BlockItem bi) {
             return bi.getBlock();
         }

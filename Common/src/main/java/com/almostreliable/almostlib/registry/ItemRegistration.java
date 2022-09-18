@@ -5,6 +5,7 @@ import com.almostreliable.almostlib.datagen.DataGenManager;
 import com.almostreliable.almostlib.datagen.provider.ItemModelProvider;
 import com.almostreliable.almostlib.item.LazyCreativeTab;
 import com.almostreliable.almostlib.mixin.ItemPropertiesAccessor;
+import com.almostreliable.almostlib.util.AlmostUtils;
 import net.minecraft.core.Registry;
 import net.minecraft.data.models.model.ModelTemplate;
 import net.minecraft.data.models.model.TextureMapping;
@@ -33,17 +34,7 @@ public class ItemRegistration extends Registration<Item, ItemEntry<? extends Ite
 
     @Override
     protected ItemEntry<? extends Item> createEntry(ResourceLocation id, Supplier<? extends Item> supplier) {
-        return new ItemEntry<>() {
-            @Override
-            public ResourceLocation getId() {
-                return id;
-            }
-
-            @Override
-            public Item get() {
-                return supplier.get();
-            }
-        };
+        return new ItemEntry<>(getRegistry(), id, AlmostUtils.cast(supplier));
     }
 
     /**
@@ -55,7 +46,7 @@ public class ItemRegistration extends Registration<Item, ItemEntry<? extends Ite
      * @return self
      */
     public ItemRegistration initDefaultCreativeTab(String description) {
-        String translationKey = description.toLowerCase(Locale.ENGLISH).replaceAll("\\s+", "");
+        String translationKey = description.toLowerCase(Locale.ENGLISH).replaceAll("\\s+", "_");
         ResourceLocation location = new ResourceLocation(getNamespace(), translationKey);
         lazyCreativeTab = new LazyCreativeTab(location);
         return this;
