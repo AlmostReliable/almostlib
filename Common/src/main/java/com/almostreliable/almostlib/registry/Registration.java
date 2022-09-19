@@ -58,12 +58,10 @@ public abstract class Registration<S, RE extends RegistryEntry<? extends S>> {
     @SuppressWarnings("unchecked")
     public <T extends S> RegistryEntry<T> register(String name, Supplier<? extends T> supplier) {
         final ResourceLocation id = new ResourceLocation(namespace, name);
-        final ResourceKey<T> key = ResourceKey.create((ResourceKey<? extends Registry<T>>) registry.key(), id);
         if (entries.containsKey(id)) {
             throw new IllegalArgumentException("Duplicate registration for " + name + " in " + namespace);
         }
-        Supplier<T> lazy = Suppliers.memoize(supplier::get);
-        RE e = createEntry(id, lazy);
+        RE e = createEntry(id, supplier);
         entries.put(id, e);
         return (RegistryEntry<T>) e;
     }
