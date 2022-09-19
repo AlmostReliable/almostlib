@@ -3,6 +3,7 @@ package com.almostreliable.almostlib;
 import com.almostreliable.almostlib.client.MenuFactory;
 import com.almostreliable.almostlib.registry.Registration;
 import com.almostreliable.almostlib.util.AlmostUtils;
+import com.google.auto.service.AutoService;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Registry;
 import net.minecraft.network.FriendlyByteBuf;
@@ -38,6 +39,7 @@ import java.util.function.BiFunction;
 import java.util.function.Consumer;
 import java.util.function.Supplier;
 
+@AutoService(AlmostLibPlatform.class)
 public class AlmostLibPlatformForge implements AlmostLibPlatform {
 
     @Override

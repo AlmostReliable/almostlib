@@ -1,49 +1,54 @@
+@file:Suppress("UnstableApiUsage")
+
 plugins {
     `maven-publish`
-    id("org.spongepowered.gradle.vanilla") version "0.2.1-SNAPSHOT"
+    id("fabric-loom") version "1.0-SNAPSHOT"
     id("com.github.gmazzo.buildconfig") version "3.0.3"
 }
 
 val minecraftVersion: String by project
-val commonRunsEnabled: String by project
-val commonClientRunName: String? by project
-val commonServerRunName: String? by project
 val modName: String by project
 val modId: String by project
 val fabricLoaderVersion: String by project
 val mappingsChannel: String by project
 val mappingsVersion: String by project
-val kubejsVersion: String by project
-val jeiVersion: String by project
+val buildConfigPackage: String by project
 
-val baseArchiveName = "${modName}-common-${minecraftVersion}"
-
-base {
-    archivesName.set(baseArchiveName)
-}
-
-minecraft {
-    version(minecraftVersion)
+loom {
+    runConfigs.configureEach {
+        ideConfigGenerated(false)
+    }
 }
 
 dependencies {
-    compileOnly("org.spongepowered:mixin:0.8.5")
+    /**
+     * Core Mod Loader dependencies
+     */
+    minecraft("com.mojang:minecraft:$minecraftVersion")
+    mappings(loom.layered {
+        officialMojangMappings()
+        parchment("org.parchmentmc.data:$mappingsChannel-$minecraftVersion:$mappingsVersion@zip")
+    })
+
+    /**
+     * Non Minecraft dependencies
+     */
     implementation("com.google.code.findbugs:jsr305:3.0.2")
-    compileOnly("dev.latvian.mods:kubejs:${kubejsVersion}")
+
+    /**
+     * DON'T USE THIS IN COMMON CODE! NEEDED TO COMPILE THIS PROJECT
+     */
+    modCompileOnly("net.fabricmc:fabric-loader:$fabricLoaderVersion")
 }
 
-tasks.processResources {
-    val buildProps = project.properties
-
-    filesMatching("pack.mcmeta") {
-        expand(buildProps)
-    }
+tasks {
+    withType<net.fabricmc.loom.task.AbstractRemapJarTask>().forEach { task -> task.targetNamespace.set("named") }
 }
 
 publishing {
     publications {
         register("mavenJava", MavenPublication::class) {
-            artifactId = baseArchiveName
+            artifactId = base.archivesName.get()
             from(components["java"])
         }
     }
@@ -54,9 +59,8 @@ publishing {
 }
 
 buildConfig {
-    buildConfigField("String", "MOD_ID", "\"${modId}\"")
-    buildConfigField("String", "MOD_VERSION", "\"${project.version}\"")
-    buildConfigField("String", "MOD_NAME", "\"${modName}\"")
-
-    packageName(project.group as String)
+    buildConfigField("String", "MOD_ID", "\"$modId\"")
+    buildConfigField("String", "MOD_NAME", "\"$modName\"")
+    buildConfigField("String", "MOD_VERSION", "\"$version\"")
+    packageName(buildConfigPackage)
 }

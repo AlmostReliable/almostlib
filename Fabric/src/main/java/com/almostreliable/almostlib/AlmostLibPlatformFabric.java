@@ -2,6 +2,7 @@ package com.almostreliable.almostlib;
 
 import com.almostreliable.almostlib.client.MenuFactory;
 import com.almostreliable.almostlib.registry.Registration;
+import com.google.auto.service.AutoService;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.fabric.api.client.itemgroup.FabricItemGroupBuilder;
 import net.fabricmc.fabric.api.object.builder.v1.block.entity.FabricBlockEntityTypeBuilder;
@@ -37,6 +38,8 @@ import java.util.function.BiFunction;
 import java.util.function.Consumer;
 import java.util.function.Supplier;
 
+
+@AutoService(AlmostLibPlatform.class)
 public class AlmostLibPlatformFabric implements AlmostLibPlatform {
 
     @Override

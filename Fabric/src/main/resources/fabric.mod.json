@@ -12,7 +12,6 @@
     "sources": "https://github.com/${githubUser}/${githubRepo}"
   },
   "license": "${license}",
-  "icon": "logo.png",
   "environment": "*",
   "entrypoints": {
     "main": [

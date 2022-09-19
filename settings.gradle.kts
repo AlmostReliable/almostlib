@@ -1,18 +1,10 @@
 pluginManagement {
     repositories {
         gradlePluginPortal()
-        maven("https://maven.fabricmc.net/") {
-            name = "Fabric"
-        }
-        maven("https://repo.spongepowered.org/repository/maven-public/") {
-            name = "Sponge Snapshots"
-        }
-        maven("https://maven.minecraftforge.net") {
-            name = "Forge"
-        }
-        maven("https://maven.parchmentmc.org") {
-            name = "ParchmentMC"
-        }
+        maven("https://maven.fabricmc.net/")
+        maven("https://repo.spongepowered.org/repository/maven-public/")
+        maven("https://maven.minecraftforge.net")
+        maven("https://maven.parchmentmc.org")
     }
     resolutionStrategy {
         eachPlugin {
@@ -20,7 +12,6 @@ pluginManagement {
             if (requested.id.id == "net.minecraftforge.gradle") {
                 useModule("${requested.id}:ForgeGradle:${requested.version}")
             }
-
             if (requested.id.id == "org.spongepowered.mixin") {
                 useModule("org.spongepowered:mixingradle:${requested.version}")
             }
@@ -28,5 +19,7 @@ pluginManagement {
     }
 }
 
-rootProject.name = "AlmostLib"
+val modName: String by extra
+val minecraftVersion: String by extra
+rootProject.name = "$modName-$minecraftVersion"
 include("Common", "Fabric", "Forge")

@@ -6,7 +6,6 @@ import net.minecraftforge.fml.common.Mod;
 public class ForgeEntry {
 
     public ForgeEntry() {
-        AlmostLib.PLATFORM.initRegistration(AlmostLib.ITEMS);
     }
 
 }

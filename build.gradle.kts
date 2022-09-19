@@ -5,10 +5,10 @@ val license: String by project
 val minecraftVersion: String by project
 val modId: String by project
 val modName: String by project
+val modVersion: String by project
 val modAuthor: String by project
 val modDescription: String by project
 val forgeMinVersion: String by project
-val extraModsDirectory: String by project
 val githubUser: String by project
 val githubRepo: String by project
 
@@ -17,32 +17,22 @@ plugins {
     idea
 }
 
-allprojects {
-    repositories {
-        flatDir {
-            name = extraModsDirectory
-            dir(file("$extraModsDirectory-$minecraftVersion"))
-        }
-        mavenLocal()
-        mavenCentral()
-        maven("https://repo.spongepowered.org/repository/maven-public/")
-        maven("https://maven.shedaniel.me")
-        maven("https://dvs1.progwml6.com/files/maven/")
-        maven("https://maven.saps.dev/minecraft")
-    }
-
-    tasks.withType<GenerateModuleMetadata> {
-        enabled = false
-    }
-}
-
-
 subprojects {
     apply(plugin = "java")
 
+    base.archivesName.set("$modId-${project.name.toLowerCase()}-$minecraftVersion")
+
+    repositories {
+        flatDir {
+            name = "extra-mods"
+            dir(file("extra-mods-$minecraftVersion"))
+        }
+        mavenLocal()
+        mavenCentral()
+    }
+
     extensions.configure<JavaPluginExtension> {
         toolchain.languageVersion.set(JavaLanguageVersion.of(17))
-//        withJavadocJar()
         withSourcesJar()
     }
 
@@ -63,32 +53,54 @@ subprojects {
                 )
             }
         }
+
+        withType<GenerateModuleMetadata> {
+            enabled = false
+        }
+
+        withType<JavaCompile> {
+            options.encoding = "UTF-8"
+            options.release.set(17)
+        }
+
+        processResources {
+            val resourceTargets = listOf("META-INF/mods.toml", "pack.mcmeta", "fabric.mod.json")
+
+            val replaceProperties = mapOf(
+                "version" to project.version as String,
+                "license" to license,
+                "modId" to modId,
+                "modName" to modName,
+                "minecraftVersion" to minecraftVersion,
+                "modAuthor" to modAuthor,
+                "modDescription" to modDescription,
+                "forgeMinVersion" to forgeMinVersion,
+                "githubUser" to githubUser,
+                "githubRepo" to githubRepo
+            )
+
+            inputs.properties(replaceProperties)
+            filesMatching(resourceTargets) {
+                expand(replaceProperties)
+            }
+        }
     }
+}
 
-    tasks.withType<JavaCompile> {
-        options.encoding = "UTF-8"
-        options.release.set(17)
-    }
+subprojects {
+    if (project.path != ":Common") {
+        tasks {
+            processResources {
+                from(project(":Common").sourceSets.main.get().resources)
+            }
 
-    tasks.processResources {
-        val resourceTargets = listOf("META-INF/mods.toml", "pack.mcmeta", "fabric.mod.json")
+            withType<JavaCompile> {
+                source(project(":Common").sourceSets.main.get().allSource)
+            }
 
-        val replaceProperties = mapOf(
-            "version" to project.version as String,
-            "license" to license,
-            "modId" to modId,
-            "modName" to modName,
-            "minecraftVersion" to minecraftVersion,
-            "modAuthor" to modAuthor,
-            "modDescription" to modDescription,
-            "forgeMinVersion" to forgeMinVersion,
-            "githubUser" to githubUser,
-            "githubRepo" to githubRepo
-        )
-
-        inputs.properties(replaceProperties)
-        filesMatching(resourceTargets) {
-            expand(replaceProperties)
+            "sourcesJar"(Jar::class) {
+                from(project(":Common").sourceSets.main.get().allSource)
+            }
         }
     }
 }
