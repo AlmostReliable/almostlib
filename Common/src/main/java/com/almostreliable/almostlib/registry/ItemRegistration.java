@@ -3,7 +3,6 @@ package com.almostreliable.almostlib.registry;
 import com.almostreliable.almostlib.datagen.DataGenHolder;
 import com.almostreliable.almostlib.datagen.DataGenManager;
 import com.almostreliable.almostlib.datagen.provider.ItemModelProvider;
-import com.almostreliable.almostlib.item.LazyCreativeTab;
 import com.almostreliable.almostlib.mixin.ItemPropertiesAccessor;
 import com.almostreliable.almostlib.util.AlmostUtils;
 import net.minecraft.core.Registry;
@@ -25,7 +24,7 @@ import java.util.function.Supplier;
 
 public class ItemRegistration extends Registration<Item, ItemEntry<? extends Item>> implements DataGenHolder {
 
-    @Nullable private LazyCreativeTab lazyCreativeTab;
+    @Nullable private CreativeModeTab defaultCreativeTab;
     private DataGenManager dataGenManager;
 
     ItemRegistration(String namespace, Registry<Item> registry) {
@@ -48,16 +47,17 @@ public class ItemRegistration extends Registration<Item, ItemEntry<? extends Ite
     public ItemRegistration initDefaultCreativeTab(String description) {
         String translationKey = description.toLowerCase(Locale.ENGLISH).replaceAll("\\s+", "_");
         ResourceLocation location = new ResourceLocation(getNamespace(), translationKey);
-        lazyCreativeTab = new LazyCreativeTab(location);
         return this;
     }
 
     @Nullable
     public CreativeModeTab getDefaultCreativeTab() {
-        if (lazyCreativeTab == null) {
-            return null;
-        }
-        return lazyCreativeTab.getTab();
+        return defaultCreativeTab;
+    }
+
+    public ItemRegistration defaultCreativeTab(CreativeModeTab tab) {
+        this.defaultCreativeTab = tab;
+        return this;
     }
 
     @Override
@@ -94,25 +94,10 @@ public class ItemRegistration extends Registration<Item, ItemEntry<? extends Ite
 
         private final Set<TagKey<Item>> tags = new HashSet<>();
 
-        private boolean isDefaultCreativeTabIcon = false;
-
         public Builder(String name, Function<Item.Properties, ? extends I> factory) {
             this.name = name;
             this.factory = factory;
             this.properties = new Item.Properties();
-        }
-
-        private Builder<I> markAsDefaultCreativeTab() {
-            if (ItemRegistration.this.lazyCreativeTab == null) {
-                throw new IllegalStateException("No default creative tab has been set in the ItemRegistration");
-            }
-
-            if (ItemRegistration.this.lazyCreativeTab.hasItem()) {
-                throw new IllegalStateException("Default creative tab has already been set");
-            }
-
-            this.isDefaultCreativeTabIcon = true;
-            return this;
         }
 
         public Builder<I> properties(Supplier<Item.Properties> supplier) {
@@ -186,10 +171,6 @@ public class ItemRegistration extends Registration<Item, ItemEntry<? extends Ite
                 properties.tab(defaultTab);
             }
             ItemEntry<I> item = ItemRegistration.this.register(name, () -> factory.apply(properties));
-
-            if (ItemRegistration.this.lazyCreativeTab != null && isDefaultCreativeTabIcon) {
-                ItemRegistration.this.lazyCreativeTab.setItem(item.asStack());
-            }
 
             applyDataGen(dg -> {
                 dg.common().itemModel(p -> itemModelGenerators.forEach(c -> c.accept(item, p)));
