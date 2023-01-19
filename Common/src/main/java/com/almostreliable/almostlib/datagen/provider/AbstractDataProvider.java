@@ -15,6 +15,7 @@ public abstract class AbstractDataProvider implements DataProvider {
     public AbstractDataProvider(String namespace, DataGenerator dataGenerator) {
         this.namespace = namespace;
         this.dataGenerator = dataGenerator;
+        dataGenerator.addProvider(true, this);
     }
 
     @Override
