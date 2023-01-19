@@ -6,7 +6,9 @@ import com.almostreliable.almostlib.datagen.provider.ItemModelProvider;
 import com.almostreliable.almostlib.mixin.ItemPropertiesAccessor;
 import com.almostreliable.almostlib.util.AlmostUtils;
 import net.minecraft.core.Registry;
+import net.minecraft.data.models.model.ModelLocationUtils;
 import net.minecraft.data.models.model.ModelTemplate;
+import net.minecraft.data.models.model.ModelTemplates;
 import net.minecraft.data.models.model.TextureMapping;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.tags.TagKey;
@@ -52,21 +54,12 @@ public class ItemRegistration extends Registration<Item, ItemEntry<? extends Ite
         return (ItemEntry<T>) super.register(id, supplier);
     }
 
-    @SuppressWarnings("unchecked")
-    public <T extends Item> ItemEntry<T> register(String id, String englishName, Supplier<? extends T> supplier) {
-        var item = (ItemEntry<T>) register(id, supplier);
-        if (dataGenManager != null) {
-            dataGenManager.common().lang(p -> p.addLang(item.get().getDescriptionId(), englishName));
-        }
-        return item;
+    public <T extends Item> ItemEntry<T> simple(String id, Function<Item.Properties, ? extends T> factory) {
+        return AlmostUtils.cast(builder(id, factory).simpleModel().register());
     }
 
-    public <T extends Item> ItemEntry<T> register(String id, Function<Item.Properties, ? extends T> factory) {
-        return AlmostUtils.cast(builder(id, factory).register());
-    }
-
-    public <T extends Item> ItemEntry<T> register(String id, String englishName, Function<Item.Properties, ? extends T> factory) {
-        return AlmostUtils.cast(builder(id, factory).defaultLang(englishName).register());
+    public <T extends Item> ItemEntry<T> simple(String id, String englishName, Function<Item.Properties, ? extends T> factory) {
+        return AlmostUtils.cast(builder(id, factory).defaultLang(englishName).simpleModel().register());
     }
 
     public <I extends Item> Builder<I> builder(String name, Function<Item.Properties, ? extends I> factory) {
@@ -154,6 +147,13 @@ public class ItemRegistration extends Registration<Item, ItemEntry<? extends Ite
         @SafeVarargs
         public final Builder<I> tags(TagKey<Item>... tags) {
             this.tags.addAll(Arrays.asList(tags));
+            return this;
+        }
+
+        public Builder<I> simpleModel() {
+            itemModelGenerators.add((e, provider) -> ModelTemplates.FLAT_HANDHELD_ITEM.create(
+                ModelLocationUtils.getModelLocation(e.get()), TextureMapping.layer0(e.get()), provider.getModelConsumer()
+            ));
             return this;
         }
 
