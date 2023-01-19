@@ -14,6 +14,7 @@ public class DataGenManager {
     private static final Queue EMPTY = new Queue() {};
     public static final String ALMOST_DATA_GEN_PLATFORM = "almost.datagen.platform";
 
+    private final boolean isEnabled;
     private final Queue commonQueue;
     private final Queue forgeQueue;
     private final Queue fabricQueue;
@@ -21,10 +22,10 @@ public class DataGenManager {
 
     private DataGenManager(String namespace) {
         this.namespace = namespace;
-        boolean enabled = AlmostLib.PLATFORM.isDataGenEnabled();
-        commonQueue = enabled ? new ExistingQueue() : EMPTY;
-        forgeQueue = enabled ? new ExistingQueue() : EMPTY;
-        fabricQueue = enabled ? new ExistingQueue() : EMPTY;
+        isEnabled = AlmostLib.PLATFORM.isDataGenEnabled();
+        commonQueue = isEnabled ? new ExistingQueue() : EMPTY;
+        forgeQueue = isEnabled ? new ExistingQueue() : EMPTY;
+        fabricQueue = isEnabled ? new ExistingQueue() : EMPTY;
     }
 
     public static DataGenManager create(String namespace) {
@@ -52,7 +53,7 @@ public class DataGenManager {
     }
 
     public void collectProviders(DataGenerator generator) {
-        if (!AlmostLib.PLATFORM.isDataGenEnabled()) {
+        if (!isEnabled) {
             throw new IllegalStateException("DataGen is not enabled");
         }
 
