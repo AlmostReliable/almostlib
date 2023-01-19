@@ -126,6 +126,11 @@ public class BlockRegistration extends Registration<Block, BlockEntry<? extends 
             return item(builder -> builder.properties(() -> properties));
         }
 
+        public Builder<B> blockState(BiConsumer<BlockEntry<B>, BlockStateProvider> callback) {
+            blockstateGeneratorCallback = callback;
+            return this;
+        }
+
         public Builder<B> properties(Supplier<BlockBehaviour.Properties> supplier) {
             properties = supplier.get();
             Objects.requireNonNull(properties);
