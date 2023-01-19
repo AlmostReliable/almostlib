@@ -97,6 +97,7 @@ public class ItemRegistration extends Registration<Item, ItemEntry<? extends Ite
         private final Set<TagKey<Item>> tags = new HashSet<>();
 
         @Nullable private String defaultLang;
+        private boolean noLang;
 
         public Builder(String id, Function<Item.Properties, ? extends I> factory) {
             this.id = id;
@@ -173,6 +174,11 @@ public class ItemRegistration extends Registration<Item, ItemEntry<? extends Ite
             return this;
         }
 
+        public Builder<I> noLang() {
+            noLang = true;
+            return this;
+        }
+
         private String generateDefaultLang() {
             return Objects.requireNonNullElseGet(defaultLang, () -> AlmostUtils.capitalizeWords(id.replace('_', ' ')));
         }
@@ -183,9 +189,12 @@ public class ItemRegistration extends Registration<Item, ItemEntry<? extends Ite
             if (defaultTab != null && tab == null) {
                 properties.tab(defaultTab);
             }
-            ItemEntry<I> item = ItemRegistration.this.register(id, generateDefaultLang(), () -> factory.apply(properties));
+            ItemEntry<I> item = ItemRegistration.this.register(id, () -> factory.apply(properties));
 
             applyDataGen(dg -> {
+                if (!noLang) {
+                    dg.common().lang(p -> p.addLang(item.get().getDescriptionId(), generateDefaultLang()));
+                }
                 dg.common().itemModel(p -> itemModelGenerators.forEach(c -> c.accept(item, p)));
                 dg.platform().tags(Registry.ITEM, p -> tags.forEach(t -> p.tag(t).add(item.get())));
             });

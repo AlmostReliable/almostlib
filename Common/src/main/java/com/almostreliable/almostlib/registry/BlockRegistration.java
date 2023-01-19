@@ -271,7 +271,7 @@ public class BlockRegistration extends Registration<Block, BlockEntry<? extends 
                     "Cannot register item for block " + block.getId() + " without an item registration");
             }
             if (itemBuilderConsumer != null) {
-                var itemBuilder = ir.builder(id, (props) -> new BlockItem(block.get(), props));
+                var itemBuilder = ir.builder(id, props -> new BlockItem(block.get(), props)).noLang();
                 itemBuilderConsumer.accept(itemBuilder);
                 itemTags.forEach(itemBuilder::tags);
                 itemBuilder.register();
