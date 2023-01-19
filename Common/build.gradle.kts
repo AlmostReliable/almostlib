@@ -20,8 +20,8 @@ loom {
 }
 
 dependencies {
-    // We depend on fabric loader here to use the fabric @Environment annotations and get the mixin dependencies
-    // Do NOT use other classes from fabric loader
+    // The Fabric loader is required here to use the @Environment annotations and to get the mixin dependencies.
+    // Do NOT use other classes from the Fabric loader!
     modImplementation("net.fabricmc:fabric-loader:$fabricLoaderVersion")
 }
 

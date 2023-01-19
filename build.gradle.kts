@@ -74,11 +74,11 @@ subprojects {
     loom.silentMojangMappingsLicense()
 
     /**
-     * General dependencies we want to use for all subprojects. E.g. mappings or the minecraft version.
+     * General dependencies used for all subprojects, e.g. mappings or the Minecraft version.
      */
     dependencies {
         /**
-         * Kotlin accessor methods are not generated in this gradle, but we can access them through quoted names.
+         * Kotlin accessor methods are not generated in this gradle, they can be accessed through quoted names.
          */
         "minecraft"("com.mojang:minecraft:$minecraftVersion")
         "mappings"(loom.officialMojangMappings())
@@ -99,7 +99,7 @@ subprojects {
             }
 
         /**
-         * Non Minecraft dependencies
+         * Non-Minecraft dependencies
          */
         compileOnly("com.google.auto.service:auto-service:1.0.1")
         annotationProcessor("com.google.auto.service:auto-service:1.0.1")
@@ -120,16 +120,16 @@ subprojects {
 
         // See https://docs.gradle.org/current/userguide/publishing_maven.html for information on how to set up publishing.
         repositories {
-            // Add repositories to publish to here.
+            // Add repositories to publish here.
         }
     }
 
     /**
-     * Disabling the runtime transformer from Architectury
-     * When runtime transformer should be enabled again, remove this block. And add the following to the corresponding subproject:
+     * Disabling the runtime transformer from Architectury here.
+     * When the runtime transformer should be enabled again, remove this block and add the following to the respective subproject:
      *
      * configurations {
-     *      "developmentFabric" { extendsFrom(configurations["Common"]) } // or "developmentForge" for Forge
+     *      "developmentFabric" { extendsFrom(configurations["common"]) } // or "developmentForge" for Forge
      * }
      */
     architectury {
@@ -137,7 +137,7 @@ subprojects {
     }
 
     /**
-     * Resource processing for defined targets. This will replace `${key}` with the given values from the map below.
+     * Resource processing for defined targets. This will replace `${key}` with the specified values from the map below.
      */
     tasks.processResources {
         val resourceTargets = listOf("META-INF/mods.toml", "pack.mcmeta", "fabric.mod.json")
@@ -152,7 +152,7 @@ subprojects {
             "modDescription" to modDescription,
             "fabricApiVersion" to fabricApiVersion,
             "forgeVersion" to forgeVersion,
-            "forgeFMLVersion" to forgeVersion.substringBefore("."), // Only use major version as FML error message sucks and the error message for wrong forge version is way better.
+            "forgeFMLVersion" to forgeVersion.substringBefore("."), // Only use major version as FML error message sucks. The error message for wrong Forge version is way better.
             "githubUser" to githubUser,
             "githubRepo" to githubRepo
         )
@@ -168,7 +168,7 @@ subprojects {
 }
 
 /**
- * Subproject configurations and tasks we only want to apply to subprojects which are not the common project. E.g. fabric or forge.
+ * Subproject configurations and tasks only applied to subprojects that are not the common project, e.g. Fabric or Forge.
  */
 subprojects {
     if (project.path == ":Common") {
@@ -181,14 +181,14 @@ subprojects {
         runs {
             forEach { it ->
                 it.runDir(if (sharedRunDir.toBoolean()) "../run" else "run")
-                // Allows hot swapping when using Jetbrains Runtime (https://github.com/JetBrains/JetBrainsRuntime)
+                // Allows DCEVM hot-swapping when using the JetBrains Runtime (https://github.com/JetBrains/JetBrainsRuntime).
                 it.vmArgs("-XX:+IgnoreUnrecognizedVMOptions", "-XX:+AllowEnhancedClassRedefinition")
             }
         }
 
         /**
-         * "main" matches the default mod's name. Since we are using `compileOnly()` in Architectur, we need to set up
-         * the local mods as well for the loaders. Otherwise, they don't understand that :common exists.
+         * "main" matches the default mod's name. Since `compileOnly()` is being used in Architectury,
+         * the local mods for the loaders need to be set up too. Otherwise, they won't recognize :Common.
          */
         with(mods.maybeCreate("main")) {
             fun Project.sourceSets() = extensions.getByName<SourceSetContainer>("sourceSets")
@@ -198,7 +198,7 @@ subprojects {
     }
 
     val common by configurations.creating
-    val shadowCommon by configurations.creating // Don't use shadow from the shadow plugin because we don't want IDEA to index this.
+    val shadowCommon by configurations.creating // Don't use shadow from the shadow plugin because IDEA isn't supposed to index this.
     configurations {
         "compileClasspath" { extendsFrom(common) }
         "runtimeClasspath" { extendsFrom(common) }
