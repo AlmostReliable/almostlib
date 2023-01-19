@@ -6,7 +6,7 @@ import com.almostreliable.almostlib.registry.BlockEntityRegistration;
 import com.almostreliable.almostlib.registry.BlockRegistration;
 import com.almostreliable.almostlib.registry.ItemRegistration;
 import com.almostreliable.almostlib.registry.Registration;
-import net.minecraft.world.item.CreativeModeTab;
+import net.minecraft.resources.ResourceLocation;
 
 /**
  * Simple manager which holds registrations for a mod.
@@ -39,6 +39,10 @@ public class AlmostManager {
 
     public String getNamespace() {
         return namespace;
+    }
+
+    public ResourceLocation getRL(String path) {
+        return new ResourceLocation(namespace, path);
     }
 
     public ItemRegistration items() {
