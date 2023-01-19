@@ -5,7 +5,7 @@ val modName: String by project
 val modPackage: String by project
 
 plugins {
-    id("com.github.gmazzo.buildconfig") version ("3.0.3")
+    id("com.github.gmazzo.buildconfig") version ("3.1.0")
 }
 
 architectury {
