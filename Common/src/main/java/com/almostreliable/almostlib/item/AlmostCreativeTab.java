@@ -10,7 +10,7 @@ public abstract class AlmostCreativeTab extends CreativeModeTab {
     private final String defaultTranslation;
 
     public AlmostCreativeTab(ResourceLocation location, String defaultTranslation) {
-        this(String.format("itemGroup.%s.%s", location.getNamespace(), location.getPath()), defaultTranslation);
+        this(String.format("%s.%s", location.getNamespace(), location.getPath()), defaultTranslation);
     }
 
     public AlmostCreativeTab(String translationKey, String defaultTranslation) {
@@ -40,4 +40,3 @@ public abstract class AlmostCreativeTab extends CreativeModeTab {
         return index;
     }
 }
-
