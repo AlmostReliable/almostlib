@@ -1,7 +1,10 @@
 package com.almostreliable.almostlib.util;
 
+import org.apache.commons.lang3.StringUtils;
+
 import javax.annotation.Nullable;
 import java.util.*;
+import java.util.stream.Collectors;
 
 @SuppressWarnings("unused")
 public class AlmostUtils {
@@ -67,5 +70,12 @@ public class AlmostUtils {
         }
 
         return OptionalDouble.empty();
+    }
+
+    public static String capitalizeWords(String str) {
+        return Arrays.stream(str.split(" "))
+            .map(String::toLowerCase)
+            .map(StringUtils::capitalize)
+            .collect(Collectors.joining(" "));
     }
 }

@@ -1,8 +1,9 @@
-package com.almostreliable.almostlib;
+package com.almostreliable.almostlib.forge;
 
+import com.almostreliable.almostlib.AlmostLibPlatform;
+import com.almostreliable.almostlib.Platform;
 import com.almostreliable.almostlib.client.MenuFactory;
 import com.almostreliable.almostlib.registry.Registration;
-import com.almostreliable.almostlib.util.AlmostUtils;
 import com.google.auto.service.AutoService;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Registry;
@@ -23,18 +24,18 @@ import net.minecraft.world.level.block.state.BlockState;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.common.extensions.IForgeMenuType;
 import net.minecraftforge.data.loading.DatagenModLoader;
-import net.minecraftforge.event.RegistryEvent;
 import net.minecraftforge.fml.ModList;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
 import net.minecraftforge.fml.loading.FMLLoader;
 import net.minecraftforge.fml.loading.FMLPaths;
 import net.minecraftforge.network.NetworkHooks;
-import net.minecraftforge.registries.ForgeRegistry;
-import net.minecraftforge.registries.IForgeRegistryEntry;
-import net.minecraftforge.registries.RegistryManager;
+import net.minecraftforge.registries.IForgeRegistry;
+import net.minecraftforge.registries.RegisterEvent;
 
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import java.nio.file.Path;
+import java.util.function.BiConsumer;
 import java.util.function.BiFunction;
 import java.util.function.Consumer;
 import java.util.function.Supplier;
@@ -87,7 +88,7 @@ public class AlmostLibPlatformForge implements AlmostLibPlatform {
 
     @Override
     public void openMenu(ServerPlayer player, MenuProvider menu, Consumer<FriendlyByteBuf> buf) {
-        NetworkHooks.openGui(player, menu, buf);
+        NetworkHooks.openScreen(player, menu, buf);
     }
 
     @Override
@@ -112,27 +113,28 @@ public class AlmostLibPlatformForge implements AlmostLibPlatform {
 
     @Override
     public <T> void initRegistration(Registration<T, ?> registration) {
-        //noinspection rawtypes
-        ForgeRegistry r = RegistryManager.ACTIVE.getRegistry(registration.getRegistry().key().location());
-        if (r == null) {
-            // TODO Handle this? Need to check
-            throw new IllegalArgumentException(
-                    "Registry " + registration.getRegistry().key().location() + " does not exist for Forge");
-        }
-        //noinspection unchecked
         FMLJavaModLoadingContext
                 .get()
                 .getModEventBus()
-                .addGenericListener(r.getRegistrySuperType(), (RegistryEvent.Register<?> event) -> {
-                    registration.applyRegister((id, entry) -> {
-                        if (!(entry instanceof IForgeRegistryEntry<?> s)) {
-                            AlmostLib.LOGGER.error("Entry {} is not an IForgeRegistryEntry", entry);
-                            return;
-                        }
-                        s.setRegistryName(id);
-                        event.getRegistry().register(AlmostUtils.cast(s));
-                    });
+                .addListener((RegisterEvent event) -> {
+                    BiConsumer<ResourceLocation, Object> registerConsumer = createRegisterConsumer(event.getForgeRegistry(),
+                            event.getVanillaRegistry());
+                    if (registerConsumer == null) {
+                        throw new IllegalArgumentException("Neither forge registry nor vanilla registry is present");
+                    }
+                    registration.applyRegister(registerConsumer::accept);
                 });
+    }
+
+    @Nullable
+    private BiConsumer<ResourceLocation, Object> createRegisterConsumer(@Nullable IForgeRegistry<Object> forgeRegistry, @Nullable Registry<Object> vanillaRegistry) {
+        if (forgeRegistry != null) {
+            return forgeRegistry::register;
+        }
+        if (vanillaRegistry != null) {
+            return (location, object) -> Registry.register(vanillaRegistry, location, object);
+        }
+        return null;
     }
 
     @Override

@@ -2,9 +2,9 @@ package com.almostreliable.almostlib.datagen.provider;
 
 import com.google.gson.JsonElement;
 import net.minecraft.core.Registry;
+import net.minecraft.data.CachedOutput;
 import net.minecraft.data.DataGenerator;
 import net.minecraft.data.DataProvider;
-import net.minecraft.data.HashCache;
 import net.minecraft.data.models.blockstates.BlockStateGenerator;
 import net.minecraft.resources.ResourceLocation;
 
@@ -28,15 +28,15 @@ public class BlockStateProvider extends AbstractDataProvider {
     }
 
     @Override
-    public void run(HashCache var1) throws IOException {
+    public void run(CachedOutput cachedOutput) throws IOException {
         for (var generator : blockStateGenerators) {
             Path path = getBlockStatePath(generator);
-            DataProvider.save(GSON, var1, generator.get(), path);
+            DataProvider.saveStable(cachedOutput, generator.get(), path);
         }
 
         for (var entry : modelGenerators.entrySet()) {
             Path path = getModelPath(entry.getKey());
-            DataProvider.save(GSON, var1, entry.getValue().get(), path);
+            DataProvider.saveStable(cachedOutput, entry.getValue().get(), path);
         }
     }
 

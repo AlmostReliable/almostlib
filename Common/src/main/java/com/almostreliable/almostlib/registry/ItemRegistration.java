@@ -36,20 +36,6 @@ public class ItemRegistration extends Registration<Item, ItemEntry<? extends Ite
         return new ItemEntry<>(getRegistry(), id, AlmostUtils.cast(supplier));
     }
 
-    /**
-     * Initialize a creative tab with given description. By default, the creative tab has no icon.
-     * By using the builder when creating a new item use {@link Builder#markAsDefaultCreativeTab()} to set the tab icon.
-     * Using {@link Builder#markAsDefaultCreativeTab()} multiple times will throw an exception.
-     *
-     * @param description The description of the creative tab.
-     * @return self
-     */
-    public ItemRegistration initDefaultCreativeTab(String description) {
-        String translationKey = description.toLowerCase(Locale.ENGLISH).replaceAll("\\s+", "_");
-        ResourceLocation location = new ResourceLocation(getNamespace(), translationKey);
-        return this;
-    }
-
     @Nullable
     public CreativeModeTab getDefaultCreativeTab() {
         return defaultCreativeTab;
@@ -62,8 +48,17 @@ public class ItemRegistration extends Registration<Item, ItemEntry<? extends Ite
 
     @Override
     @SuppressWarnings("unchecked")
-    public <T extends Item> ItemEntry<T> register(String name, Supplier<? extends T> supplier) {
-        return (ItemEntry<T>) super.register(name, supplier);
+    public <T extends Item> ItemEntry<T> register(String id, Supplier<? extends T> supplier) {
+        return (ItemEntry<T>) super.register(id, supplier);
+    }
+
+    @SuppressWarnings("unchecked")
+    public <T extends Item> ItemEntry<T> register(String id, String englishName, Supplier<? extends T> supplier) {
+        var item = (ItemEntry<T>) super.register(id, supplier);
+        if (dataGenManager != null) {
+            dataGenManager.common().lang(p -> p.addLang(item.get().getDescriptionId(), englishName));
+        }
+        return item;
     }
 
     public <I extends Item> Builder<I> builder(String name, Function<Item.Properties, ? extends I> factory) {
@@ -86,16 +81,17 @@ public class ItemRegistration extends Registration<Item, ItemEntry<? extends Ite
     }
 
     public class Builder<I extends Item> {
+
         private final Function<Item.Properties, ? extends I> factory;
-        private final String name;
+        private final String id;
         private Item.Properties properties;
-
         private final List<BiConsumer<RegistryEntry<I>, ItemModelProvider>> itemModelGenerators = new ArrayList<>();
-
         private final Set<TagKey<Item>> tags = new HashSet<>();
 
-        public Builder(String name, Function<Item.Properties, ? extends I> factory) {
-            this.name = name;
+        @Nullable private String defaultLang;
+
+        public Builder(String id, Function<Item.Properties, ? extends I> factory) {
+            this.id = id;
             this.factory = factory;
             this.properties = new Item.Properties();
         }
@@ -154,8 +150,8 @@ public class ItemRegistration extends Registration<Item, ItemEntry<? extends Ite
 
         public Builder<I> model(ModelTemplate template) {
             itemModelGenerators.add((e, provider) -> template.create(e.getId(),
-                    TextureMapping.layer0(e.get()),
-                    provider.getModelConsumer()));
+                TextureMapping.layer0(e.get()),
+                provider.getModelConsumer()));
             return this;
         }
 
@@ -164,13 +160,22 @@ public class ItemRegistration extends Registration<Item, ItemEntry<? extends Ite
             return this;
         }
 
+        public Builder<I> defaultLang(String englishName) {
+            defaultLang = englishName;
+            return this;
+        }
+
+        private String generateDefaultLang() {
+            return Objects.requireNonNullElseGet(defaultLang, () -> AlmostUtils.capitalizeWords(id.replace('_', ' ')));
+        }
+
         public ItemEntry<I> register() {
             final CreativeModeTab tab = ((ItemPropertiesAccessor) properties).getCreativeTab();
             final CreativeModeTab defaultTab = ItemRegistration.this.getDefaultCreativeTab();
             if (defaultTab != null && tab == null) {
                 properties.tab(defaultTab);
             }
-            ItemEntry<I> item = ItemRegistration.this.register(name, () -> factory.apply(properties));
+            ItemEntry<I> item = ItemRegistration.this.register(id, generateDefaultLang(), () -> factory.apply(properties));
 
             applyDataGen(dg -> {
                 dg.common().itemModel(p -> itemModelGenerators.forEach(c -> c.accept(item, p)));

@@ -10,11 +10,12 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.tags.TagKey;
 import net.minecraft.util.valueproviders.UniformInt;
 import net.minecraft.world.item.BlockItem;
+import net.minecraft.world.item.CreativeModeTab;
 import net.minecraft.world.item.DyeColor;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.level.ItemLike;
 import net.minecraft.world.level.block.Block;
-import net.minecraft.world.level.block.OreBlock;
+import net.minecraft.world.level.block.DropExperienceBlock;
 import net.minecraft.world.level.block.SoundType;
 import net.minecraft.world.level.block.state.BlockBehaviour;
 import net.minecraft.world.level.block.state.BlockState;
@@ -50,8 +51,17 @@ public class BlockRegistration extends Registration<Block, BlockEntry<? extends 
 
     @Override
     @SuppressWarnings("unchecked")
-    public <T extends Block> BlockEntry<T> register(String name, Supplier<? extends T> supplier) {
-        return (BlockEntry<T>) super.register(name, supplier);
+    public <T extends Block> BlockEntry<T> register(String id, Supplier<? extends T> supplier) {
+        return (BlockEntry<T>) super.register(id, supplier);
+    }
+
+    @SuppressWarnings("unchecked")
+    public <T extends Block> BlockEntry<T> register(String id, String englishName, Supplier<? extends T> supplier) {
+        var block = register(id, supplier);
+        if (dataGenManager != null) {
+            dataGenManager.common().lang(p -> p.addLang(block.get().getDescriptionId(), englishName));
+        }
+        return (BlockEntry<T>) block;
     }
 
     public <B extends Block> Builder<B> builder(String name, Material material, Function<BlockBehaviour.Properties, ? extends B> factory) {
@@ -63,7 +73,7 @@ public class BlockRegistration extends Registration<Block, BlockEntry<? extends 
     }
 
     public Builder<Block> oreBuilder(String name, Material material, UniformInt xp) {
-        return builder(name, material, properties -> new OreBlock(properties, xp));
+        return builder(name, material, properties -> new DropExperienceBlock(properties, xp));
     }
 
     public BlockRegistration dataGen(DataGenManager dataGenManager) {
@@ -79,20 +89,20 @@ public class BlockRegistration extends Registration<Block, BlockEntry<? extends 
 
     @SuppressWarnings("unused")
     public class Builder<B extends Block> {
-        private final String name;
+
+        private final String id;
         private BlockBehaviour.Properties properties;
         Function<BlockBehaviour.Properties, ? extends B> factory;
-
         @Nullable protected BiConsumer<BlockEntry<B>, BlockStateProvider> blockstateGeneratorCallback;
         @Nullable protected BiConsumer<BlockEntry<B>, LootTableProvider> lootTableCallback;
         private final Set<TagKey<Block>> blockTags = new HashSet<>();
-
         /* Item Stuff */
         @Nullable Consumer<ItemRegistration.Builder<? extends BlockItem>> itemBuilderConsumer;
         private final Set<TagKey<Item>> itemTags = new HashSet<>();
+        @Nullable String defaultLang;
 
-        public Builder(String name, BlockBehaviour.Properties properties, Function<BlockBehaviour.Properties, ? extends B> factory) {
-            this.name = name;
+        public Builder(String id, BlockBehaviour.Properties properties, Function<BlockBehaviour.Properties, ? extends B> factory) {
+            this.id = id;
             this.properties = properties;
             this.factory = factory;
         }
@@ -102,8 +112,16 @@ public class BlockRegistration extends Registration<Block, BlockEntry<? extends 
             return this;
         }
 
-        public Builder<B> simpleItem() {
+        public Builder<B> defaultItem() {
             return item(builder -> {});
+        }
+
+        public Builder<B> defaultItem(CreativeModeTab tab) {
+            return item(builder -> builder.creativeTab(tab));
+        }
+
+        public Builder<B> defaultItem(Item.Properties properties) {
+            return item(builder -> builder.properties(() -> properties));
         }
 
         public Builder<B> properties(Supplier<BlockBehaviour.Properties> supplier) {
@@ -177,8 +195,8 @@ public class BlockRegistration extends Registration<Block, BlockEntry<? extends 
             return this;
         }
 
-        public Builder<B> noDrops() {
-            properties.noDrops();
+        public Builder<B> noLootTable() {
+            properties.noLootTable();
             return this;
         }
 
@@ -235,16 +253,25 @@ public class BlockRegistration extends Registration<Block, BlockEntry<? extends 
             return this;
         }
 
+        public Builder<B> defaultLang(String englishName) {
+            defaultLang = englishName;
+            return this;
+        }
+
+        private String generateDefaultLang() {
+            return Objects.requireNonNullElseGet(defaultLang, () -> AlmostUtils.capitalizeWords(id.replace('_', ' ')));
+        }
+
         public BlockEntry<B> register() {
-            BlockEntry<B> block = BlockRegistration.this.register(name, () -> factory.apply(properties));
+            BlockEntry<B> block = BlockRegistration.this.register(id, generateDefaultLang(), () -> factory.apply(properties));
 
             var ir = BlockRegistration.this.itemRegistration;
             if (ir == null && itemBuilderConsumer != null) {
                 throw new IllegalStateException(
-                        "Cannot register item for block " + block.getId() + " without an item registration");
+                    "Cannot register item for block " + block.getId() + " without an item registration");
             }
             if (itemBuilderConsumer != null) {
-                var itemBuilder = ir.builder(name, (props) -> new BlockItem(block.get(), props));
+                var itemBuilder = ir.builder(id, (props) -> new BlockItem(block.get(), props));
                 itemBuilderConsumer.accept(itemBuilder);
                 itemTags.forEach(itemBuilder::tags);
                 itemBuilder.register();

@@ -26,13 +26,13 @@ public class BlockEntityRegistration extends GenericRegistration<BlockEntityType
 
     public class Builder<BE extends BlockEntity> {
 
-        private final String name;
+        private final String id;
         private final BiFunction<BlockPos, BlockState, BE> factory;
 
         private final List<Supplier<Collection<? extends Block>>> blocksSuppliers = new ArrayList<>();
 
-        public Builder(String name, BiFunction<BlockPos, BlockState, BE> factory) {
-            this.name = name;
+        public Builder(String id, BiFunction<BlockPos, BlockState, BE> factory) {
+            this.id = id;
             this.factory = factory;
         }
 
@@ -42,7 +42,7 @@ public class BlockEntityRegistration extends GenericRegistration<BlockEntityType
         }
 
         public RegistryEntry<BlockEntityType<BE>> register() {
-            return BlockEntityRegistration.this.register(name, () -> {
+            return BlockEntityRegistration.this.register(id, () -> {
                 Block[] blocks = blocksSuppliers
                         .stream()
                         .flatMap(s -> s.get().stream())

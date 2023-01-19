@@ -8,6 +8,8 @@ import java.util.Random;
 import java.util.function.Function;
 
 public class WeightedList<T> {
+
+    // TODO Use RandomSource from Mojang or maybe both
     private static final Random RANDOM = new Random();
     private final List<Entry<T>> entries;
     private final int totalWeight;

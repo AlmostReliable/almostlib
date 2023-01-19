@@ -1,6 +1,7 @@
 package com.almostreliable.almostlib.datagen.provider;
 
 import com.google.gson.JsonObject;
+import net.minecraft.data.CachedOutput;
 import net.minecraft.data.DataGenerator;
 import net.minecraft.data.DataProvider;
 import net.minecraft.data.HashCache;
@@ -18,14 +19,14 @@ public class LangProvider extends AbstractDataProvider {
     }
 
     @Override
-    public void run(HashCache var1) throws IOException {
+    public void run(CachedOutput cachedOutput) throws IOException {
         JsonObject data = new JsonObject();
         SortedMap<String, String> sorted = new TreeMap<>(Comparator.naturalOrder());
         sorted.putAll(langs);
         sorted.forEach(data::addProperty);
 
         if (!sorted.isEmpty()) {
-            DataProvider.save(GSON, var1, data, getLangPath("en_us"));
+            DataProvider.saveStable(cachedOutput, data, getLangPath("en_us"));
         }
     }
 

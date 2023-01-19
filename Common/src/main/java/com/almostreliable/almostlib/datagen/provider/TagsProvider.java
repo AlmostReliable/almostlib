@@ -1,16 +1,18 @@
 package com.almostreliable.almostlib.datagen.provider;
 
+import com.almostreliable.almostlib.AlmostLib;
 import com.almostreliable.almostlib.registry.RegistryEntry;
 import com.google.common.collect.Maps;
+import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
+import com.mojang.serialization.DataResult;
+import com.mojang.serialization.JsonOps;
 import net.minecraft.core.Registry;
+import net.minecraft.data.CachedOutput;
 import net.minecraft.data.DataGenerator;
 import net.minecraft.data.DataProvider;
-import net.minecraft.data.HashCache;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraft.tags.Tag;
-import net.minecraft.tags.TagKey;
-import net.minecraft.tags.TagManager;
+import net.minecraft.tags.*;
 
 import java.io.IOException;
 import java.nio.file.Path;
@@ -20,7 +22,7 @@ import java.util.Objects;
 import java.util.stream.Collectors;
 
 public class TagsProvider<T> extends AbstractDataProvider {
-    public final Map<ResourceLocation, Tag.Builder> builders = Maps.newLinkedHashMap();
+    public final Map<ResourceLocation, TagBuilder> builders = Maps.newLinkedHashMap();
     private final Registry<T> registry;
 
     public TagsProvider(String namespace, DataGenerator dataGenerator, Registry<T> registry) {
@@ -29,22 +31,24 @@ public class TagsProvider<T> extends AbstractDataProvider {
     }
 
     @Override
-    public void run(HashCache hashCache) throws IOException {
+    public void run(CachedOutput cachedOutput) throws IOException {
         for (var entry : builders.entrySet()) {
-            List<Tag.BuilderEntry> invalidEntries = entry.getValue().getEntries().filter(this::isInvalid).toList();
+            List<TagEntry> invalidEntries = entry.getValue().build().stream().filter(this::isInvalid).toList();
             if (!invalidEntries.isEmpty()) {
                 throw new IllegalStateException(
                         "Invalid entries in tag " + entry.getKey() + ": " + invalidEntries.stream().map(
                                 Objects::toString).collect(Collectors.joining(",")));
             }
 
-            JsonObject jsonObject = entry.getValue().serializeToJson();
-            DataProvider.save(GSON, hashCache, jsonObject, getTagPath(entry.getKey()));
+            DataResult<JsonElement> result = TagFile.CODEC.encodeStart(JsonOps.INSTANCE,
+                    new TagFile(entry.getValue().build(), false));
+            JsonElement json = result.getOrThrow(false, AlmostLib.LOGGER::error);
+            DataProvider.saveStable(cachedOutput, json, getTagPath(entry.getKey()));
         }
     }
 
-    protected boolean isInvalid(Tag.BuilderEntry builderEntry) {
-        return !builderEntry.entry().verifyIfPresent(registry::containsKey, builders::containsKey);
+    protected boolean isInvalid(TagEntry entry) {
+        return !entry.verifyIfPresent(registry::containsKey, builders::containsKey);
     }
 
     protected Path getTagPath(ResourceLocation resourceLocation) {
@@ -59,15 +63,15 @@ public class TagsProvider<T> extends AbstractDataProvider {
     }
 
     public TagAppender<T> tag(TagKey<T> tagKey) {
-        Tag.Builder builder = this.builders.computeIfAbsent(tagKey.location(), ($) -> new Tag.Builder());
-        return new TagAppender<>(builder, this.registry, namespace);
+        TagBuilder builder = this.builders.computeIfAbsent(tagKey.location(), ($) -> new TagBuilder());
+        return new TagAppender<>(builder, this.registry);
     }
 
-    public record TagAppender<T>(Tag.Builder builder, Registry<T> registry, String namespace) {
+    public record TagAppender<T>(TagBuilder builder, Registry<T> registry) {
         @SafeVarargs
         public final TagAppender<T> add(T... entries) {
             for (T entry : entries) {
-                builder.addElement(Objects.requireNonNull(registry.getKey(entry)), namespace);
+                builder.addElement(Objects.requireNonNull(registry.getKey(entry)));
             }
             return this;
         }
@@ -75,23 +79,23 @@ public class TagsProvider<T> extends AbstractDataProvider {
         @SafeVarargs
         public final TagAppender<T> add(RegistryEntry<T>... entries) {
             for (RegistryEntry<T> entry : entries) {
-                builder.addElement(entry.getId(), namespace);
+                builder.addElement(entry.getId());
             }
             return this;
         }
 
         public TagAppender<T> addOptional(ResourceLocation id) {
-            builder.addOptionalElement(id, namespace);
+            builder.addOptionalElement(id);
             return this;
         }
 
         public TagAppender<T> addTag(TagKey<T> tag) {
-            builder.addTag(tag.location(), namespace);
+            builder.addTag(tag.location());
             return this;
         }
 
         public TagAppender<T> addOptionalTag(ResourceLocation tag) {
-            builder.addOptionalTag(tag, namespace);
+            builder.addOptionalTag(tag);
             return this;
         }
     }

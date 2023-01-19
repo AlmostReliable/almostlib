@@ -1,5 +1,7 @@
-package com.almostreliable.almostlib;
+package com.almostreliable.almostlib.fabric;
 
+import com.almostreliable.almostlib.AlmostLibPlatform;
+import com.almostreliable.almostlib.Platform;
 import com.almostreliable.almostlib.client.MenuFactory;
 import com.almostreliable.almostlib.registry.Registration;
 import com.google.auto.service.AutoService;

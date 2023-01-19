@@ -2,6 +2,7 @@ package com.almostreliable.almostlib.datagen.provider;
 
 import com.almostreliable.almostlib.AlmostLib;
 import com.google.common.collect.Multimap;
+import net.minecraft.data.CachedOutput;
 import net.minecraft.data.DataGenerator;
 import net.minecraft.data.DataProvider;
 import net.minecraft.data.HashCache;
@@ -27,7 +28,7 @@ public class LootTableProvider extends AbstractDataProvider {
     }
 
     @Override
-    public void run(HashCache var1) throws IOException {
+    public void run(CachedOutput cachedOutput) throws IOException {
         ValidationContext validation = new ValidationContext(LootContextParamSets.ALL_PARAMS,
                 resourceLocation -> null,
                 lootTables::get);
@@ -45,7 +46,7 @@ public class LootTableProvider extends AbstractDataProvider {
         }
 
         for (var entry : lootTables.entrySet()) {
-            DataProvider.save(GSON, var1, LootTables.serialize(entry.getValue()), createLootTablePath(entry.getKey()));
+            DataProvider.saveStable(cachedOutput, LootTables.serialize(entry.getValue()), createLootTablePath(entry.getKey()));
         }
     }
 

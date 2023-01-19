@@ -1,8 +1,6 @@
 package com.almostreliable.almostlib.registry;
 
-import com.google.common.base.Suppliers;
 import net.minecraft.core.Registry;
-import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
 
 import java.util.Collection;
@@ -56,13 +54,13 @@ public abstract class Registration<S, RE extends RegistryEntry<? extends S>> {
     protected abstract RE createEntry(ResourceLocation id, Supplier<? extends S> supplier);
 
     @SuppressWarnings("unchecked")
-    public <T extends S> RegistryEntry<T> register(String name, Supplier<? extends T> supplier) {
-        final ResourceLocation id = new ResourceLocation(namespace, name);
-        if (entries.containsKey(id)) {
-            throw new IllegalArgumentException("Duplicate registration for " + name + " in " + namespace);
+    public <T extends S> RegistryEntry<T> register(String id, Supplier<? extends T> supplier) {
+        final ResourceLocation fullId = new ResourceLocation(namespace, id);
+        if (entries.containsKey(fullId)) {
+            throw new IllegalArgumentException("Duplicate registration for " + id + " in " + namespace);
         }
-        RE e = createEntry(id, supplier);
-        entries.put(id, e);
+        RE e = createEntry(fullId, supplier);
+        entries.put(fullId, e);
         return (RegistryEntry<T>) e;
     }
 

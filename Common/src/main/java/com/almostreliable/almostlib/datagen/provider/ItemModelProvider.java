@@ -1,6 +1,7 @@
 package com.almostreliable.almostlib.datagen.provider;
 
 import com.google.gson.JsonElement;
+import net.minecraft.data.CachedOutput;
 import net.minecraft.data.DataGenerator;
 import net.minecraft.data.DataProvider;
 import net.minecraft.data.HashCache;
@@ -22,10 +23,10 @@ public class ItemModelProvider extends AbstractDataProvider {
     }
 
     @Override
-    public void run(HashCache var1) throws IOException {
+    public void run(CachedOutput cachedOutput) throws IOException {
         for (var entry : modelGenerators.entrySet()) {
             Path modelPath = getModelPath(entry.getKey());
-            DataProvider.save(GSON, var1, entry.getValue().get(), modelPath);
+            DataProvider.saveStable(cachedOutput, entry.getValue().get(), modelPath);
         }
     }
 

@@ -15,14 +15,14 @@
   "environment": "*",
   "entrypoints": {
     "main": [
-      "com.almostreliable.almostlib.FabricEntry"
+      "com.almostreliable.almostlib.fabric.FabricInitializer"
     ]
   },
   "mixins": [
     "almostlib-common.mixins.json"
   ],
   "depends": {
-    "fabric": "*",
+    "fabric": ">=${fabricApiVersion}",
     "minecraft": ">=${minecraftVersion}",
     "java": ">=17"
   }
