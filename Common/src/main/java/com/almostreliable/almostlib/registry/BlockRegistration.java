@@ -6,6 +6,8 @@ import com.almostreliable.almostlib.datagen.provider.BlockStateProvider;
 import com.almostreliable.almostlib.datagen.provider.LootTableProvider;
 import com.almostreliable.almostlib.util.AlmostUtils;
 import net.minecraft.core.Registry;
+import net.minecraft.data.models.model.DelegatedModel;
+import net.minecraft.data.models.model.ModelLocationUtils;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.tags.TagKey;
 import net.minecraft.util.valueproviders.UniformInt;
@@ -274,7 +276,9 @@ public class BlockRegistration extends Registration<Block, BlockEntry<? extends 
                 var itemBuilder = ir.builder(id, props -> new BlockItem(block.get(), props)).noLang();
                 itemBuilderConsumer.accept(itemBuilder);
                 itemTags.forEach(itemBuilder::tags);
-                itemBuilder.register();
+                itemBuilder.model((e, provider) -> provider.getModelConsumer().accept(
+                    ModelLocationUtils.getModelLocation(e.get()), new DelegatedModel(ModelLocationUtils.getModelLocation(block.get()))
+                )).register();
             }
 
             applyDataGen(dg -> {
