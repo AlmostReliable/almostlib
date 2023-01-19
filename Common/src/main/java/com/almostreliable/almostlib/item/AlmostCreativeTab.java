@@ -28,7 +28,7 @@ public abstract class AlmostCreativeTab extends CreativeModeTab {
     }
 
     public AlmostCreativeTab bindLang(DataGenManager dataGen) {
-        dataGen.common().lang(lp -> lp.addLang(getTranslationKey(), getDefaultTranslation()));
+        dataGen.common().lang(lp -> lp.addLang("itemGroup." + getTranslationKey(), getDefaultTranslation()));
         return this;
     }
 
