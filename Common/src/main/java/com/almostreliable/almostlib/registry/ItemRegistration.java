@@ -54,11 +54,19 @@ public class ItemRegistration extends Registration<Item, ItemEntry<? extends Ite
 
     @SuppressWarnings("unchecked")
     public <T extends Item> ItemEntry<T> register(String id, String englishName, Supplier<? extends T> supplier) {
-        var item = (ItemEntry<T>) super.register(id, supplier);
+        var item = (ItemEntry<T>) register(id, supplier);
         if (dataGenManager != null) {
             dataGenManager.common().lang(p -> p.addLang(item.get().getDescriptionId(), englishName));
         }
         return item;
+    }
+
+    public <T extends Item> ItemEntry<T> register(String id, Function<Item.Properties, ? extends T> factory) {
+        return AlmostUtils.cast(builder(id, factory).register());
+    }
+
+    public <T extends Item> ItemEntry<T> register(String id, String englishName, Function<Item.Properties, ? extends T> factory) {
+        return AlmostUtils.cast(builder(id, factory).defaultLang(englishName).register());
     }
 
     public <I extends Item> Builder<I> builder(String name, Function<Item.Properties, ? extends I> factory) {
