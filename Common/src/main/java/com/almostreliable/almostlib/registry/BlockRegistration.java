@@ -66,16 +66,16 @@ public class BlockRegistration extends Registration<Block, BlockEntry<? extends 
         return (BlockEntry<T>) block;
     }
 
-    public <B extends Block> Builder<B> builder(String name, Material material, Function<BlockBehaviour.Properties, ? extends B> factory) {
-        return new Builder<>(name, BlockBehaviour.Properties.of(material), factory);
+    public <B extends Block> Builder<B> builder(String id, Material material, Function<BlockBehaviour.Properties, ? extends B> factory) {
+        return new Builder<>(id, BlockBehaviour.Properties.of(material), factory);
     }
 
-    public Builder<Block> builder(String name, Material material) {
-        return builder(name, material, Block::new);
+    public Builder<Block> builder(String id, Material material) {
+        return builder(id, material, Block::new);
     }
 
-    public Builder<Block> oreBuilder(String name, Material material, UniformInt xp) {
-        return builder(name, material, properties -> new DropExperienceBlock(properties, xp));
+    public Builder<Block> oreBuilder(String id, Material material, UniformInt xp) {
+        return builder(id, material, properties -> new DropExperienceBlock(properties, xp));
     }
 
     public BlockRegistration dataGen(DataGenManager dataGenManager) {

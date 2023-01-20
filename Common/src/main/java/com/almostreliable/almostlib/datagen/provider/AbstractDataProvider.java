@@ -33,7 +33,6 @@ public abstract class AbstractDataProvider implements DataProvider {
     }
 
     protected Path getModelPath(ResourceLocation resourceLocation) {
-        return getAssetsPath().resolve(
-            resourceLocation.getNamespace() + "/models/" + resourceLocation.getPath() + ".json");
+        return getAssetsPath().resolve(resourceLocation.getNamespace() + "/models/" + resourceLocation.getPath() + ".json");
     }
 }
