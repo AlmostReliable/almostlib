@@ -30,11 +30,6 @@ public class ItemModelProvider extends AbstractDataProvider {
         }
     }
 
-    private Path getModelPath(ResourceLocation resourceLocation) {
-        return getAssetsPath().resolve(
-                resourceLocation.getNamespace() + "/models/item/" + resourceLocation.getPath() + ".json");
-    }
-
     public void addModel(ResourceLocation resourceLocation, Supplier<JsonElement> supplier) {
         modelGenerators.put(resourceLocation, supplier);
     }

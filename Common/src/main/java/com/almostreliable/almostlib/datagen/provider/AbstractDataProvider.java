@@ -4,6 +4,7 @@ import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import net.minecraft.data.DataGenerator;
 import net.minecraft.data.DataProvider;
+import net.minecraft.resources.ResourceLocation;
 
 import java.nio.file.Path;
 
@@ -29,5 +30,10 @@ public abstract class AbstractDataProvider implements DataProvider {
 
     protected Path getDataPath() {
         return dataGenerator.getOutputFolder().resolve("data/");
+    }
+
+    protected Path getModelPath(ResourceLocation resourceLocation) {
+        return getAssetsPath().resolve(
+            resourceLocation.getNamespace() + "/models/" + resourceLocation.getPath() + ".json");
     }
 }

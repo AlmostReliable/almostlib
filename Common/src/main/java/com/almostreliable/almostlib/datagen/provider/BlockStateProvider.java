@@ -45,11 +45,6 @@ public class BlockStateProvider extends AbstractDataProvider {
         return getAssetsPath().resolve(key.getNamespace() + "/blockstates/" + key.getPath() + ".json");
     }
 
-    private Path getModelPath(ResourceLocation resourceLocation) {
-        return getAssetsPath().resolve(
-                resourceLocation.getNamespace() + "/models/" + resourceLocation.getPath() + ".json");
-    }
-
     public void addBlockState(BlockStateGenerator blockStateGenerator) {
         blockStateGenerators.add(blockStateGenerator);
     }
