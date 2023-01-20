@@ -5,7 +5,7 @@ import net.minecraft.resources.ResourceLocation;
 
 import java.util.Collection;
 import java.util.Collections;
-import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.function.BiConsumer;
 import java.util.function.Supplier;
@@ -31,7 +31,7 @@ public abstract class Registration<S, RE extends RegistryEntry<? extends S>> {
     private final String namespace;
     private final Registry<S> registry;
 
-    private final Map<ResourceLocation, RegistryEntry<? extends S>> entries = new HashMap<>();
+    private final Map<ResourceLocation, RegistryEntry<? extends S>> entries = new LinkedHashMap<>();
     private final Collection<RegistryEntry<? extends S>> entriesView = Collections.unmodifiableCollection(entries.values());
 
     public Registration(String namespace, Registry<S> registry) {
