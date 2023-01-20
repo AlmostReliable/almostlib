@@ -20,8 +20,8 @@ public class BlockEntityRegistration extends GenericRegistration<BlockEntityType
         super(namespace, registry);
     }
 
-    public <BE extends BlockEntity> Builder<BE> builder(String name, BiFunction<BlockPos, BlockState, BE> factory) {
-        return new Builder<>(name, factory);
+    public <BE extends BlockEntity> Builder<BE> builder(String id, BiFunction<BlockPos, BlockState, BE> factory) {
+        return new Builder<>(id, factory);
     }
 
     public class Builder<BE extends BlockEntity> {
