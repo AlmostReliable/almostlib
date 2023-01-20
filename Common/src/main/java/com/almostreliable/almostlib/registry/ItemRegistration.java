@@ -62,12 +62,12 @@ public class ItemRegistration extends Registration<Item, ItemEntry<? extends Ite
         return AlmostUtils.cast(builder(id, factory).defaultLang(englishName).simpleModel().register());
     }
 
-    public <I extends Item> Builder<I> builder(String name, Function<Item.Properties, ? extends I> factory) {
-        return new Builder<>(name, factory);
+    public <I extends Item> Builder<I> builder(String id, Function<Item.Properties, ? extends I> factory) {
+        return new Builder<>(id, factory);
     }
 
-    public Builder<Item> builder(String name) {
-        return new Builder<>(name, Item::new);
+    public Builder<Item> builder(String id) {
+        return new Builder<>(id, Item::new);
     }
 
     public ItemRegistration dataGen(DataGenManager dataGenManager) {
