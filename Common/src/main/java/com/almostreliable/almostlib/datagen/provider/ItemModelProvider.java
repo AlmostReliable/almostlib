@@ -4,7 +4,6 @@ import com.google.gson.JsonElement;
 import net.minecraft.data.CachedOutput;
 import net.minecraft.data.DataGenerator;
 import net.minecraft.data.DataProvider;
-import net.minecraft.data.HashCache;
 import net.minecraft.resources.ResourceLocation;
 
 import java.io.IOException;
@@ -28,11 +27,6 @@ public class ItemModelProvider extends AbstractDataProvider {
             Path modelPath = getModelPath(entry.getKey());
             DataProvider.saveStable(cachedOutput, entry.getValue().get(), modelPath);
         }
-    }
-
-    private Path getModelPath(ResourceLocation resourceLocation) {
-        return getAssetsPath().resolve(
-                resourceLocation.getNamespace() + "/models/item/" + resourceLocation.getPath() + ".json");
     }
 
     public void addModel(ResourceLocation resourceLocation, Supplier<JsonElement> supplier) {
