@@ -3,6 +3,8 @@ package com.almostreliable.almostlib.forge;
 import com.almostreliable.almostlib.AlmostLibPlatform;
 import com.almostreliable.almostlib.Platform;
 import com.almostreliable.almostlib.client.MenuFactory;
+import com.almostreliable.almostlib.forge.network.NetworkHandlerForge;
+import com.almostreliable.almostlib.network.NetworkHandler;
 import com.almostreliable.almostlib.registry.Registration;
 import com.google.auto.service.AutoService;
 import net.minecraft.core.BlockPos;
@@ -146,5 +148,10 @@ public class AlmostLibPlatformForge implements AlmostLibPlatform {
         for (Registration<?, ?> registration : registrations) {
             initRegistration(registration);
         }
+    }
+
+    @Override
+    public NetworkHandler createNetworkHandler(ResourceLocation id) {
+        return new NetworkHandlerForge(id);
     }
 }

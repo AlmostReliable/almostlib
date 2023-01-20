@@ -3,6 +3,8 @@ package com.almostreliable.almostlib.fabric;
 import com.almostreliable.almostlib.AlmostLibPlatform;
 import com.almostreliable.almostlib.Platform;
 import com.almostreliable.almostlib.client.MenuFactory;
+import com.almostreliable.almostlib.fabric.network.NetworkHandlerFabric;
+import com.almostreliable.almostlib.network.NetworkHandler;
 import com.almostreliable.almostlib.registry.Registration;
 import com.google.auto.service.AutoService;
 import net.fabricmc.api.EnvType;
@@ -140,14 +142,19 @@ public class AlmostLibPlatformFabric implements AlmostLibPlatform {
                 .sorted((o1, o2) -> o1
                         .getRegistry()
                         .key()
-                        .location()
-                        .toString()
-                        .compareToIgnoreCase(o2.getRegistry().key().location().toString()))
-                .sorted(Comparator.comparingInt(r -> {
-                    int i = priority.indexOf(r.getRegistry());
-                    return i >= 0 ? i : priority.size();
-                })).toList();
+                    .location()
+                    .toString()
+                    .compareToIgnoreCase(o2.getRegistry().key().location().toString()))
+            .sorted(Comparator.comparingInt(r -> {
+                int i = priority.indexOf(r.getRegistry());
+                return i >= 0 ? i : priority.size();
+            })).toList();
 
         sorted.forEach(this::initRegistration);
+    }
+
+    @Override
+    public NetworkHandler createNetworkHandler(ResourceLocation id) {
+        return new NetworkHandlerFabric(id);
     }
 }

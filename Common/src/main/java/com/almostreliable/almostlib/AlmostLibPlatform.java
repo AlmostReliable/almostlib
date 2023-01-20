@@ -1,6 +1,7 @@
 package com.almostreliable.almostlib;
 
 import com.almostreliable.almostlib.client.MenuFactory;
+import com.almostreliable.almostlib.network.NetworkHandler;
 import com.almostreliable.almostlib.registry.Registration;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Registry;
@@ -101,4 +102,6 @@ public interface AlmostLibPlatform {
      * @param registrations The registrations to init.
      */
     void initRegistrations(Registration<?, ?>... registrations);
+
+    NetworkHandler createNetworkHandler(ResourceLocation id);
 }
