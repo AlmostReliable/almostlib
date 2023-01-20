@@ -29,25 +29,31 @@ public class BlockEntityRegistration extends GenericRegistration<BlockEntityType
         private final String id;
         private final BiFunction<BlockPos, BlockState, BE> factory;
 
-        private final List<Supplier<Collection<? extends Block>>> blocksSuppliers = new ArrayList<>();
+        private final List<Supplier<Collection<BlockEntry<? extends Block>>>> blockEntrySuppliers = new ArrayList<>();
 
         public Builder(String id, BiFunction<BlockPos, BlockState, BE> factory) {
             this.id = id;
             this.factory = factory;
         }
 
-        public Builder<BE> blocks(Supplier<Collection<? extends Block>> blocks) {
-            blocksSuppliers.add(blocks);
+        public Builder<BE> block(BlockEntry<? extends Block> block) {
+            blockEntrySuppliers.add(() -> List.of(block));
+            return this;
+        }
+
+        public Builder<BE> blocks(Supplier<Collection<BlockEntry<? extends Block>>> blocks) {
+            blockEntrySuppliers.add(blocks);
             return this;
         }
 
         public RegistryEntry<BlockEntityType<BE>> register() {
             return BlockEntityRegistration.this.register(id, () -> {
-                Block[] blocks = blocksSuppliers
-                        .stream()
-                        .flatMap(s -> s.get().stream())
-                        .distinct()
-                        .toArray(Block[]::new);
+                Block[] blocks = blockEntrySuppliers
+                    .stream()
+                    .flatMap(s -> s.get().stream())
+                    .map(BlockEntry::get)
+                    .distinct()
+                    .toArray(Block[]::new);
                 return AlmostLib.PLATFORM.createBlockEntityType(factory, blocks);
             });
         }
