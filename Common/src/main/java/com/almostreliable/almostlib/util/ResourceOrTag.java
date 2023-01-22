@@ -8,11 +8,9 @@ import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.tags.TagKey;
 
-import java.util.Arrays;
 import java.util.Optional;
 import java.util.function.Function;
 import java.util.function.Predicate;
-import java.util.stream.Collectors;
 
 public class ResourceOrTag<T> {
     private final Either<ResourceKey<T>, TagKey<T>> either;
@@ -45,11 +43,8 @@ public class ResourceOrTag<T> {
 
     public String toCapitalizedString() {
         String name = either.map(id -> id.location().toString(), tag -> "#" + tag.location().toString());
-        int index = name.indexOf(":");
+        int index = name.indexOf(':');
         String sanitized = name.substring(index + 1).replaceAll("[#:._]", " ").trim();
-        return Arrays
-                .stream(sanitized.split(" "))
-                .map(s -> s.substring(0, 1).toUpperCase() + s.substring(1))
-                .collect(Collectors.joining(" "));
+        return AlmostUtils.capitalizeWords(sanitized);
     }
 }
