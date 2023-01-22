@@ -11,8 +11,12 @@ import net.minecraft.tags.TagKey;
 import java.util.Optional;
 import java.util.function.Function;
 import java.util.function.Predicate;
+import java.util.regex.Pattern;
 
 public class ResourceOrTag<T> {
+
+    private static final Pattern SEPARATORS = Pattern.compile("[#:._]");
+
     private final Either<ResourceKey<T>, TagKey<T>> either;
 
     private ResourceOrTag(Either<ResourceKey<T>, TagKey<T>> either) {
@@ -42,9 +46,9 @@ public class ResourceOrTag<T> {
     }
 
     public String toCapitalizedString() {
-        String name = either.map(id -> id.location().toString(), tag -> "#" + tag.location().toString());
+        String name = either.map(id -> id.location().toString(), tag -> "#" + tag.location());
         int index = name.indexOf(':');
-        String sanitized = name.substring(index + 1).replaceAll("[#:._]", " ").trim();
+        String sanitized = SEPARATORS.matcher(name.substring(index + 1)).replaceAll(" ").trim();
         return AlmostUtils.capitalizeWords(sanitized);
     }
 }
