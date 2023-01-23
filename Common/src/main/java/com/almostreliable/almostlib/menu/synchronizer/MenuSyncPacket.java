@@ -1,7 +1,7 @@
 package com.almostreliable.almostlib.menu.synchronizer;
 
 import com.almostreliable.almostlib.AlmostLib;
-import com.almostreliable.almostlib.menu.AlmostContainerMenu;
+import com.almostreliable.almostlib.menu.SynchronizedContainerMenu;
 import com.almostreliable.almostlib.network.PacketHandler;
 import io.netty.buffer.Unpooled;
 import net.minecraft.client.Minecraft;
@@ -28,7 +28,7 @@ public class MenuSyncPacket implements PacketHandler.S2C<MenuSyncPacket> {
     @Override
     public void handle(MenuSyncPacket packet) {
         var player = Minecraft.getInstance().player;
-        if (player == null && player.containerMenu instanceof AlmostContainerMenu<?> menu && packet.menuId == menu.containerId) {
+        if (player == null && player.containerMenu instanceof SynchronizedContainerMenu<?> menu && packet.menuId == menu.containerId) {
             menu.receiveServerData(packet.data);
         }
     }

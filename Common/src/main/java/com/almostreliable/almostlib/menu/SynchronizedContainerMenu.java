@@ -31,13 +31,13 @@ import org.jetbrains.annotations.ApiStatus;
  *
  * @param <T> The type of the linked {@link BlockEntity}.
  */
-public abstract class AlmostContainerMenu<T extends BlockEntity> extends AbstractContainerMenu {
+public abstract class SynchronizedContainerMenu<T extends BlockEntity> extends AbstractContainerMenu {
 
     public final T blockEntity;
     protected final MenuSynchronizer sync;
     private final Inventory playerInventory;
 
-    protected AlmostContainerMenu(MenuType<?> menuType, int windowId, T blockEntity, Inventory playerInventory) {
+    protected SynchronizedContainerMenu(MenuType<?> menuType, int windowId, T blockEntity, Inventory playerInventory) {
         super(menuType, windowId);
         this.blockEntity = blockEntity;
         this.sync = new MenuSynchronizer();
