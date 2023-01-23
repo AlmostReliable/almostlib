@@ -24,6 +24,10 @@ import org.jetbrains.annotations.ApiStatus;
  * <pre> {@code
  * sync.addDataHandler(DataHandler)
  * }</pre>
+ * Example:
+ * <pre> {@code
+ * sync.addDataHandler(new IntegerDataHandler(blockEntity::getProgress, this::setProgress)
+ * }</pre>
  *
  * @param <T> The type of the linked {@link BlockEntity}.
  */
