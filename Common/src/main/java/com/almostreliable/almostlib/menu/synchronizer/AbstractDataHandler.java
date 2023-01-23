@@ -2,7 +2,6 @@ package com.almostreliable.almostlib.menu.synchronizer;
 
 import net.minecraft.network.FriendlyByteBuf;
 
-import javax.annotation.Nullable;
 import java.util.Objects;
 import java.util.function.Consumer;
 import java.util.function.Supplier;
@@ -38,6 +37,5 @@ public abstract class AbstractDataHandler<T> implements DataHandler {
 
     protected abstract void handleEncoding(FriendlyByteBuf buffer, T value);
 
-    @Nullable
     protected abstract T handleDecoding(FriendlyByteBuf buffer);
 }

@@ -2,7 +2,6 @@ package com.almostreliable.almostlib.menu.synchronizer.handler;
 
 import com.almostreliable.almostlib.menu.synchronizer.AbstractDataHandler;
 import net.minecraft.network.FriendlyByteBuf;
-import javax.annotation.Nullable;
 
 import java.util.function.Consumer;
 import java.util.function.Supplier;
@@ -18,21 +17,12 @@ public class EnumDataHandler<T extends Enum<T>> extends AbstractDataHandler<T> {
     }
 
     @Override
-    protected void handleEncoding(FriendlyByteBuf buffer, @Nullable T value) {
-        if (value == null) {
-            buffer.writeShort(-1);
-        } else {
-            buffer.writeShort((short) value.ordinal());
-        }
+    protected void handleEncoding(FriendlyByteBuf buffer, T value) {
+        buffer.writeShort((short) value.ordinal());
     }
 
-    @Nullable
     @Override
     protected T handleDecoding(FriendlyByteBuf buffer) {
-        int ordinal = buffer.readShort();
-        if (ordinal == -1) {
-            return null;
-        }
-        return values[ordinal];
+        return values[buffer.readShort()];
     }
 }
