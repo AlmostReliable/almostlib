@@ -1,4 +1,4 @@
-package com.almostreliable.almostlib.network.synchronizer;
+package com.almostreliable.almostlib.menu.synchronizer;
 
 import net.minecraft.network.FriendlyByteBuf;
 

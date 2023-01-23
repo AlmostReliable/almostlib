@@ -1,6 +1,6 @@
-package com.almostreliable.almostlib.network.synchronizer.handler;
+package com.almostreliable.almostlib.menu.synchronizer.handler;
 
-import com.almostreliable.almostlib.network.synchronizer.AbstractDataHandler;
+import com.almostreliable.almostlib.menu.synchronizer.AbstractDataHandler;
 import net.minecraft.network.FriendlyByteBuf;
 import javax.annotation.Nullable;
 

@@ -1,8 +1,8 @@
 package com.almostreliable.almostlib.menu;
 
 import com.almostreliable.almostlib.AlmostLib;
-import com.almostreliable.almostlib.network.synchronizer.MenuSyncPacket;
-import com.almostreliable.almostlib.network.synchronizer.MenuSynchronizer;
+import com.almostreliable.almostlib.menu.synchronizer.MenuSyncPacket;
+import com.almostreliable.almostlib.menu.synchronizer.MenuSynchronizer;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.player.Inventory;
