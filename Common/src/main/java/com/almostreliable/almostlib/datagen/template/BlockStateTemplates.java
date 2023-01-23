@@ -17,13 +17,13 @@ import net.minecraft.world.level.block.state.properties.BlockStateProperties;
 // TODO: more templates
 public class BlockStateTemplates {
 
-    public static void simple(BlockEntry<Block> entry, BlockStateProvider provider) {
+    public static <T extends Block> void simple(BlockEntry<T> entry, BlockStateProvider provider) {
         ResourceLocation modelLocation = TexturedModel.CUBE.create(entry.get(), provider.getModelConsumer());
         var variant = MultiVariantGenerator.multiVariant(entry.get(), Variant.variant().with(VariantProperties.MODEL, modelLocation));
         provider.addBlockState(variant);
     }
 
-    public static void horizontalFacing(BlockEntry<Block> entry, BlockStateProvider provider) {
+    public static <T extends Block> void horizontalFacing(BlockEntry<T> entry, BlockStateProvider provider) {
         Block block = entry.get();
         var mapping = new TextureMapping()
             .put(TextureSlot.FRONT, TextureMapping.getBlockTexture(block, "_front"))
@@ -37,7 +37,7 @@ public class BlockStateTemplates {
         }, BlockStateProperties.HORIZONTAL_FACING);
     }
 
-    public static void facing(BlockEntry<Block> entry, BlockStateProvider provider) {
+    public static <T extends Block> void facing(BlockEntry<T> entry, BlockStateProvider provider) {
         Block block = entry.get();
         var mapping = new TextureMapping()
             .put(TextureSlot.FRONT, TextureMapping.getBlockTexture(block, "_front"))
