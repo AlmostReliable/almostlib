@@ -1,7 +1,6 @@
 package com.almostreliable.almostlib.menu;
 
 import com.almostreliable.almostlib.AlmostLib;
-import com.almostreliable.almostlib.mixin.AbstractContainerMenuInvoker;
 import com.almostreliable.almostlib.network.synchronizer.MenuSyncPacket;
 import com.almostreliable.almostlib.network.synchronizer.MenuSynchronizer;
 import net.minecraft.network.FriendlyByteBuf;
@@ -43,8 +42,7 @@ public abstract class AlmostContainerMenu<T extends BlockEntity> extends Abstrac
 
     @Override
     public boolean stillValid(Player player) {
-        //noinspection ConstantValue
-        return blockEntity.getLevel() != null && AbstractContainerMenuInvoker.stillValid(
+        return blockEntity.getLevel() != null && stillValid(
             ContainerLevelAccess.create(blockEntity.getLevel(), blockEntity.getBlockPos()),
             player,
             blockEntity.getBlockState().getBlock()
