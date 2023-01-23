@@ -1,5 +1,7 @@
 package com.almostreliable.almostlib.network;
 
+import net.fabricmc.api.EnvType;
+import net.fabricmc.api.Environment;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerPlayer;
@@ -21,6 +23,7 @@ public interface PacketHandler<T> {
 
     interface S2C<T> extends PacketHandler<T> {
 
+        @Environment(EnvType.CLIENT)
         void handle(T packet);
     }
 }
