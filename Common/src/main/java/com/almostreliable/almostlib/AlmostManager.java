@@ -2,10 +2,7 @@ package com.almostreliable.almostlib;
 
 import com.almostreliable.almostlib.datagen.DataGenManager;
 import com.almostreliable.almostlib.item.AlmostCreativeTab;
-import com.almostreliable.almostlib.registry.BlockEntityRegistration;
-import com.almostreliable.almostlib.registry.BlockRegistration;
-import com.almostreliable.almostlib.registry.ItemRegistration;
-import com.almostreliable.almostlib.registry.Registration;
+import com.almostreliable.almostlib.registry.*;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.CreativeModeTab;
 
@@ -19,6 +16,7 @@ public class AlmostManager {
     private final ItemRegistration items;
     private final BlockRegistration blocks;
     private final BlockEntityRegistration blockEntities;
+    private final MenuRegistration menus;
 
     private AlmostManager(String namespace) {
         this.namespace = namespace;
@@ -26,6 +24,7 @@ public class AlmostManager {
         this.items = Registration.items(namespace).dataGen(dataGen);
         this.blocks = Registration.blocks(namespace).itemRegistration(items).dataGen(dataGen);
         this.blockEntities = Registration.blockEntities(namespace);
+        this.menus = Registration.menus(namespace);
     }
 
     /**
@@ -96,6 +95,10 @@ public class AlmostManager {
      */
     public BlockEntityRegistration blockEntities() {
         return blockEntities;
+    }
+
+    public MenuRegistration menus() {
+        return menus;
     }
 
     /**

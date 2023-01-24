@@ -37,7 +37,7 @@ public abstract class SynchronizedContainerMenu<T extends BlockEntity> extends A
     protected final MenuSynchronizer sync;
     private final Inventory playerInventory;
 
-    protected SynchronizedContainerMenu(MenuType<?> menuType, int windowId, T blockEntity, Inventory playerInventory) {
+    protected SynchronizedContainerMenu(MenuType<?> menuType, int windowId, Inventory playerInventory, T blockEntity) {
         super(menuType, windowId);
         this.blockEntity = blockEntity;
         this.sync = new MenuSynchronizer();

@@ -11,11 +11,12 @@ public interface MenuFactory<M extends AbstractContainerMenu> {
 
     @FunctionalInterface
     interface ForBlockEntity<M extends AbstractContainerMenu, BE extends BlockEntity> {
-        M apply(int id, BE blockEntity);
+        M apply(int id, Inventory inventory, BE blockEntity);
     }
 
     @FunctionalInterface
-    interface ForBlockEntityAndInventory<M extends AbstractContainerMenu, BE extends BlockEntity> {
-        M apply(int id, Inventory inventory, BE blockEntity);
+    interface ForCustom<M extends AbstractContainerMenu, BE extends BlockEntity> {
+
+        M apply(int id, Inventory inventory, BE blockEntity, FriendlyByteBuf buffer);
     }
 }

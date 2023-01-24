@@ -64,6 +64,13 @@ public interface AlmostLibPlatform {
         this.openMenu(player, menu, buf -> buf.writeBlockPos(blockPos));
     }
 
+    default void openMenu(ServerPlayer player, MenuProvider menu, BlockPos blockPos, Consumer<FriendlyByteBuf> buf) {
+        this.openMenu(player, menu, firstBuf -> {
+            firstBuf.writeBlockPos(blockPos);
+            buf.accept(firstBuf);
+        });
+    }
+
     boolean isDataGenEnabled();
 
     Path getConfigPath();

@@ -28,6 +28,10 @@ public abstract class Registration<S, RE extends RegistryEntry<? extends S>> {
         return new BlockEntityRegistration(namespace, Registry.BLOCK_ENTITY_TYPE);
     }
 
+    public static MenuRegistration menus(String namespace) {
+        return new MenuRegistration(namespace, Registry.MENU);
+    }
+
     private final String namespace;
     private final Registry<S> registry;
 
