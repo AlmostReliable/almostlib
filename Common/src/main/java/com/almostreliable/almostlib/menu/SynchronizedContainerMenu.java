@@ -35,13 +35,13 @@ public abstract class SynchronizedContainerMenu<T extends BlockEntity> extends A
 
     public final T blockEntity;
     protected final MenuSynchronizer sync;
-    private final Inventory playerInventory;
+    private final Inventory inventory;
 
-    protected SynchronizedContainerMenu(MenuType<?> menuType, int windowId, Inventory playerInventory, T blockEntity) {
-        super(menuType, windowId);
+    protected SynchronizedContainerMenu(MenuType<?> menuType, int wid, Inventory inventory, T blockEntity) {
+        super(menuType, wid);
         this.blockEntity = blockEntity;
         this.sync = new MenuSynchronizer();
-        this.playerInventory = playerInventory;
+        this.inventory = inventory;
     }
 
     @Override
@@ -57,14 +57,14 @@ public abstract class SynchronizedContainerMenu<T extends BlockEntity> extends A
     public void sendAllDataToRemote() {
         super.sendAllDataToRemote();
         if (sync.hasDataHandlers()) {
-            AlmostLib.SYNC_PACKET.send((ServerPlayer) playerInventory.player, new MenuSyncPacket(containerId, sync::encodeAll));
+            AlmostLib.SYNC_PACKET.send((ServerPlayer) inventory.player, new MenuSyncPacket(containerId, sync::encodeAll));
         }
     }
 
     @Override
     public void broadcastChanges() {
-        if (!playerInventory.player.level.isClientSide && sync.hasChanged()) {
-            AlmostLib.SYNC_PACKET.send((ServerPlayer) playerInventory.player, new MenuSyncPacket(containerId, sync::encode));
+        if (!inventory.player.level.isClientSide && sync.hasChanged()) {
+            AlmostLib.SYNC_PACKET.send((ServerPlayer) inventory.player, new MenuSyncPacket(containerId, sync::encode));
         }
         super.broadcastChanges();
     }
