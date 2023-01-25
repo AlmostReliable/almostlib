@@ -117,6 +117,6 @@ public class AlmostManager {
      * This has to be called after all objects have been registered to the manager.
      */
     public void initRegistriesToLoader() {
-        AlmostLib.PLATFORM.initRegistrations(items, blocks, blockEntities);
+        AlmostLib.PLATFORM.initRegistrations(items, blocks, blockEntities, menus);
     }
 }
