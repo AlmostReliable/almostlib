@@ -5,6 +5,7 @@ import com.almostreliable.almostlib.datagen.DataGenManager;
 import com.almostreliable.almostlib.datagen.provider.BlockStateProvider;
 import com.almostreliable.almostlib.datagen.provider.LootTableProvider;
 import com.almostreliable.almostlib.util.AlmostUtils;
+import com.almostreliable.almostlib.util.ToolType;
 import net.minecraft.core.Registry;
 import net.minecraft.data.models.model.DelegatedModel;
 import net.minecraft.data.models.model.ModelLocationUtils;
@@ -26,10 +27,7 @@ import net.minecraft.world.level.material.MaterialColor;
 import net.minecraft.world.level.storage.loot.LootTable;
 
 import javax.annotation.Nullable;
-import java.util.Arrays;
-import java.util.HashSet;
-import java.util.Objects;
-import java.util.Set;
+import java.util.*;
 import java.util.function.*;
 
 public class BlockRegistration extends Registration<Block, BlockEntry<? extends Block>> implements DataGenHolder {
@@ -262,6 +260,11 @@ public class BlockRegistration extends Registration<Block, BlockEntry<? extends 
 
         public Builder<B> defaultLang(String englishName) {
             defaultLang = englishName;
+            return this;
+        }
+
+        public Builder<B> effectiveTools(ToolType... tools) {
+            blockTags(AlmostUtils.cast(Arrays.stream(tools).map(t -> t.mineableBlockTag).toArray(TagKey[]::new)));
             return this;
         }
 
