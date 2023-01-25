@@ -27,7 +27,10 @@ import net.minecraft.world.level.material.MaterialColor;
 import net.minecraft.world.level.storage.loot.LootTable;
 
 import javax.annotation.Nullable;
-import java.util.*;
+import java.util.Arrays;
+import java.util.HashSet;
+import java.util.Objects;
+import java.util.Set;
 import java.util.function.*;
 
 public class BlockRegistration extends Registration<Block, BlockEntry<? extends Block>> implements DataGenHolder {
@@ -98,6 +101,7 @@ public class BlockRegistration extends Registration<Block, BlockEntry<? extends 
         private final Set<TagKey<Block>> blockTags = new HashSet<>();
         /* Item Stuff */
         @Nullable Consumer<ItemRegistration.Builder<? extends BlockItem>> itemBuilderConsumer;
+        @Nullable BiFunction<B, Item.Properties, ? extends BlockItem> blockItemFactory;
         private final Set<TagKey<Item>> itemTags = new HashSet<>();
         @Nullable String defaultLang;
 
@@ -109,6 +113,13 @@ public class BlockRegistration extends Registration<Block, BlockEntry<? extends 
 
         public Builder<B> item(Consumer<ItemRegistration.Builder<? extends BlockItem>> consumer) {
             itemBuilderConsumer = consumer;
+            blockItemFactory = BlockItem::new;
+            return this;
+        }
+
+        public <I extends BlockItem> Builder<B> item(Consumer<ItemRegistration.Builder<I>> consumer, BiFunction<B, Item.Properties, I> itemFactory) {
+            itemBuilderConsumer = AlmostUtils.cast(consumer);
+            blockItemFactory = itemFactory;
             return this;
         }
 
@@ -280,13 +291,15 @@ public class BlockRegistration extends Registration<Block, BlockEntry<? extends 
                 throw new IllegalStateException(
                     "Cannot register item for block " + block.getId() + " without an item registration");
             }
-            if (itemBuilderConsumer != null) {
-                var itemBuilder = ir.builder(id, props -> new BlockItem(block.get(), props)).noLang();
-                itemBuilderConsumer.accept(itemBuilder);
+
+            if (itemBuilderConsumer != null && blockItemFactory != null) {
+                var itemBuilder = ir.builder(id, props -> blockItemFactory.apply(block.get(), props)).noLang();
                 itemTags.forEach(itemBuilder::tags);
                 itemBuilder.model((e, provider) -> provider.getModelConsumer().accept(
                     ModelLocationUtils.getModelLocation(e.get()), new DelegatedModel(ModelLocationUtils.getModelLocation(block.get()))
-                )).register();
+                ));
+                itemBuilderConsumer.accept(itemBuilder);
+                itemBuilder.register();
             }
 
             applyDataGen(dg -> {
