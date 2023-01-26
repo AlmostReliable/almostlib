@@ -1,5 +1,6 @@
 package com.almostreliable.almostlib.fabric.mixin;
 
+import com.almostreliable.almostlib.AlmostManager;
 import com.almostreliable.almostlib.datagen.template.LayeredModelTemplate.RenderLayer;
 import com.almostreliable.almostlib.fabric.FabricInitializer;
 import com.google.gson.JsonDeserializationContext;
@@ -31,6 +32,8 @@ public abstract class BlockModelDeserializerMixin {
         if (renderLayer == RenderLayer.SOLID) return;
 
         ResourceLocation resourceLocation = name.isEmpty() ? null : new ResourceLocation(name);
-        if (resourceLocation != null) FabricInitializer.initRenderType(resourceLocation, renderLayer);
+        if (resourceLocation != null && AlmostManager.REGISTERED_MODS.contains(resourceLocation.getNamespace())) {
+            FabricInitializer.initRenderType(resourceLocation, renderLayer.renderType.get());
+        }
     }
 }

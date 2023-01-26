@@ -6,10 +6,15 @@ import com.almostreliable.almostlib.registry.*;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.CreativeModeTab;
 
+import java.util.HashSet;
+import java.util.Set;
+
 /**
  * Simple manager to hold registrations for a specified namespace.
  */
 public class AlmostManager {
+
+    public static Set<String> REGISTERED_MODS = new HashSet<>();
 
     private final String namespace;
     private final DataGenManager dataGen;
@@ -34,6 +39,7 @@ public class AlmostManager {
      * @return A new AlmostManager.
      */
     public static AlmostManager create(String namespace) {
+        REGISTERED_MODS.add(namespace);
         return new AlmostManager(namespace);
     }
 
