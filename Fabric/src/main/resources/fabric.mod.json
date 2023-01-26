@@ -19,7 +19,8 @@
     ]
   },
   "mixins": [
-    "almostlib-common.mixins.json"
+    "almostlib-common.mixins.json",
+    "almostlib-fabric.mixins.json"
   ],
   "depends": {
     "fabric": ">=${fabricApiVersion}",
