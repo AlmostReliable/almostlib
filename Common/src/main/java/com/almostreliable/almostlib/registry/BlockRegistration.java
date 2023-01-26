@@ -257,6 +257,15 @@ public class BlockRegistration extends Registration<Block, BlockEntry<? extends 
             return this;
         }
 
+        public Builder<B> loot(Function<BlockEntry<B>, LootTable.Builder> factory) {
+            checkLootTwice();
+            this.lootTableCallback = (entry, provider) -> {
+                LootTable.Builder builder = factory.apply(entry);
+                provider.add(entry.get(), builder);
+            };
+            return this;
+        }
+
         @SafeVarargs
         public final Builder<B> blockTags(TagKey<Block>... tags) {
             blockTags.addAll(Arrays.asList(tags));
