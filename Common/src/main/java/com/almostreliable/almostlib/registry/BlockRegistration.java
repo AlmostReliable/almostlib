@@ -10,12 +10,10 @@ import net.minecraft.core.Registry;
 import net.minecraft.data.models.model.DelegatedModel;
 import net.minecraft.data.models.model.ModelLocationUtils;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.tags.BlockTags;
 import net.minecraft.tags.TagKey;
 import net.minecraft.util.valueproviders.UniformInt;
-import net.minecraft.world.item.BlockItem;
-import net.minecraft.world.item.CreativeModeTab;
-import net.minecraft.world.item.DyeColor;
-import net.minecraft.world.item.Item;
+import net.minecraft.world.item.*;
 import net.minecraft.world.level.ItemLike;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.DropExperienceBlock;
@@ -219,6 +217,16 @@ public class BlockRegistration extends Registration<Block, BlockEntry<? extends 
         public Builder<B> requiresCorrectToolForDrops() {
             properties.requiresCorrectToolForDrops();
             return this;
+        }
+
+        public Builder<B> requiresCorrectToolForDrops(Tiers toolTier) {
+            blockTags(switch (toolTier) {
+                case STONE -> BlockTags.NEEDS_STONE_TOOL;
+                case IRON -> BlockTags.NEEDS_IRON_TOOL;
+                case DIAMOND -> BlockTags.NEEDS_DIAMOND_TOOL;
+                default -> throw new IllegalStateException("Unexpected value: " + toolTier);
+            });
+            return requiresCorrectToolForDrops();
         }
 
         public Builder<B> color(MaterialColor materialColor) {
