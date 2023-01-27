@@ -32,7 +32,11 @@ public class LayeredModelTemplate extends ModelTemplate {
 
     @Override
     public ResourceLocation create(ResourceLocation resourceLocation, TextureMapping textureMapping, BiConsumer<ResourceLocation, Supplier<JsonElement>> biConsumer) {
-        return super.create(resourceLocation, textureMapping, (rl, supplier) -> injectRenderLayer(rl, supplier, biConsumer));
+        return super.create(
+            resourceLocation,
+            textureMapping,
+            renderLayer == RenderLayer.SOLID ? biConsumer : (rl, supplier) -> injectRenderLayer(rl, supplier, biConsumer)
+        );
     }
 
     private void injectRenderLayer(ResourceLocation resourceLocation, Supplier<JsonElement> supplier, BiConsumer<ResourceLocation, Supplier<JsonElement>> biConsumer) {
