@@ -36,7 +36,7 @@ public interface Area {
         return getX() <= h && h < getRight();
     }
 
-    default boolean isInBounds(double x, double y) {
+    default boolean inBounds(double x, double y) {
         return isHorizontalInside(x) && isVerticalInside(y);
     }
 

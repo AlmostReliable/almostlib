@@ -3,7 +3,6 @@ package com.almostreliable.almostlib.client.gui;
 import com.almostreliable.almostlib.util.Area;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
-import net.minecraft.client.renderer.Rect2i;
 
 @Environment(EnvType.CLIENT)
 public record Padding(int top, int right, int bottom, int left) {

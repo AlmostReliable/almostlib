@@ -1,13 +1,12 @@
 package com.almostreliable.almostlib.client.gui;
 
-import com.mojang.blaze3d.vertex.PoseStack;
+import com.almostreliable.almostlib.client.rendering.AlmostPoseStack;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiComponent;
-import net.minecraft.client.gui.components.Widget;
 import net.minecraft.client.gui.components.events.GuiEventListener;
 import net.minecraft.util.Mth;
 
-public class Scrollbar implements Widget, GuiEventListener, WidgetDataProvider<WidgetData> {
+public class Scrollbar implements GuiEventListener, AlmostWidget<WidgetData> {
 
     private final WidgetData data;
     private int value;
@@ -19,11 +18,11 @@ public class Scrollbar implements Widget, GuiEventListener, WidgetDataProvider<W
     private int valueSnap = 0;
 
     public Scrollbar(int x, int y, int width, int height) {
-        this.data = new WidgetData(x, y, width, height);
+        this.data = WidgetData.of(x, y, width, height);
     }
 
     @Override
-    public void render(PoseStack poseStack, int mouseX, int mouseY, float delta) {
+    public void render(AlmostPoseStack poseStack, int mouseX, int mouseY, float delta) {
         getData().setHovered(isMouseOverSlider(mouseX, mouseY));
         GuiComponent.fill(poseStack, getData().getX(), getData().getY(), getData().getRight(), getData().getBottom(), 0x80_0000FF);
         GuiComponent.fill(poseStack, getData().getX(), getSliderY(), getData().getRight(), getSliderY() + getSliderHeight(), 0x80_FF0000);
@@ -108,7 +107,7 @@ public class Scrollbar implements Widget, GuiEventListener, WidgetDataProvider<W
 
     @Override
     public boolean isMouseOver(double mouseX, double mouseY) {
-        return getData().isInBounds(mouseX, mouseY);
+        return getData().inBounds(mouseX, mouseY);
     }
 
     @Override

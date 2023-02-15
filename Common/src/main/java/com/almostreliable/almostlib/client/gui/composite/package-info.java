@@ -1,5 +1,5 @@
 @ParametersAreNonnullByDefault @MethodsReturnNonnullByDefault
-package com.almostreliable.almostlib.client.gui.panel;
+package com.almostreliable.almostlib.client.gui.composite;
 
 import net.minecraft.MethodsReturnNonnullByDefault;
 

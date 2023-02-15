@@ -1,13 +1,15 @@
-package com.almostreliable.almostlib.client.gui.panel;
+package com.almostreliable.almostlib.client.gui.composite;
 
 import com.almostreliable.almostlib.client.gui.*;
+import com.almostreliable.almostlib.client.rendering.AlmostPoseStack;
 import com.almostreliable.almostlib.util.Area;
 import com.mojang.blaze3d.vertex.PoseStack;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Font;
 import net.minecraft.client.gui.GuiComponent;
+import net.minecraft.client.gui.components.Widget;
 
-public class ScrollPanel<T extends ContainerOld> implements TranslatableWidget<T>, WidgetDataProvider<WidgetData> {
+public class ScrollPanel<T extends CompositeWidget> implements TranslatableWidget<T>, Widget, AlmostWidget<WidgetData> {
 
     private final T content;
     private final WidgetData data;
@@ -16,12 +18,12 @@ public class ScrollPanel<T extends ContainerOld> implements TranslatableWidget<T
     private boolean requiresScrollbarUpdate = true;
 
     public ScrollPanel(T content, int x, int y, int width, int height) {
-        this(content, x, y, width, height, Padding.of(2));
+        this(content, x, y, width, height, Padding.of(3));
     }
 
     public ScrollPanel(T content, int x, int y, int width, int height, Padding contentPadding) {
         this.content = content;
-        this.data = new WidgetData(x, y, width, height);
+        this.data = WidgetData.of(x, y, width, height);
         this.scrollbar = createScrollbar();
         setContentPadding(contentPadding);
     }
@@ -31,7 +33,7 @@ public class ScrollPanel<T extends ContainerOld> implements TranslatableWidget<T
     }
 
     @Override
-    public void render(PoseStack poseStack, int mouseX, int mouseY, float delta) {
+    public void render(AlmostPoseStack poseStack, int mouseX, int mouseY, float delta) {
         Font font = Minecraft.getInstance().font;
         GuiComponent.drawString(poseStack, font, getData().getHeight() + " (" + contentArea.getHeight() + ")", data.getX() - 11, data.getY() - font.lineHeight * 2, 0xFF_FF0000);
         GuiComponent.drawString(poseStack, font, String.valueOf(getContainerHeight()), data.getX() - 11, data.getY() - font.lineHeight, 0xFF_FF0000);
@@ -47,13 +49,13 @@ public class ScrollPanel<T extends ContainerOld> implements TranslatableWidget<T
         }
     }
 
-    protected void renderContent(PoseStack poseStack, int mouseX, int mouseY, float delta) {
+    protected void renderContent(AlmostPoseStack poseStack, int mouseX, int mouseY, float delta) {
         GuiComponent.enableScissor(getContentArea().getX(), getContentArea().getY(), getContentArea().getRight(), getContentArea().getBottom());
         TranslatableWidget.super.render(poseStack, mouseX, mouseY, delta);
         GuiComponent.disableScissor();
     }
 
-    protected void renderScrollbar(PoseStack poseStack, int mouseX, int mouseY, float delta) {
+    protected void renderScrollbar(AlmostPoseStack poseStack, int mouseX, int mouseY, float delta) {
         scrollbar.render(poseStack, mouseX, mouseY, delta);
     }
 
@@ -104,7 +106,7 @@ public class ScrollPanel<T extends ContainerOld> implements TranslatableWidget<T
     }
 
     protected int getContainerHeight() {
-        return content.getHeight();
+        return content.getData().getHeight();
     }
 
     public Scrollbar getScrollbar() {
@@ -119,7 +121,7 @@ public class ScrollPanel<T extends ContainerOld> implements TranslatableWidget<T
 
     @Override
     public boolean isMouseOver(double mouseX, double mouseY) {
-        return data.isInBounds(mouseX, mouseY) || TranslatableWidget.super.isMouseOver(mouseX, mouseY);
+        return data.inBounds(mouseX, mouseY) || TranslatableWidget.super.isMouseOver(mouseX, mouseY);
     }
 
     @Override
@@ -137,5 +139,10 @@ public class ScrollPanel<T extends ContainerOld> implements TranslatableWidget<T
     public boolean mouseDragged(double mouseX, double mouseY, int mouseButton, double dragX, double dragY) {
         return scrollbar.mouseDragged(mouseX, mouseY, mouseButton, dragX, dragY)
             || TranslatableWidget.super.mouseDragged(mouseX, mouseY, mouseButton, dragX, dragY);
+    }
+
+    @Override
+    public void render(PoseStack poseStack, int i, int j, float f) {
+        render(new AlmostPoseStack(poseStack), i, j, f);
     }
 }
