@@ -3,7 +3,9 @@ package com.almostreliable.almostlib.client.gui.composite;
 import com.almostreliable.almostlib.client.gui.AlmostWidget;
 import com.almostreliable.almostlib.client.gui.WidgetChangeListener;
 import com.almostreliable.almostlib.client.gui.WidgetData;
+import com.almostreliable.almostlib.client.gui.util.VanillaWidgetWrapper;
 import com.almostreliable.almostlib.client.rendering.AlmostPoseStack;
+import net.minecraft.client.gui.components.AbstractWidget;
 import net.minecraft.client.gui.components.events.ContainerEventHandler;
 import net.minecraft.client.gui.components.events.GuiEventListener;
 import net.minecraft.client.gui.narration.NarratableEntry;
@@ -64,6 +66,10 @@ public abstract class CompositeWidget implements ContainerEventHandler, Narratab
         return widget;
     }
 
+    public AlmostWidget<WidgetData> addVanillaWidget(AbstractWidget vanillaWidget) {
+        return addWidget(VanillaWidgetWrapper.wrap(vanillaWidget));
+    }
+
     /**
      * Removes the first occurrence of the specified widget from this list, if it is present. Will use {@link Object#equals(Object)} to compare.
      * If the widget is a {@link GuiEventListener}, it will be removed from the list of event listeners.
@@ -83,6 +89,10 @@ public abstract class CompositeWidget implements ContainerEventHandler, Narratab
             markForRecalculation();
         }
         return removed;
+    }
+
+    public boolean removeVanillaWidget(AbstractWidget vanillaWidget) {
+        return removeWidget(VanillaWidgetWrapper.wrap(vanillaWidget));
     }
 
     /**

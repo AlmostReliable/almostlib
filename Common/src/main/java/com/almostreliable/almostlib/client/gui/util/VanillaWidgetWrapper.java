@@ -36,6 +36,15 @@ public class VanillaWidgetWrapper implements AlmostWidget<WidgetData>, GuiEventL
         widget.render(stack, mouseX, mouseY, delta);
     }
 
+    @Override
+    public boolean equals(Object obj) {
+        return obj instanceof AbstractWidget && widget.equals(obj);
+    }
+
+    public AbstractWidget getWidget() {
+        return widget;
+    }
+
     //region GuiEventListener delegate methods
     @Override
     public void mouseMoved(double d, double e) {
