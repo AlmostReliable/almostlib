@@ -6,8 +6,6 @@ import com.almostreliable.almostlib.client.gui.WidgetData;
 import com.almostreliable.almostlib.client.rendering.AlmostPoseStack;
 import com.almostreliable.almostlib.util.Area;
 import com.mojang.blaze3d.vertex.PoseStack;
-import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.Font;
 import net.minecraft.client.gui.GuiComponent;
 import net.minecraft.client.gui.components.Widget;
 import net.minecraft.client.gui.components.events.GuiEventListener;
@@ -39,12 +37,12 @@ public class ScrollableWidget<T extends AlmostWidget<?> & GuiEventListener> impl
 
     @Override
     public void render(AlmostPoseStack poseStack, int mouseX, int mouseY, float delta) {
-        Font font = Minecraft.getInstance().font;
-        GuiComponent.drawString(poseStack, font, getData().getHeight() + " (" + contentArea.getHeight() + ")", data.getX() - 11, data.getY() - font.lineHeight * 2, 0xFF_FF0000);
-        GuiComponent.drawString(poseStack, font, String.valueOf(getContainerHeight()), data.getX() - 11, data.getY() - font.lineHeight, 0xFF_FF0000);
-        GuiComponent.fill(poseStack, getData().getX(), getData().getY(), getData().getRight(), getData().getBottom(), 0x80_00FF00);
+        if (poseStack.isDebug()) {
+            GuiComponent.fill(poseStack, getData().getX(), getData().getY(), getData().getRight(), getData().getBottom(), 0x80_00FF00);
+        }
 
         renderContent(poseStack, mouseX, mouseY, delta);
+
         if (scrollbar.getData().isVisible()) {
             if (requiresScrollbarUpdate) {
                 updateScrollbar();
