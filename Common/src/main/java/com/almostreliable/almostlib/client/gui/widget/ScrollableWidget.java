@@ -1,9 +1,8 @@
 package com.almostreliable.almostlib.client.gui.widget;
 
-import com.almostreliable.almostlib.client.gui.*;
-import com.almostreliable.almostlib.client.gui.widget.composite.CompositeWidget;
 import com.almostreliable.almostlib.client.gui.Padding;
 import com.almostreliable.almostlib.client.gui.Scrollbar;
+import com.almostreliable.almostlib.client.gui.WidgetData;
 import com.almostreliable.almostlib.client.rendering.AlmostPoseStack;
 import com.almostreliable.almostlib.util.Area;
 import com.mojang.blaze3d.vertex.PoseStack;
@@ -11,8 +10,10 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Font;
 import net.minecraft.client.gui.GuiComponent;
 import net.minecraft.client.gui.components.Widget;
+import net.minecraft.client.gui.components.events.GuiEventListener;
 
-public class ScrollableWidget<T extends CompositeWidget> implements TranslatableWidget<T>, Widget, AlmostWidget<WidgetData> {
+public class ScrollableWidget<T extends AlmostWidget<?> & GuiEventListener> implements TranslatableWidget<T>, Widget,
+    AlmostWidget<WidgetData> {
 
     private final T content;
     private final WidgetData data;
