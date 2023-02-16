@@ -13,7 +13,7 @@ import org.jetbrains.annotations.Nullable;
 import java.util.*;
 
 @Environment(EnvType.CLIENT)
-public class AlmostRender {
+public class AlmostRendering {
 
     @Nullable private static List<Component> tooltipLines;
     @Nullable private static Debug debug = new DebugImpl(); // TODO make this configurable

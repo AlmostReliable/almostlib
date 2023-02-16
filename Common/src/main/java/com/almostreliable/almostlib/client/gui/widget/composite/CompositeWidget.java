@@ -4,7 +4,7 @@ import com.almostreliable.almostlib.client.gui.WidgetChangeListener;
 import com.almostreliable.almostlib.client.gui.WidgetData;
 import com.almostreliable.almostlib.client.gui.widget.AlmostWidget;
 import com.almostreliable.almostlib.client.gui.widget.VanillaWidgetWrapper;
-import com.almostreliable.almostlib.client.rendering.AlmostRender;
+import com.almostreliable.almostlib.client.rendering.AlmostRendering;
 import com.mojang.blaze3d.vertex.PoseStack;
 import net.minecraft.client.gui.GuiComponent;
 import net.minecraft.client.gui.components.AbstractWidget;
@@ -38,7 +38,7 @@ public abstract class CompositeWidget implements ContainerEventHandler, Narratab
             calculateLayout();
             requireRecalculation = false;
         }
-        if (AlmostRender.isDebug()) {
+        if (AlmostRendering.isDebug()) {
             GuiComponent.fill(stack, data.getX(), data.getY(), data.getX() + data.getWidth(), data.getY() + data.getHeight(), 0x80FF0000);
         }
         renderWidgets(stack, mouseX, mouseY, delta);

@@ -3,7 +3,7 @@ package com.almostreliable.almostlib.client.gui.widget;
 import com.almostreliable.almostlib.client.gui.Padding;
 import com.almostreliable.almostlib.client.gui.Scrollbar;
 import com.almostreliable.almostlib.client.gui.WidgetData;
-import com.almostreliable.almostlib.client.rendering.AlmostRender;
+import com.almostreliable.almostlib.client.rendering.AlmostRendering;
 import com.almostreliable.almostlib.util.Area;
 import com.mojang.blaze3d.vertex.PoseStack;
 import net.minecraft.client.gui.GuiComponent;
@@ -37,7 +37,7 @@ public class ScrollableWidget<T extends AlmostWidget<?> & GuiEventListener> impl
 
     @Override
     public void render(PoseStack poseStack, int mouseX, int mouseY, float delta) {
-        if (AlmostRender.isDebug()) {
+        if (AlmostRendering.isDebug()) {
             GuiComponent.fill(poseStack, getData().getX(), getData().getY(), getData().getRight(), getData().getBottom(), 0x80_00FF00);
         }
 
@@ -50,7 +50,7 @@ public class ScrollableWidget<T extends AlmostWidget<?> & GuiEventListener> impl
             }
             scrollbar.updateHovered(mouseX, mouseY);
             renderScrollbar(poseStack, mouseX, mouseY, delta);
-            if (AlmostRender.isDebug()) {
+            if (AlmostRendering.isDebug()) {
                 scrollbar.renderDebug(poseStack);
             }
         }
