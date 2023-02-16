@@ -48,7 +48,11 @@ public class ScrollableWidget<T extends AlmostWidget<?> & GuiEventListener> impl
                 updateScrollbar();
                 requiresScrollbarUpdate = false;
             }
+            scrollbar.updateHovered(mouseX, mouseY);
             renderScrollbar(poseStack, mouseX, mouseY, delta);
+            if (poseStack.isDebug()) {
+                scrollbar.renderDebug(poseStack);
+            }
         }
     }
 
@@ -58,12 +62,7 @@ public class ScrollableWidget<T extends AlmostWidget<?> & GuiEventListener> impl
         GuiComponent.disableScissor();
     }
 
-    protected void renderScrollbar(AlmostPoseStack poseStack, int mouseX, int mouseY, float delta) {
-        scrollbar.updateHovered(mouseX, mouseY);
-        if(poseStack.isDebug()) {
-            scrollbar.renderDebug(poseStack);
-        }
-    }
+    protected void renderScrollbar(AlmostPoseStack poseStack, int mouseX, int mouseY, float delta) {}
 
     @Override
     public T getInnerWidget() {
