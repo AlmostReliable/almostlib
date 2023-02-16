@@ -2,8 +2,8 @@ package com.almostreliable.almostlib.client.gui.widget;
 
 import com.almostreliable.almostlib.client.gui.WidgetChangeListener;
 import com.almostreliable.almostlib.client.gui.WidgetData;
-import com.almostreliable.almostlib.client.rendering.AlmostPoseStack;
 import com.almostreliable.almostlib.mixin.AbstractWidgetAccessor;
+import com.mojang.blaze3d.vertex.PoseStack;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 import net.minecraft.client.gui.components.AbstractWidget;
@@ -31,7 +31,7 @@ public class VanillaWidgetWrapper implements AlmostWidget<WidgetData>, GuiEventL
     }
 
     @Override
-    public void render(AlmostPoseStack stack, int mouseX, int mouseY, float delta) {
+    public void render(PoseStack stack, int mouseX, int mouseY, float delta) {
         widget.render(stack, mouseX, mouseY, delta);
     }
 

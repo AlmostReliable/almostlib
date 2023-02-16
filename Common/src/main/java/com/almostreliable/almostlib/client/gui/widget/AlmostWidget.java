@@ -2,12 +2,12 @@ package com.almostreliable.almostlib.client.gui.widget;
 
 import com.almostreliable.almostlib.client.gui.WidgetData;
 import com.almostreliable.almostlib.client.gui.widget.composite.CompositeWidget;
-import com.almostreliable.almostlib.client.rendering.RenderElement;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
+import net.minecraft.client.gui.components.Widget;
 
 @Environment(EnvType.CLIENT)
-public interface AlmostWidget<T extends WidgetData> extends RenderElement {
+public interface AlmostWidget<T extends WidgetData> extends Widget {
 
     /**
      * Set the width and height of the area. After resize is called, the parent will be notified of the resize.

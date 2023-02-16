@@ -4,7 +4,8 @@ import com.almostreliable.almostlib.client.gui.WidgetChangeListener;
 import com.almostreliable.almostlib.client.gui.WidgetData;
 import com.almostreliable.almostlib.client.gui.widget.AlmostWidget;
 import com.almostreliable.almostlib.client.gui.widget.VanillaWidgetWrapper;
-import com.almostreliable.almostlib.client.rendering.AlmostPoseStack;
+import com.almostreliable.almostlib.client.rendering.AlmostRender;
+import com.mojang.blaze3d.vertex.PoseStack;
 import net.minecraft.client.gui.GuiComponent;
 import net.minecraft.client.gui.components.AbstractWidget;
 import net.minecraft.client.gui.components.events.ContainerEventHandler;
@@ -32,18 +33,18 @@ public abstract class CompositeWidget implements ContainerEventHandler, Narratab
     }
 
     @Override
-    public void render(AlmostPoseStack stack, int mouseX, int mouseY, float delta) {
+    public void render(PoseStack stack, int mouseX, int mouseY, float delta) {
         if (requireRecalculation) {
             calculateLayout();
             requireRecalculation = false;
         }
-        if (stack.isDebug()) {
+        if (AlmostRender.isDebug()) {
             GuiComponent.fill(stack, data.getX(), data.getY(), data.getX() + data.getWidth(), data.getY() + data.getHeight(), 0x80FF0000);
         }
         renderWidgets(stack, mouseX, mouseY, delta);
     }
 
-    public void renderWidgets(AlmostPoseStack stack, int mouseX, int mouseY, float delta) {
+    public void renderWidgets(PoseStack stack, int mouseX, int mouseY, float delta) {
         for (AlmostWidget<?> widget : widgets) {
             if (widget.getData().isVisible()) {
                 widget.render(stack, mouseX, mouseY, delta);

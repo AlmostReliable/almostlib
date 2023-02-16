@@ -1,9 +1,9 @@
 package com.almostreliable.almostlib.client.gui.widget;
 
-import com.almostreliable.almostlib.client.rendering.AlmostPoseStack;
-import com.almostreliable.almostlib.client.rendering.RenderElement;
+import com.mojang.blaze3d.vertex.PoseStack;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
+import net.minecraft.client.gui.components.Widget;
 import net.minecraft.client.gui.components.events.GuiEventListener;
 import net.minecraft.client.gui.narration.NarratableEntry;
 import net.minecraft.client.gui.narration.NarrationElementOutput;
@@ -16,7 +16,7 @@ import net.minecraft.client.gui.narration.NarrationElementOutput;
  * @param <T> The inner widget type
  */
 @Environment(EnvType.CLIENT)
-public interface TranslatableWidget<T extends AlmostWidget<?> & GuiEventListener> extends RenderElement, GuiEventListener, NarratableEntry {
+public interface TranslatableWidget<T extends AlmostWidget<?> & GuiEventListener> extends Widget, GuiEventListener, NarratableEntry {
 
     T getInnerWidget();
 
@@ -33,7 +33,7 @@ public interface TranslatableWidget<T extends AlmostWidget<?> & GuiEventListener
     }
 
     @Override
-    default void render(AlmostPoseStack poseStack, int mouseX, int mouseY, float delta) {
+    default void render(PoseStack poseStack, int mouseX, int mouseY, float delta) {
         poseStack.pushPose();
         poseStack.translate(getTranslateX(), getTranslateY(), 0);
         mouseX = (int) calcMouseXTranslation(mouseX);
@@ -42,7 +42,7 @@ public interface TranslatableWidget<T extends AlmostWidget<?> & GuiEventListener
         poseStack.popPose();
     }
 
-    default void renderInnerWidget(AlmostPoseStack poseStack, int mouseX, int mouseY, float delta) {
+    default void renderInnerWidget(PoseStack poseStack, int mouseX, int mouseY, float delta) {
         getInnerWidget().render(poseStack, mouseX, mouseY, delta);
     }
 

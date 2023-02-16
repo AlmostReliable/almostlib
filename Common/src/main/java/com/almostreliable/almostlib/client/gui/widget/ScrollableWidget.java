@@ -3,7 +3,7 @@ package com.almostreliable.almostlib.client.gui.widget;
 import com.almostreliable.almostlib.client.gui.Padding;
 import com.almostreliable.almostlib.client.gui.Scrollbar;
 import com.almostreliable.almostlib.client.gui.WidgetData;
-import com.almostreliable.almostlib.client.rendering.AlmostPoseStack;
+import com.almostreliable.almostlib.client.rendering.AlmostRender;
 import com.almostreliable.almostlib.util.Area;
 import com.mojang.blaze3d.vertex.PoseStack;
 import net.minecraft.client.gui.GuiComponent;
@@ -36,8 +36,8 @@ public class ScrollableWidget<T extends AlmostWidget<?> & GuiEventListener> impl
     }
 
     @Override
-    public void render(AlmostPoseStack poseStack, int mouseX, int mouseY, float delta) {
-        if (poseStack.isDebug()) {
+    public void render(PoseStack poseStack, int mouseX, int mouseY, float delta) {
+        if (AlmostRender.isDebug()) {
             GuiComponent.fill(poseStack, getData().getX(), getData().getY(), getData().getRight(), getData().getBottom(), 0x80_00FF00);
         }
 
@@ -50,19 +50,19 @@ public class ScrollableWidget<T extends AlmostWidget<?> & GuiEventListener> impl
             }
             scrollbar.updateHovered(mouseX, mouseY);
             renderScrollbar(poseStack, mouseX, mouseY, delta);
-            if (poseStack.isDebug()) {
+            if (AlmostRender.isDebug()) {
                 scrollbar.renderDebug(poseStack);
             }
         }
     }
 
-    protected void renderContent(AlmostPoseStack poseStack, int mouseX, int mouseY, float delta) {
+    protected void renderContent(PoseStack poseStack, int mouseX, int mouseY, float delta) {
         GuiComponent.enableScissor(getContentArea().getX(), getContentArea().getY(), getContentArea().getRight(), getContentArea().getBottom());
         TranslatableWidget.super.render(poseStack, mouseX, mouseY, delta);
         GuiComponent.disableScissor();
     }
 
-    protected void renderScrollbar(AlmostPoseStack poseStack, int mouseX, int mouseY, float delta) {}
+    protected void renderScrollbar(PoseStack poseStack, int mouseX, int mouseY, float delta) {}
 
     @Override
     public T getInnerWidget() {
@@ -144,10 +144,5 @@ public class ScrollableWidget<T extends AlmostWidget<?> & GuiEventListener> impl
     public boolean mouseDragged(double mouseX, double mouseY, int mouseButton, double dragX, double dragY) {
         return scrollbar.mouseDragged(mouseX, mouseY, mouseButton, dragX, dragY)
             || TranslatableWidget.super.mouseDragged(mouseX, mouseY, mouseButton, dragX, dragY);
-    }
-
-    @Override
-    public void render(PoseStack poseStack, int i, int j, float f) {
-        render(new AlmostPoseStack(poseStack), i, j, f);
     }
 }
