@@ -2,7 +2,11 @@ package com.almostreliable.almostlib.client.gui;
 
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
+import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.components.events.GuiEventListener;
+import net.minecraft.client.resources.sounds.SimpleSoundInstance;
+import net.minecraft.client.sounds.SoundManager;
+import net.minecraft.sounds.SoundEvents;
 
 @Environment(EnvType.CLIENT)
 public interface AlmostGuiEventListener<T extends WidgetData> extends GuiEventListener {
@@ -50,10 +54,15 @@ public interface AlmostGuiEventListener<T extends WidgetData> extends GuiEventLi
         return mouseButton == LEFT_MOUSE_BUTTON;
     }
 
+    default void playClickSound(SoundManager soundManager, int mouseButton) {
+        soundManager.play(SimpleSoundInstance.forUI(SoundEvents.UI_BUTTON_CLICK, 1.0f));
+    }
+
     //region GuiEventListener implementation
     @Override
     default boolean mouseClicked(double mouseX, double mouseY, int mouseButton) {
         if (getData().isActive() && getData().isVisible() && getData().isHovered() && isValidMouseClickButton(mouseButton)) {
+            playClickSound(Minecraft.getInstance().getSoundManager(), mouseButton);
             onClick(mouseX, mouseY, mouseButton);
             return true;
         }
