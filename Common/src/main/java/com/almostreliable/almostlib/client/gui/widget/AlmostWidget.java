@@ -1,6 +1,7 @@
-package com.almostreliable.almostlib.client.gui;
+package com.almostreliable.almostlib.client.gui.widget;
 
-import com.almostreliable.almostlib.client.gui.composite.CompositeWidget;
+import com.almostreliable.almostlib.client.gui.WidgetData;
+import com.almostreliable.almostlib.client.gui.widget.composite.CompositeWidget;
 import com.almostreliable.almostlib.client.rendering.RenderElement;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;

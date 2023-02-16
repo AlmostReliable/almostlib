@@ -1,10 +1,11 @@
-package com.almostreliable.almostlib.client.gui.composite;
+package com.almostreliable.almostlib.client.gui.widget.composite;
 
-import com.almostreliable.almostlib.client.gui.AlmostWidget;
 import com.almostreliable.almostlib.client.gui.WidgetChangeListener;
 import com.almostreliable.almostlib.client.gui.WidgetData;
-import com.almostreliable.almostlib.client.gui.util.VanillaWidgetWrapper;
+import com.almostreliable.almostlib.client.gui.widget.AlmostWidget;
+import com.almostreliable.almostlib.client.gui.widget.VanillaWidgetWrapper;
 import com.almostreliable.almostlib.client.rendering.AlmostPoseStack;
+import net.minecraft.client.gui.GuiComponent;
 import net.minecraft.client.gui.components.AbstractWidget;
 import net.minecraft.client.gui.components.events.ContainerEventHandler;
 import net.minecraft.client.gui.components.events.GuiEventListener;
@@ -35,6 +36,9 @@ public abstract class CompositeWidget implements ContainerEventHandler, Narratab
         if (requireRecalculation) {
             calculateLayout();
             requireRecalculation = false;
+        }
+        if (stack.isDebug()) {
+            GuiComponent.fill(stack, data.getX(), data.getY(), data.getX() + data.getWidth(), data.getY() + data.getHeight(), 0x80FF0000);
         }
         renderWidgets(stack, mouseX, mouseY, delta);
     }

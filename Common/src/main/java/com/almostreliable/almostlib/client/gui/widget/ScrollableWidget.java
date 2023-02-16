@@ -1,8 +1,9 @@
-package com.almostreliable.almostlib.client.gui.composite;
+package com.almostreliable.almostlib.client.gui.widget;
 
 import com.almostreliable.almostlib.client.gui.*;
-import com.almostreliable.almostlib.client.gui.util.Padding;
-import com.almostreliable.almostlib.client.gui.util.Scrollbar;
+import com.almostreliable.almostlib.client.gui.widget.composite.CompositeWidget;
+import com.almostreliable.almostlib.client.gui.Padding;
+import com.almostreliable.almostlib.client.gui.Scrollbar;
 import com.almostreliable.almostlib.client.rendering.AlmostPoseStack;
 import com.almostreliable.almostlib.util.Area;
 import com.mojang.blaze3d.vertex.PoseStack;
@@ -11,7 +12,7 @@ import net.minecraft.client.gui.Font;
 import net.minecraft.client.gui.GuiComponent;
 import net.minecraft.client.gui.components.Widget;
 
-public class ScrollPanel<T extends CompositeWidget> implements TranslatableWidget<T>, Widget, AlmostWidget<WidgetData> {
+public class ScrollableWidget<T extends CompositeWidget> implements TranslatableWidget<T>, Widget, AlmostWidget<WidgetData> {
 
     private final T content;
     private final WidgetData data;
@@ -19,11 +20,11 @@ public class ScrollPanel<T extends CompositeWidget> implements TranslatableWidge
     private final Scrollbar scrollbar;
     private boolean requiresScrollbarUpdate = true;
 
-    public ScrollPanel(T content, int x, int y, int width, int height) {
+    public ScrollableWidget(T content, int x, int y, int width, int height) {
         this(content, x, y, width, height, Padding.of(3));
     }
 
-    public ScrollPanel(T content, int x, int y, int width, int height, Padding contentPadding) {
+    public ScrollableWidget(T content, int x, int y, int width, int height, Padding contentPadding) {
         this.content = content;
         this.data = WidgetData.of(x, y, width, height);
         this.scrollbar = createScrollbar();
@@ -58,7 +59,10 @@ public class ScrollPanel<T extends CompositeWidget> implements TranslatableWidge
     }
 
     protected void renderScrollbar(AlmostPoseStack poseStack, int mouseX, int mouseY, float delta) {
-        scrollbar.render(poseStack, mouseX, mouseY, delta);
+        scrollbar.updateHovered(mouseX, mouseY);
+        if(poseStack.isDebug()) {
+            scrollbar.renderDebug(poseStack);
+        }
     }
 
     @Override

@@ -1,6 +1,5 @@
-package com.almostreliable.almostlib.client.gui;
+package com.almostreliable.almostlib.client.gui.widget;
 
-import com.almostreliable.almostlib.client.gui.composite.ScrollPanel;
 import com.almostreliable.almostlib.client.rendering.AlmostPoseStack;
 import com.almostreliable.almostlib.client.rendering.RenderElement;
 import net.fabricmc.api.EnvType;
@@ -10,7 +9,7 @@ import net.minecraft.client.gui.narration.NarratableEntry;
 import net.minecraft.client.gui.narration.NarrationElementOutput;
 
 /**
- * Utility interface for wrapping a widget with a translation. This is useful for things like scrolling containers. You can see an example of this in {@link ScrollPanel}.
+ * Utility interface for wrapping a widget with a translation. This is useful for things like scrolling containers. You can see an example of this in {@link ScrollableWidget}.
  * <p>
  * Interface delegates all {@link GuiEventListener} methods to the inner widget. It also translates the mouse coordinates before passing them to the inner widget.
  *

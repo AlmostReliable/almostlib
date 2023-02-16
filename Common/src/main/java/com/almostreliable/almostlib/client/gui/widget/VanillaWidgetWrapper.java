@@ -1,6 +1,5 @@
-package com.almostreliable.almostlib.client.gui.util;
+package com.almostreliable.almostlib.client.gui.widget;
 
-import com.almostreliable.almostlib.client.gui.AlmostWidget;
 import com.almostreliable.almostlib.client.gui.WidgetChangeListener;
 import com.almostreliable.almostlib.client.gui.WidgetData;
 import com.almostreliable.almostlib.client.rendering.AlmostPoseStack;

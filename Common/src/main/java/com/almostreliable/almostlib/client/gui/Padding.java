@@ -1,4 +1,4 @@
-package com.almostreliable.almostlib.client.gui.util;
+package com.almostreliable.almostlib.client.gui;
 
 import com.almostreliable.almostlib.util.Area;
 

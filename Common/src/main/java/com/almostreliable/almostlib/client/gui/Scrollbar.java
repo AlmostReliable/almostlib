@@ -1,17 +1,16 @@
-package com.almostreliable.almostlib.client.gui.util;
+package com.almostreliable.almostlib.client.gui;
 
-import com.almostreliable.almostlib.client.gui.AlmostWidget;
-import com.almostreliable.almostlib.client.gui.WidgetData;
-import com.almostreliable.almostlib.client.rendering.AlmostPoseStack;
+import com.mojang.blaze3d.vertex.PoseStack;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiComponent;
 import net.minecraft.client.gui.components.events.GuiEventListener;
+import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.util.Mth;
 
 @Environment(EnvType.CLIENT)
-public class Scrollbar implements GuiEventListener, AlmostWidget<WidgetData> {
+public class Scrollbar implements GuiEventListener {
 
     private final WidgetData data;
     private int value;
@@ -20,19 +19,24 @@ public class Scrollbar implements GuiEventListener, AlmostWidget<WidgetData> {
     private boolean dragging;
     private int dragOffset;
     private int scrollFactor = 10;
-    private int valueSnap = 0;
+    private boolean snapOnScrollFactor = false;
+    private boolean hoveredSlider = false;
 
     public Scrollbar(int x, int y, int width, int height) {
         this.data = WidgetData.of(x, y, width, height);
     }
 
-    @Override
-    public void render(AlmostPoseStack poseStack, int mouseX, int mouseY, float delta) {
-        getData().setHovered(isMouseOverSlider(mouseX, mouseY));
-        GuiComponent.fill(poseStack, getData().getX(), getData().getY(), getData().getRight(), getData().getBottom(), 0x80_0000FF);
-        GuiComponent.fill(poseStack, getData().getX(), getSliderY(), getData().getRight(), getSliderY() + getSliderHeight(), 0x80_FF0000);
-        GuiComponent.drawString(poseStack, Minecraft.getInstance().font, String.valueOf(value), getData().getX() + 11, getData().getY(), 0xFF_FF0000);
-        GuiComponent.drawString(poseStack, Minecraft.getInstance().font, String.valueOf(dragOffset), getData().getX() + 11, getData().getY() + Minecraft.getInstance().font.lineHeight, 0xFF_FF0000);
+    public void updateHovered(int mouseX, int mouseY) {
+        hoveredSlider = isMouseOverSlider(mouseX, mouseY);
+        getData().setHovered(isMouseOver(mouseX, mouseY));
+    }
+
+    public boolean isHoveredSlider() {
+        return hoveredSlider;
+    }
+
+    public boolean isHovered() {
+        return getData().isHovered();
     }
 
     public int getSliderY() {
@@ -63,22 +67,23 @@ public class Scrollbar implements GuiEventListener, AlmostWidget<WidgetData> {
         this.scrollFactor = scrollFactor;
     }
 
-    public void setValueSnap(int valueSnap) {
-        this.valueSnap = valueSnap;
+    public void snapOnScrollFactor(boolean snap) {
+        this.snapOnScrollFactor = snap;
     }
 
     private int getScrollFactor() {
-        if(valueSnap > 0) {
-            return valueSnap;
-        }
         return scrollFactor;
     }
 
     public void setValue(double value) {
         this.value = (int) Mth.clamp(value, 0d, maxScrollableValue);
-        if (valueSnap > 0) {
-            this.value = this.value - this.value % valueSnap;
+        if (shouldSnap()) {
+            this.value = this.value - this.value % scrollFactor;
         }
+    }
+
+    public boolean shouldSnap() {
+        return snapOnScrollFactor && !Screen.hasShiftDown();
     }
 
     public boolean isMouseOverSlider(double mouseX, double mouseY) {
@@ -96,23 +101,22 @@ public class Scrollbar implements GuiEventListener, AlmostWidget<WidgetData> {
     }
 
     protected void updateValueByMouse(double mouseY, double offset) {
-        double mappedMouseY = mapPixelToScrollValue(mouseY - getData().getY());
-        double mappedOffset = mapPixelToScrollValue(offset);
+        double mappedMouseY = mapToScrollValue(mouseY - getData().getY());
+        double mappedOffset = mapToScrollValue(offset);
         setValue(mappedMouseY - mappedOffset);
     }
 
-    protected double mapPixelToScrollValue(double v) {
+    protected double mapToScrollValue(double v) {
         return (v * maxScrollableValue / (getData().getHeight() - getSliderHeight()));
     }
 
-    @Override
     public WidgetData getData() {
         return data;
     }
 
     @Override
     public boolean isMouseOver(double mouseX, double mouseY) {
-        return getData().inBounds(mouseX, mouseY);
+        return getData().isActive() && getData().isVisible() && getData().inBounds(mouseX, mouseY);
     }
 
     @Override
@@ -138,11 +142,25 @@ public class Scrollbar implements GuiEventListener, AlmostWidget<WidgetData> {
             return GuiEventListener.super.mouseClicked(mouseX, mouseY, mouseButton);
         }
 
-        if (!getData().isHovered()) {
+        if (!isHoveredSlider()) {
             updateValueByMouse(mouseY, getSliderHeight() / 2d);
         }
 
         activateDragging(mouseY);
         return true;
+    }
+
+    public void renderDebug(PoseStack poseStack) {
+        var sliderY = getSliderY();
+        GuiComponent.fill(poseStack, getData().getX(), getData().getY(), getData().getRight(), getData().getBottom(), 0x80_000FFF);
+        if (isHovered()) {
+            GuiComponent.fill(poseStack, getData().getX(), getData().getY(), getData().getRight(), getData().getY() + 3, 0xC0_340BA3);
+        }
+        GuiComponent.fill(poseStack, getData().getX(), sliderY, getData().getRight(), sliderY + getSliderHeight(), 0xA0_FF0000);
+        if (isHoveredSlider()) {
+            GuiComponent.fill(poseStack, getData().getX(), sliderY, getData().getRight(), sliderY + 3, 0xC0_d7db00);
+        }
+        String s = String.format("%d/%d", value, maxScrollableValue);
+        GuiComponent.drawString(poseStack, Minecraft.getInstance().font, s, getData().getRight() + 1, getData().getY(), 0xFF_FF0000);
     }
 }
