@@ -2,12 +2,15 @@ package com.almostreliable.almostlib.client.gui;
 
 import com.almostreliable.almostlib.util.Area;
 import com.google.common.base.Preconditions;
+import net.fabricmc.api.EnvType;
+import net.fabricmc.api.Environment;
 
 import javax.annotation.Nullable;
 
 /**
  * A simple interface to store the data for a widget.
  */
+@Environment(EnvType.CLIENT)
 public interface WidgetData extends Area.Mutable {
 
     static WidgetData of(int x, int y, int width, int height) {

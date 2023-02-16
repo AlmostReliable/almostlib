@@ -34,6 +34,10 @@ public abstract class CompositeWidget implements ContainerEventHandler, Narratab
             calculateLayout();
             requireRecalculation = false;
         }
+        renderWidgets(stack, mouseX, mouseY, delta);
+    }
+
+    public void renderWidgets(AlmostPoseStack stack, int mouseX, int mouseY, float delta) {
         for (AlmostWidget<?> widget : widgets) {
             if (widget.getData().isVisible()) {
                 widget.render(stack, mouseX, mouseY, delta);
@@ -41,23 +45,49 @@ public abstract class CompositeWidget implements ContainerEventHandler, Narratab
         }
     }
 
-    public void addWidget(AlmostWidget<?> widget) {
+    /**
+     * Adds a widget. If the widget is a {@link GuiEventListener}, it will be added to the list of event listeners.
+     * <p>
+     * Adding a widget will cause the layout to be recalculated in the next render call.
+     *
+     * @param widget The widget to add
+     * @param <T>    The data type of the widget. {@link WidgetData}
+     * @return The widget that was added
+     */
+    public <T extends WidgetData> AlmostWidget<T> addWidget(AlmostWidget<T> widget) {
         widgets.add(widget);
         widget.getData().setParent(this);
         if (widget instanceof GuiEventListener listener) {
             eventListeners.add(listener);
         }
+        markForRecalculation();
+        return widget;
     }
 
-    public void removeWidget(AlmostWidget<?> widget) {
-        widgets.remove(widget);
+    /**
+     * Removes the first occurrence of the specified widget from this list, if it is present. Will use {@link Object#equals(Object)} to compare.
+     * If the widget is a {@link GuiEventListener}, it will be removed from the list of event listeners.
+     * <p>
+     * Removing a widget will cause the layout to be recalculated in the next render call.
+     *
+     * @param widget The widget to remove
+     * @return true if the widget was removed, false otherwise
+     */
+    public boolean removeWidget(AlmostWidget<?> widget) {
+        boolean removed = widgets.remove(widget);
         widget.getData().setParent(null);
         if (widget instanceof GuiEventListener listener) {
             eventListeners.remove(listener);
         }
-        markForRecalculation();
+        if (removed) {
+            markForRecalculation();
+        }
+        return removed;
     }
 
+    /**
+     * Removes all widgets from this list.
+     */
     public void clearWidgets() {
         widgets.forEach(w -> w.getData().setParent(null));
         widgets.clear();

@@ -1,6 +1,8 @@
 package com.almostreliable.almostlib.client.gui.composite;
 
 import com.almostreliable.almostlib.client.gui.*;
+import com.almostreliable.almostlib.client.gui.util.Padding;
+import com.almostreliable.almostlib.client.gui.util.Scrollbar;
 import com.almostreliable.almostlib.client.rendering.AlmostPoseStack;
 import com.almostreliable.almostlib.util.Area;
 import com.mojang.blaze3d.vertex.PoseStack;

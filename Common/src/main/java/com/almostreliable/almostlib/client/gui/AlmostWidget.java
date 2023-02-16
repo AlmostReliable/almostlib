@@ -2,7 +2,10 @@ package com.almostreliable.almostlib.client.gui;
 
 import com.almostreliable.almostlib.client.gui.composite.CompositeWidget;
 import com.almostreliable.almostlib.client.rendering.RenderElement;
+import net.fabricmc.api.EnvType;
+import net.fabricmc.api.Environment;
 
+@Environment(EnvType.CLIENT)
 public interface AlmostWidget<T extends WidgetData> extends RenderElement {
 
     /**

@@ -1,11 +1,17 @@
-package com.almostreliable.almostlib.client.gui;
+package com.almostreliable.almostlib.client.gui.util;
 
+import com.almostreliable.almostlib.client.gui.AlmostWidget;
+import com.almostreliable.almostlib.client.gui.WidgetChangeListener;
+import com.almostreliable.almostlib.client.gui.WidgetData;
 import com.almostreliable.almostlib.client.rendering.AlmostPoseStack;
 import com.almostreliable.almostlib.mixin.AbstractWidgetAccessor;
+import net.fabricmc.api.EnvType;
+import net.fabricmc.api.Environment;
 import net.minecraft.client.gui.components.AbstractWidget;
 import net.minecraft.client.gui.components.events.GuiEventListener;
 import org.jetbrains.annotations.Nullable;
 
+@Environment(EnvType.CLIENT)
 public class VanillaWidgetWrapper implements AlmostWidget<WidgetData>, GuiEventListener {
 
     private final AbstractWidget widget;

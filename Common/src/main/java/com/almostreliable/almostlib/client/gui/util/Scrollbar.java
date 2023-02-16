@@ -1,11 +1,16 @@
-package com.almostreliable.almostlib.client.gui;
+package com.almostreliable.almostlib.client.gui.util;
 
+import com.almostreliable.almostlib.client.gui.AlmostWidget;
+import com.almostreliable.almostlib.client.gui.WidgetData;
 import com.almostreliable.almostlib.client.rendering.AlmostPoseStack;
+import net.fabricmc.api.EnvType;
+import net.fabricmc.api.Environment;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiComponent;
 import net.minecraft.client.gui.components.events.GuiEventListener;
 import net.minecraft.util.Mth;
 
+@Environment(EnvType.CLIENT)
 public class Scrollbar implements GuiEventListener, AlmostWidget<WidgetData> {
 
     private final WidgetData data;

@@ -1,7 +1,10 @@
 package com.almostreliable.almostlib.client.gui;
 
+import net.fabricmc.api.EnvType;
+import net.fabricmc.api.Environment;
 import net.minecraft.client.gui.components.events.GuiEventListener;
 
+@Environment(EnvType.CLIENT)
 public interface AlmostGuiEventListener<T extends WidgetData> extends GuiEventListener {
 
     int LEFT_MOUSE_BUTTON = 0;
@@ -10,6 +13,16 @@ public interface AlmostGuiEventListener<T extends WidgetData> extends GuiEventLi
 
     T getData();
 
+    /**
+     * Will be called when the mouse is clicked on this widget.
+     * <p>
+     * On default this method will be called when the widget is active, visible and {@link #isValidMouseClickButton(int)} returns true.
+     * Widgets may override this behavior through {@link #mouseClicked(double, double, int)}
+     *
+     * @param mouseX
+     * @param mouseY
+     * @param mouseButton
+     */
     default void onClick(double mouseX, double mouseY, int mouseButton) {
 
     }
@@ -57,7 +70,6 @@ public interface AlmostGuiEventListener<T extends WidgetData> extends GuiEventLi
 
     @Override
     default boolean mouseDragged(double mouseX, double mouseY, int mouseButton, double dragX, double dragY) {
-        // TODO check also for active, visible and hovered?
         if (getData().isActive() && getData().isVisible() && isValidMouseClickButton(mouseButton)) {
             onDrag(mouseX, mouseY, dragX, dragY);
             return true;

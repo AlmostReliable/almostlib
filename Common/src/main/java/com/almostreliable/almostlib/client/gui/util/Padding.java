@@ -1,10 +1,7 @@
-package com.almostreliable.almostlib.client.gui;
+package com.almostreliable.almostlib.client.gui.util;
 
 import com.almostreliable.almostlib.util.Area;
-import net.fabricmc.api.EnvType;
-import net.fabricmc.api.Environment;
 
-@Environment(EnvType.CLIENT)
 public record Padding(int top, int right, int bottom, int left) {
 
     public static final Padding ZERO = new Padding(0, 0, 0, 0);

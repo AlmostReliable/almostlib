@@ -1,11 +1,22 @@
 package com.almostreliable.almostlib.client.gui;
 
+import com.almostreliable.almostlib.client.gui.composite.ScrollPanel;
 import com.almostreliable.almostlib.client.rendering.AlmostPoseStack;
 import com.almostreliable.almostlib.client.rendering.RenderElement;
+import net.fabricmc.api.EnvType;
+import net.fabricmc.api.Environment;
 import net.minecraft.client.gui.components.events.GuiEventListener;
 import net.minecraft.client.gui.narration.NarratableEntry;
 import net.minecraft.client.gui.narration.NarrationElementOutput;
 
+/**
+ * Utility interface for wrapping a widget with a translation. This is useful for things like scrolling containers. You can see an example of this in {@link ScrollPanel}.
+ * <p>
+ * Interface delegates all {@link GuiEventListener} methods to the inner widget. It also translates the mouse coordinates before passing them to the inner widget.
+ *
+ * @param <T> The inner widget type
+ */
+@Environment(EnvType.CLIENT)
 public interface TranslatableWidget<T extends AlmostWidget<?> & GuiEventListener> extends RenderElement, GuiEventListener, NarratableEntry {
 
     T getInnerWidget();
@@ -28,11 +39,11 @@ public interface TranslatableWidget<T extends AlmostWidget<?> & GuiEventListener
         poseStack.translate(getTranslateX(), getTranslateY(), 0);
         mouseX = (int) calcMouseXTranslation(mouseX);
         mouseY = (int) calcMouseYTranslation(mouseY);
-        postRender(poseStack, mouseX, mouseY, delta);
+        renderInnerWidget(poseStack, mouseX, mouseY, delta);
         poseStack.popPose();
     }
 
-    default void postRender(AlmostPoseStack poseStack, int mouseX, int mouseY, float delta) {
+    default void renderInnerWidget(AlmostPoseStack poseStack, int mouseX, int mouseY, float delta) {
         getInnerWidget().render(poseStack, mouseX, mouseY, delta);
     }
 
