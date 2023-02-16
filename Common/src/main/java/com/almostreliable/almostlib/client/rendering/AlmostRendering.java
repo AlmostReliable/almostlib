@@ -36,19 +36,19 @@ public class AlmostRendering {
         }
     }
 
-    public void debug(String key, Object value) {
+    public static void debug(String key, Object value) {
         if (debug != null) {
             debug.write(key, value);
         }
     }
 
-    public void debug(String category, String key, Object value) {
+    public static void debug(String category, String key, Object value) {
         if (debug != null) {
             debug.write(category, key, value);
         }
     }
 
-    public void renderDebug(PoseStack poseStack) {
+    public static void renderDebug(PoseStack poseStack) {
         if (debug != null) {
             debug.render(poseStack);
         }
@@ -103,6 +103,7 @@ public class AlmostRendering {
                 lineIndex += 3;
             }
             ps.popPose();
+            data.clear(); // TODO outsource clear?
         }
     }
 }
