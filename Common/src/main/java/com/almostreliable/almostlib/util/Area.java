@@ -59,6 +59,11 @@ public interface Area {
          * @param height the height of the area
          */
         void setHeight(int height);
+
+        default void move(int x, int y) {
+            setX(getX() + x);
+            setY(getY() + y);
+        }
     }
 
     record Simple(int getX, int getY, int getWidth, int getHeight) implements Area {

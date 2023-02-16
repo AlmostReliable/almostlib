@@ -17,17 +17,6 @@ public interface WidgetData extends Area.Mutable {
         return new Simple(x, y, width, height);
     }
 
-    void setX(int x);
-
-    void setY(int y);
-
-    /**
-     * Set the width and height of the area. Implementations must ensure that the values are always positive
-     *
-     * @param height the height of the area
-     */
-    void setHeight(int height);
-
     void setActive(boolean active);
 
     boolean isActive();

@@ -24,7 +24,7 @@ public abstract class CompositeWidget implements ContainerEventHandler, Narratab
     private boolean dragging;
     protected final List<GuiEventListener> eventListeners = new ArrayList<>();
     protected final List<AlmostWidget<?>> widgets = new ArrayList<>();
-
+    private int spacing = 0;
     private boolean requireRecalculation = true;
 
     public CompositeWidget(int x, int y, int width, int height) {
@@ -49,6 +49,15 @@ public abstract class CompositeWidget implements ContainerEventHandler, Narratab
                 widget.render(stack, mouseX, mouseY, delta);
             }
         }
+    }
+
+    public void setSpacing(int spacing) {
+        this.spacing = spacing;
+        markForRecalculation();
+    }
+
+    public int getSpacing() {
+        return spacing;
     }
 
     /**

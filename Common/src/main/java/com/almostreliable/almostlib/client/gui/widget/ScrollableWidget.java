@@ -30,6 +30,7 @@ public class ScrollableWidget<T extends AlmostWidget<?> & GuiEventListener> impl
         this.data = WidgetData.of(x, y, width, height);
         this.scrollbar = createScrollbar();
         setContentPadding(contentPadding);
+        this.content.getData().setWidth(contentArea.getWidth());
     }
 
     protected Scrollbar createScrollbar() {
