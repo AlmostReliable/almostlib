@@ -1,9 +1,12 @@
 package com.almostreliable.almostlib.client.gui.widget.composite;
 
+import com.almostreliable.almostlib.client.gui.Padding;
 import com.almostreliable.almostlib.client.gui.WidgetChangeListener;
 import com.almostreliable.almostlib.client.gui.WidgetData;
 import com.almostreliable.almostlib.client.gui.widget.AlmostWidget;
 import com.almostreliable.almostlib.client.gui.widget.VanillaWidgetWrapper;
+import com.almostreliable.almostlib.client.gui.widget.layout.Layout;
+import com.almostreliable.almostlib.client.gui.widget.layout.Layouts;
 import com.almostreliable.almostlib.client.rendering.AlmostRendering;
 import com.mojang.blaze3d.vertex.PoseStack;
 import net.minecraft.client.gui.GuiComponent;
@@ -15,18 +18,22 @@ import net.minecraft.client.gui.narration.NarrationElementOutput;
 
 import javax.annotation.Nullable;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 
-public abstract class CompositeWidget implements ContainerEventHandler, NarratableEntry, AlmostWidget<WidgetData>,
-    WidgetChangeListener {
+public abstract class CompositeWidget implements ContainerEventHandler, NarratableEntry, AlmostWidget<WidgetData>, WidgetChangeListener {
 
     private final WidgetData data;
     @Nullable private GuiEventListener focused;
     private boolean dragging;
     protected final List<GuiEventListener> eventListeners = new ArrayList<>();
     protected final List<AlmostWidget<?>> widgets = new ArrayList<>();
-    private int spacing = 0;
-    private boolean requireRecalculation = true;
+    protected boolean requireRecalculation = true;
+    protected Layout layout = Layouts.NOTHING;
+    private boolean fullWidthWidgets;
+    private int horizontalSpacing;
+    private int verticalSpacing;
+    private Padding padding = Padding.ZERO;
 
     public CompositeWidget(int x, int y, int width, int height) {
         this.data = WidgetData.of(x, y, width, height);
@@ -39,7 +46,7 @@ public abstract class CompositeWidget implements ContainerEventHandler, Narratab
             requireRecalculation = false;
         }
         if (AlmostRendering.isDebug()) {
-            GuiComponent.fill(stack, data.getX(), data.getY(), data.getX() + data.getWidth(), data.getY() + data.getHeight(), 0x80FF0000);
+            GuiComponent.fill(stack, data.getX(), data.getY(), data.getRight(), data.getBottom(), 0x80FF0000);
         }
         renderWidgets(stack, mouseX, mouseY, delta);
     }
@@ -50,15 +57,6 @@ public abstract class CompositeWidget implements ContainerEventHandler, Narratab
                 widget.render(stack, mouseX, mouseY, delta);
             }
         }
-    }
-
-    public void setSpacing(int spacing) {
-        this.spacing = spacing;
-        markForRecalculation();
-    }
-
-    public int getSpacing() {
-        return spacing;
     }
 
     /**
@@ -119,6 +117,54 @@ public abstract class CompositeWidget implements ContainerEventHandler, Narratab
         markForRecalculation();
     }
 
+    public Collection<AlmostWidget<?>> getWidgets() {
+        return widgets;
+    }
+
+    public Layout getLayout() {
+        return layout;
+    }
+
+    public void setLayout(Layout layout) {
+        this.layout = layout;
+    }
+
+    public void setFullWidthWidgets(boolean fullWidth) {
+        this.fullWidthWidgets = fullWidth;
+        markForRecalculation();
+    }
+
+    public void setHorizontalSpacing(int spacing) {
+        this.horizontalSpacing = spacing;
+        markForRecalculation();
+    }
+
+    public void setVerticalSpacing(int spacing) {
+        this.verticalSpacing = spacing;
+        markForRecalculation();
+    }
+
+    public void setPadding(Padding padding) {
+        this.padding = padding;
+        markForRecalculation();
+    }
+
+    public boolean isFullWidthWidgets() {
+        return fullWidthWidgets;
+    }
+
+    public int getHorizontalSpacing() {
+        return horizontalSpacing;
+    }
+
+    public int getVerticalSpacing() {
+        return verticalSpacing;
+    }
+
+    public Padding getPadding() {
+        return padding;
+    }
+
     @Override
     public boolean isDragging() {
         return dragging;
@@ -174,5 +220,14 @@ public abstract class CompositeWidget implements ContainerEventHandler, Narratab
         requireRecalculation = true;
     }
 
-    abstract protected void calculateLayout();
+    protected void calculateLayout() {
+        Layout.Result result = getLayout().calculate(this);
+        if (result != null) {
+            onLayoutCalculated(result);
+        }
+    }
+
+    protected void onLayoutCalculated(Layout.Result result) {
+
+    }
 }

@@ -57,6 +57,7 @@ public class Scrollbar implements GuiEventListener {
 
     public void setMaxScrollableValue(int height) {
         this.maxScrollableValue = Math.max(0, height);
+        setValue(value);
     }
 
     public void setSliderHeight(int height) {
