@@ -85,8 +85,10 @@ public class BlockRegistration extends Registration<Block, BlockEntry<? extends 
     }
 
     /**
-     * Setup render layers for blocks. Call this in {@link net.fabricmc.api.ClientModInitializer#onInitializeClient()}. <br>
-     * Don't call this for forge as render layers are set through data generation.
+     * Setup render layers for blocks.
+     * <p>
+     * Needs to be called in Fabric's {@link net.fabricmc.api.ClientModInitializer#onInitializeClient()}.<br>
+     * <b>Don't</b> call this for Forge since render layers are handled by data gen.
      *
      * @param consumer The consumer to set the render layer.
      */

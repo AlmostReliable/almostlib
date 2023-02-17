@@ -12,10 +12,9 @@ import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 
 /**
- * Can be used to register client-only things. Implement this interface and register it with `ClientInitRunner` for the specific loader.<p>
+ * Can be used to register client-only features. Implement this interface and register it with `ClientInitRunner` for the respective loader.<p>
  * => Fabric: {@link com.almostreliable.almostlib.fabric.client.ClientInitRunner} in {@link net.fabricmc.api.ClientModInitializer}<p>
- * => Forge: {@link com.almostreliable.almostlib.forge.client.ClientInitRunner} in mod constructor<p>
- *
+ * => Forge: {@link com.almostreliable.almostlib.forge.client.ClientInitRunner} in mod constructor
  */
 public interface ClientInit {
 
