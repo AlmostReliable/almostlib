@@ -21,11 +21,11 @@ public interface ClientInit {
 
     default void onClientInit() {}
 
-    default void onMenuScreensInit(ScreenFactoryInit register) {}
+    default void onMenuScreensInit(ScreenFactoryInit event) {}
 
-    default void onEntityRendererInit(EntityRendererRegisterInit register) {}
+    default void onEntityRendererInit(EntityRendererRegisterInit event) {}
 
-    default void onBlockEntityRendererInit(BlockEntityRendererInit register) {}
+    default void onBlockEntityRendererInit(BlockEntityRendererInit event) {}
 
     @FunctionalInterface
     interface ScreenFactoryInit {
