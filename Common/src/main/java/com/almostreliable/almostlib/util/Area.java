@@ -2,6 +2,10 @@ package com.almostreliable.almostlib.util;
 
 public interface Area {
 
+    static Area of(int x, int y, int width, int height) {
+        return new Simple(x, y, width, height);
+    }
+
     int getX();
 
     int getY();
@@ -40,6 +44,34 @@ public interface Area {
         return isHorizontalInside(x) && isVerticalInside(y);
     }
 
+    default Area shrink(int amount) {
+        return expand(-amount, -amount);
+    }
+
+    default Area shrink(int x, int y) {
+        return expand(-x, -y);
+    }
+
+    default Area expand(int amount) {
+        return expand(amount, amount);
+    }
+
+    default Area expand(int x, int y) {
+        return new Simple(getX() - x, getY() - y, getWidth() + 2 * x, getHeight() + 2 * y);
+    }
+
+    default Area intersect(Area other) {
+        int x = Math.max(getX(), other.getX());
+        int y = Math.max(getY(), other.getY());
+        int right = Math.min(getRight(), other.getRight());
+        int bottom = Math.min(getBottom(), other.getBottom());
+        return new Simple(x, y, right - x, bottom - y);
+    }
+
+    default Area move(int x, int y) {
+        return new Simple(getX() + x, getY() + y, getWidth(), getHeight());
+    }
+
     interface Mutable extends Area {
 
         void setX(int x);
@@ -59,11 +91,6 @@ public interface Area {
          * @param height the height of the area
          */
         void setHeight(int height);
-
-        default void move(int x, int y) {
-            setX(getX() + x);
-            setY(getY() + y);
-        }
     }
 
     record Simple(int getX, int getY, int getWidth, int getHeight) implements Area {
