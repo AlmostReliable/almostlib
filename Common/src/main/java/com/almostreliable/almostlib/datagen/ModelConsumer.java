@@ -21,10 +21,6 @@ public class ModelConsumer implements BiConsumer<ResourceLocation, Supplier<Json
         modelGenerators.put(id, jsonGenerator);
     }
 
-    public void add(ResourceLocation id, Supplier<JsonElement> jsonGenerator) {
-        modelGenerators.put(id, jsonGenerator);
-    }
-
     public void decorate(Block block, UnaryOperator<Supplier<JsonElement>> decorator) {
         ResourceLocation modelLocation = ModelLocationUtils.getModelLocation(block);
         modelGenerators.computeIfPresent(modelLocation, (key, value) -> decorator.apply(value));

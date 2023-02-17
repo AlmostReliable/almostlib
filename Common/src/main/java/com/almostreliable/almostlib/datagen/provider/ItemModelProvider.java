@@ -30,7 +30,7 @@ public class ItemModelProvider extends AbstractDataProvider {
     }
 
     public void addModel(ResourceLocation resourceLocation, Supplier<JsonElement> supplier) {
-        modelConsumer.add(resourceLocation, supplier);
+        modelConsumer.accept(resourceLocation, supplier);
     }
 
     public BiConsumer<ResourceLocation, Supplier<JsonElement>> getModelConsumer() {

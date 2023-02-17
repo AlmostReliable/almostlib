@@ -18,15 +18,13 @@ import org.apache.commons.lang3.ArrayUtils;
 import java.io.IOException;
 import java.nio.file.Path;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
-import java.util.function.BiConsumer;
 import java.util.function.Consumer;
 import java.util.function.Predicate;
 import java.util.function.Supplier;
 
 public class BlockStateProvider extends AbstractDataProvider {
+
     private final List<BlockStateGenerator> blockStateGenerators;
     private final ModelConsumer modelConsumer;
 
@@ -66,7 +64,7 @@ public class BlockStateProvider extends AbstractDataProvider {
     }
 
     public void addModel(ResourceLocation resourceLocation, Supplier<JsonElement> supplier) {
-        modelConsumer.add(resourceLocation, supplier);
+        modelConsumer.accept(resourceLocation, supplier);
     }
 
     public ModelConsumer getModelConsumer() {
