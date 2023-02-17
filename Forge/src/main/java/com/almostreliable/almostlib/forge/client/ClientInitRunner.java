@@ -28,7 +28,6 @@ public class ClientInitRunner {
                 clientInit.onMenuScreensInit(new ClientInit.ScreenFactoryInit() {
                     @Override
                     public <T extends AbstractContainerMenu, U extends Screen & MenuAccess<T>> void register(MenuType<? extends T> menuType, ScreenFactory<T, U> screenFactory) {
-                        //noinspection NullableProblems
                         MenuScreens.register(menuType, screenFactory::create);
                     }
                 });
