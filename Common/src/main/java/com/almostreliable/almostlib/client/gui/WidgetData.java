@@ -17,6 +17,19 @@ public interface WidgetData extends Area.Mutable {
         return new Simple(x, y, width, height);
     }
 
+    Area getOriginArea();
+
+    default void restoreOrigin() {
+        applyArea(getOriginArea());
+    }
+
+    default void applyArea(Area area) {
+        setX(area.getX());
+        setY(area.getY());
+        setWidth(area.getWidth());
+        setHeight(area.getHeight());
+    }
+
     void setActive(boolean active);
 
     boolean isActive();
@@ -49,6 +62,7 @@ public interface WidgetData extends Area.Mutable {
         private float alpha;
         private boolean hovered;
         private WidgetChangeListener parent;
+        private final Area originArea;
 
         public Simple(int x, int y, int width, int height) {
             this.x = x;
@@ -59,6 +73,7 @@ public interface WidgetData extends Area.Mutable {
             this.visible = true;
             this.alpha = 1.0f;
             this.hovered = false;
+            this.originArea = Area.of(x, y, width, height);
         }
 
         @Override
@@ -101,6 +116,11 @@ public interface WidgetData extends Area.Mutable {
         public void setHeight(int height) {
             Preconditions.checkArgument(height >= 0, "Height must be positive");
             this.height = height;
+        }
+
+        @Override
+        public Area getOriginArea() {
+            return originArea;
         }
 
         @Override

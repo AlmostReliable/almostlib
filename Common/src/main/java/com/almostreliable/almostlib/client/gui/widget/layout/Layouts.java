@@ -16,6 +16,7 @@ public interface Layouts {
         int areaWidth = data.getWidth() - padding.left() - padding.right();
 
         for (AlmostWidget<?> widget : composite.getWidgets()) {
+            widget.getData().restoreOrigin();
             int widgetWidth = widget.getData().getWidth();
             if (composite.isFullWidthWidgets()) {
                 widgetWidth = areaWidth;

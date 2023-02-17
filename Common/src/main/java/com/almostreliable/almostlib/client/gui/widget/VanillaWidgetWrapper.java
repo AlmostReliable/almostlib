@@ -3,6 +3,7 @@ package com.almostreliable.almostlib.client.gui.widget;
 import com.almostreliable.almostlib.client.gui.WidgetChangeListener;
 import com.almostreliable.almostlib.client.gui.WidgetData;
 import com.almostreliable.almostlib.mixin.AbstractWidgetAccessor;
+import com.almostreliable.almostlib.util.Area;
 import com.mojang.blaze3d.vertex.PoseStack;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
@@ -99,9 +100,19 @@ public class VanillaWidgetWrapper implements AlmostWidget<WidgetData>, GuiEventL
     public class Data implements WidgetData {
 
         @Nullable private WidgetChangeListener parent;
+        private final Area originArea;
+
+        public Data() {
+            originArea = Area.of(getX(), getY(), getWidth(), getHeight());
+        }
 
         private AbstractWidgetAccessor asAccessor() {
             return (AbstractWidgetAccessor) VanillaWidgetWrapper.this.widget;
+        }
+
+        @Override
+        public Area getOriginArea() {
+            return originArea;
         }
 
         @Override
