@@ -16,7 +16,7 @@ import java.util.*;
 public class AlmostRendering {
 
     @Nullable private static List<Component> tooltipLines;
-    @Nullable private static Debug debug = new DebugImpl(); // TODO make this configurable
+    @Nullable private static Debug debug = new Debug(); // TODO make this configurable
 
     public static boolean isDebug() {
         return true;
@@ -48,40 +48,29 @@ public class AlmostRendering {
         }
     }
 
-    public static void renderDebug(PoseStack poseStack) {
+    public static void renderAndClearDebug(PoseStack poseStack) {
         if (debug != null) {
-            debug.render(poseStack);
+            debug.renderAndClear(poseStack);
         }
     }
 
-    private interface Debug {
-
-        default void write(String key, Object value) {
-            write("", key, value);
-        }
-
-        default void write(String category, String key, Object value) {
-
-        }
-
-        default void render(PoseStack ps) {}
-    }
-
-    private static class DebugImpl implements Debug {
+    private static class Debug {
 
         private final Map<String, List<Tuple<String, String>>> data = new LinkedHashMap<>();
 
-        public DebugImpl() {
+        public Debug() {
             data.put("", new ArrayList<>());
         }
 
-        @Override
+        public void write(String key, Object value) {
+            write("", key, value);
+        }
+
         public void write(String category, String key, Object value) {
             data.computeIfAbsent(category, k -> new ArrayList<>()).add(new Tuple<>(key, value.toString()));
         }
 
-        @Override
-        public void render(PoseStack ps) {
+        public void renderAndClear(PoseStack ps) {
             var font = Minecraft.getInstance().font;
             int lineIndex = 0;
             ps.pushPose();
@@ -103,7 +92,8 @@ public class AlmostRendering {
                 lineIndex += 3;
             }
             ps.popPose();
-            data.clear(); // TODO outsource clear?
+
+            data.clear();
         }
     }
 }
