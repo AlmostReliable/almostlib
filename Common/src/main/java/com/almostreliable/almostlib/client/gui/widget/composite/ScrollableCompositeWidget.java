@@ -19,7 +19,7 @@ public class ScrollableCompositeWidget extends TranslatableCompositeWidget {
     private int contentHeight = 0;
 
     public ScrollableCompositeWidget(int x, int y, int width, int height) {
-        this(x, y, width, height, Padding.of(3));
+        this(x, y, width, height, Padding.of(0));
     }
 
     public ScrollableCompositeWidget(int x, int y, int width, int height, Padding contentPadding) {
@@ -31,7 +31,7 @@ public class ScrollableCompositeWidget extends TranslatableCompositeWidget {
     }
 
     protected Scrollbar createScrollbar() {
-        return new Scrollbar(getData().getRight() - 10, getData().getY() + 10, 10, getData().getHeight() - 20);
+        return new Scrollbar(getData().getRight() - 10, getData().getY(), 10, getData().getHeight());
     }
 
     @Override
