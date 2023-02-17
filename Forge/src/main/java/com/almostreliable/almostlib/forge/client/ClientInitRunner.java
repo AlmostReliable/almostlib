@@ -23,8 +23,8 @@ public class ClientInitRunner {
 
     private record Holder(ClientInit clientInit) {
 
-        public void onClientInit(FMLClientSetupEvent e) {
-            e.enqueueWork(() -> {
+        private void onClientInit(FMLClientSetupEvent event) {
+            event.enqueueWork(() -> {
                 clientInit.onMenuScreensInit(new ClientInit.ScreenFactoryInit() {
                     @Override
                     public <T extends AbstractContainerMenu, U extends Screen & MenuAccess<T>> void register(MenuType<? extends T> menuType, ScreenFactory<T, U> screenFactory) {
@@ -37,7 +37,7 @@ public class ClientInitRunner {
             });
         }
 
-        public void onRendererInit(EntityRenderersEvent.RegisterRenderers event) {
+        private void onRendererInit(EntityRenderersEvent.RegisterRenderers event) {
             clientInit.onEntityRendererInit(event::registerEntityRenderer);
             clientInit.onBlockEntityRendererInit(event::registerBlockEntityRenderer);
         }
