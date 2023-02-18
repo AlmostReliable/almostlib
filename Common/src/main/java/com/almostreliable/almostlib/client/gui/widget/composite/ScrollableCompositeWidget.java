@@ -128,6 +128,9 @@ public class ScrollableCompositeWidget extends TranslatableCompositeWidget {
     @Override
     protected void onLayoutCalculated(Layout.Result result) {
         contentHeight = result.getHeight();
+        if(contentHeight <= 0) {
+            contentHeight = contentArea.getHeight();
+        }
         requiresScrollbarUpdate = true;
     }
 
