@@ -13,6 +13,8 @@ import net.minecraft.client.renderer.RenderType;
 import net.minecraft.world.inventory.AbstractContainerMenu;
 import net.minecraft.world.inventory.MenuType;
 
+import java.util.function.Supplier;
+
 public class ClientInitRunner {
 
     public static void run(ClientInit clientInit) {
@@ -27,6 +29,10 @@ public class ClientInitRunner {
         clientInit.onClientInit();
     }
 
+    public static void run(Supplier<ClientInit> clientInitFactory) {
+        run(clientInitFactory.get());
+    }
+
     public static void run(ClientInit clientInit, AlmostManager manager) {
         run(clientInit);
         manager.blocks().setupRenderLayers((block, renderLayer) -> {
@@ -38,5 +44,9 @@ public class ClientInitRunner {
             };
             BlockRenderLayerMap.INSTANCE.putBlock(block, renderType);
         });
+    }
+
+    public static void run(Supplier<ClientInit> clientInitFactory, AlmostManager manager) {
+        run(clientInitFactory.get(), manager);
     }
 }

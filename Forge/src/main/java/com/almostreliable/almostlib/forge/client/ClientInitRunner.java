@@ -12,6 +12,8 @@ import net.minecraftforge.eventbus.api.IEventBus;
 import net.minecraftforge.fml.event.lifecycle.FMLClientSetupEvent;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
 
+import java.util.function.Supplier;
+
 public class ClientInitRunner {
 
     public static void run(ClientInit clientInit) {
@@ -19,6 +21,10 @@ public class ClientInitRunner {
         IEventBus bus = FMLJavaModLoadingContext.get().getModEventBus();
         bus.addListener(h::onClientInit);
         bus.addListener(h::onRendererInit);
+    }
+
+    public static void run(Supplier<ClientInit> clientInitFactory) {
+        run(clientInitFactory.get());
     }
 
     private record Holder(ClientInit clientInit) {
