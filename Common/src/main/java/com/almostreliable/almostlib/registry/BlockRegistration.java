@@ -1,11 +1,15 @@
 package com.almostreliable.almostlib.registry;
 
+import com.almostreliable.almostlib.AlmostLib;
+import com.almostreliable.almostlib.Platform;
+import com.almostreliable.almostlib.client.RenderLayerType;
 import com.almostreliable.almostlib.datagen.DataGenHolder;
 import com.almostreliable.almostlib.datagen.DataGenManager;
 import com.almostreliable.almostlib.datagen.provider.BlockStateProvider;
 import com.almostreliable.almostlib.datagen.provider.LootTableProvider;
 import com.almostreliable.almostlib.util.AlmostUtils;
 import com.almostreliable.almostlib.util.ToolType;
+import com.google.gson.JsonObject;
 import net.minecraft.core.Registry;
 import net.minecraft.data.models.model.DelegatedModel;
 import net.minecraft.data.models.model.ModelLocationUtils;
@@ -25,16 +29,14 @@ import net.minecraft.world.level.material.MaterialColor;
 import net.minecraft.world.level.storage.loot.LootTable;
 
 import javax.annotation.Nullable;
-import java.util.Arrays;
-import java.util.HashSet;
-import java.util.Objects;
-import java.util.Set;
+import java.util.*;
 import java.util.function.*;
 
 public class BlockRegistration extends Registration<Block, BlockEntry<? extends Block>> implements DataGenHolder {
 
     @Nullable private ItemRegistration itemRegistration;
     @Nullable private DataGenManager dataGenManager;
+    private final Map<BlockEntry<? extends Block>, RenderLayerType> renderLayers = new HashMap<>();
 
     BlockRegistration(String namespace, Registry<Block> registry) {
         super(namespace, registry);
@@ -82,6 +84,19 @@ public class BlockRegistration extends Registration<Block, BlockEntry<? extends 
         return this;
     }
 
+    /**
+     * Setup render layers for blocks.
+     * <p>
+     * Needs to be called in Fabric's {@link net.fabricmc.api.ClientModInitializer#onInitializeClient()}.<br>
+     * <b>Don't</b> call this for Forge since render layers are handled by data gen.
+     *
+     * @param consumer The consumer to set the render layer.
+     */
+    public void setupRenderLayers(BiConsumer<Block, RenderLayerType> consumer) {
+        renderLayers.forEach((block, type) -> consumer.accept(block.get(), type));
+        renderLayers.clear();
+    }
+
     @Override
     @Nullable
     public DataGenManager getDataGenManager() {
@@ -102,6 +117,7 @@ public class BlockRegistration extends Registration<Block, BlockEntry<? extends 
         @Nullable BiFunction<B, Item.Properties, ? extends BlockItem> blockItemFactory;
         private final Set<TagKey<Item>> itemTags = new HashSet<>();
         @Nullable String defaultLang;
+        private RenderLayerType renderLayerType = RenderLayerType.SOLID;
 
         public Builder(String id, BlockBehaviour.Properties properties, Function<BlockBehaviour.Properties, ? extends B> factory) {
             this.id = id;
@@ -296,6 +312,21 @@ public class BlockRegistration extends Registration<Block, BlockEntry<? extends 
             return this;
         }
 
+        public Builder<B> renderCutout() {
+            renderLayerType = RenderLayerType.CUTOUT;
+            return this;
+        }
+
+        public Builder<B> renderCutoutMipped() {
+            renderLayerType = RenderLayerType.CUTOUT_MIPPED;
+            return this;
+        }
+
+        public Builder<B> renderTranslucent() {
+            renderLayerType = RenderLayerType.TRANSLUCENT;
+            return this;
+        }
+
         private String generateDefaultLang() {
             return Objects.requireNonNullElseGet(defaultLang, () -> AlmostUtils.capitalizeWords(id.replace('_', ' ')));
         }
@@ -329,7 +360,22 @@ public class BlockRegistration extends Registration<Block, BlockEntry<? extends 
                 dg.platform().tags(Registry.BLOCK, p -> blockTags.forEach(tag -> p.tag(tag).add(block.get())));
             });
 
+            applyRenderLayer(block);
             return block;
+        }
+
+        private void applyRenderLayer(BlockEntry<B> block) {
+            if (renderLayerType == RenderLayerType.SOLID) return;
+
+            if (AlmostLib.PLATFORM.getPlatform() != Platform.FORGE) {
+                renderLayers.put(block, renderLayerType);
+            }
+
+            applyDataGen(dg -> dg.common().blockState(p -> p.getModelConsumer().decorate(block.get(), jsonGen -> () -> {
+                JsonObject json = jsonGen.get().getAsJsonObject();
+                json.addProperty("render_type", renderLayerType.getJsonDefinition());
+                return json;
+            })));
         }
 
         private void checkLootTwice() {
