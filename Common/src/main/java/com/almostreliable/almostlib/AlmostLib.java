@@ -31,4 +31,8 @@ public class AlmostLib {
             .findFirst()
             .orElseThrow(() -> new NullPointerException("Failed to load service for class: " + clazz.getName()));
     }
+
+    public static void initNetworkHandler() {
+        NETWORK_HANDLER.init();
+    }
 }
