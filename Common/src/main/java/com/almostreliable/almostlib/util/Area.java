@@ -68,10 +68,6 @@ public interface Area {
         return new Simple(x, y, right - x, bottom - y);
     }
 
-    default Area move(int x, int y) {
-        return new Simple(getX() + x, getY() + y, getWidth(), getHeight());
-    }
-
     interface Mutable extends Area {
 
         void setX(int x);
@@ -91,6 +87,12 @@ public interface Area {
          * @param height the height of the area
          */
         void setHeight(int height);
+
+
+        default void move(int x, int y) {
+            setX(getX() + x);
+            setY(getY() + y);
+        }
     }
 
     record Simple(int getX, int getY, int getWidth, int getHeight) implements Area {

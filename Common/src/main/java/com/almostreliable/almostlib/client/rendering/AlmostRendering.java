@@ -19,10 +19,17 @@ import java.util.*;
 public class AlmostRendering {
 
     @Nullable private static List<Component> tooltipLines;
-    @Nullable private static Debug debug = new Debug(); // TODO make this configurable
+    @Nullable private static Debug debug = null; // TODO make this configurable
+
+    private static boolean IS_DEBUG = false;
 
     public static boolean isDebug() {
-        return true;
+        return IS_DEBUG;
+    }
+
+    public static void toggleDebug() {
+        IS_DEBUG = !IS_DEBUG;
+        debug = IS_DEBUG ? new Debug() : null;
     }
 
     public static void writeTooltip(Component... component) {
@@ -43,7 +50,7 @@ public class AlmostRendering {
         GuiComponent.fill(poseStack, area.getX(), area.getY(), area.getRight(), area.getBottom(), (int) color);
     }
 
-    public static void border(PoseStack poseStack, Area area, int s, long color) {
+    public static void border(PoseStack poseStack, Area area, long color, int s) {
         float alpha = (float) (color >> 24 & 0xFF) / 255.0f;
         float red = (float) (color >> 16 & 0xFF) / 255.0f;
         float green = (float) (color >> 8 & 0xFF) / 255.0f;
@@ -132,7 +139,10 @@ public class AlmostRendering {
         }
 
         public void renderAndClear(PoseStack ps) {
+            boolean renderBackground = true; // TODO config
+
             var font = Minecraft.getInstance().font;
+            int diffWidth = font.width(" = ") + 4;
             int lineIndex = 0;
             ps.pushPose();
             ps.scale(0.7f, 0.7f, 1);
@@ -146,6 +156,10 @@ public class AlmostRendering {
 
                 for (var kv : e.getValue()) {
                     lineIndex++;
+                    int y = 2 + lineIndex * font.lineHeight - 1;
+                    if (renderBackground) {
+                        GuiComponent.fill(ps, 0, y, width + font.width(kv.getB()) + diffWidth, y + font.lineHeight, 0x88000000);
+                    }
                     GuiComponent.drawString(ps, font, kv.getA(), 2, 2 + lineIndex * font.lineHeight, 0xFFFFFF);
                     GuiComponent.drawString(ps, font, " = " + kv.getB(), 2 + width, 2 + lineIndex * font.lineHeight, 0xFFFFFF);
                 }
