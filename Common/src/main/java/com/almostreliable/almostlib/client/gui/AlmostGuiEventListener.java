@@ -74,6 +74,7 @@ public interface AlmostGuiEventListener<T extends WidgetData> extends GuiEventLi
     default boolean mouseReleased(double mouseX, double mouseY, int mouseButton) {
         if (isValidMouseClickButton(mouseButton)) {
             onRelease(mouseX, mouseY, mouseButton);
+            return true;
         }
         return false;
     }
