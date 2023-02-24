@@ -7,6 +7,10 @@ import net.fabricmc.api.Environment;
 import net.minecraft.client.gui.components.Widget;
 import net.minecraft.resources.ResourceLocation;
 
+/**
+ * Implemented by all kinds of widgets holding {@link WidgetData} in
+ * order to add convenience functionality.
+ */
 @Environment(EnvType.CLIENT)
 public interface AlmostWidget<T extends WidgetData> extends Widget {
 
@@ -15,13 +19,15 @@ public interface AlmostWidget<T extends WidgetData> extends Widget {
     }
 
     /**
-     * Set the width and height of the area. After resize is called, the parent will be notified of the resize.
+     * Sets the width and height of the widget area.<br>
+     * After the resize is performed, the parent will be notified of the event.
      * <p>
-     * This is the preferred way to resize a widget, as it will notify the parent of the widget.<br>
-     * {@link WidgetData#setWidth(int)} and {@link WidgetData#setHeight(int)} should only be used while calculating a new layout. This is mainly used by {@link CompositeWidget}, when layout is calculated.
+     * Because of the automated notification, this is the recommended way to resize a widget.<br>
+     * {@link WidgetData#setWidth(int)} and {@link WidgetData#setHeight(int)} should only be used when calculating a new layout.
+     * This is mainly used by {@link CompositeWidget} when the layout is calculated.
      *
-     * @param width  the width of the area
-     * @param height the height of the area
+     * @param width  The width of the area.
+     * @param height The height of the area.
      */
     default void resize(int width, int height) {
         getData().setWidth(width);

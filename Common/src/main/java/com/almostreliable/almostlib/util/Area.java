@@ -11,16 +11,16 @@ public interface Area {
     int getY();
 
     /**
-     * Returns the width of the area. Implementations must ensure that the width is always positive
+     * Returns the width of the area. Implementations must ensure that the width is always positive.
      *
-     * @return the width of the area
+     * @return The width of the area.
      */
     int getWidth();
 
     /**
-     * Returns the height of the area. Implementations must ensure that the height is always positive
+     * Returns the height of the area. Implementations must ensure that the height is always positive.
      *
-     * @return the height of the area
+     * @return The height of the area.
      */
     int getHeight();
 
@@ -75,16 +75,16 @@ public interface Area {
         void setY(int y);
 
         /**
-         * Set the width of the area. Implementations must ensure that the width is always positive
+         * Sets the width of the area. Implementations must ensure that the width is always positive.
          *
-         * @param width the width of the area
+         * @param width The width of the area.
          */
         void setWidth(int width);
 
         /**
-         * Set the height of the area. Implementations must ensure that the height is always positive
+         * Sets the height of the area. Implementations must ensure that the height is always positive.
          *
-         * @param height the height of the area
+         * @param height The height of the area.
          */
         void setHeight(int height);
 

@@ -10,6 +10,11 @@ import com.almostreliable.almostlib.util.Area;
 import com.mojang.blaze3d.vertex.PoseStack;
 import net.minecraft.client.gui.GuiComponent;
 
+/**
+ * A scrollable implementation of {@link TranslatableCompositeWidget}.
+ * <p>
+ * Automatically handles layout, mouse translation and events for all its children.
+ */
 public class ScrollableCompositeWidget extends TranslatableCompositeWidget {
 
     private final WidgetData data;

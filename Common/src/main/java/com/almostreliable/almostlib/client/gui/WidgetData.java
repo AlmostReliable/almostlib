@@ -1,5 +1,6 @@
 package com.almostreliable.almostlib.client.gui;
 
+import com.almostreliable.almostlib.client.gui.widget.composite.CompositeWidget;
 import com.almostreliable.almostlib.util.Area;
 import com.google.common.base.Preconditions;
 import net.fabricmc.api.EnvType;
@@ -8,7 +9,7 @@ import net.fabricmc.api.Environment;
 import javax.annotation.Nullable;
 
 /**
- * A simple interface to store the data for a widget.
+ * Implemented to store data for a widget.
  */
 @Environment(EnvType.CLIENT)
 public interface WidgetData extends Area.Mutable {
@@ -17,12 +18,25 @@ public interface WidgetData extends Area.Mutable {
         return new Simple(x, y, width, height);
     }
 
+    /**
+     * Get the origin area of the widget. This is the area that the widget was created with.
+     *
+     * @return The origin area of the widget.
+     */
     Area getOriginArea();
 
+    /**
+     * Restore the origin area of the widget.
+     */
     default void restoreOrigin() {
         applyArea(getOriginArea());
     }
 
+    /**
+     * Apply custom position and dimensions to the widget.
+     *
+     * @param area The area to apply.
+     */
     default void applyArea(Area area) {
         setX(area.getX());
         setY(area.getY());
@@ -44,8 +58,23 @@ public interface WidgetData extends Area.Mutable {
 
     void setHovered(boolean hovered);
 
+    /**
+     * Checks if the widget is hovered.
+     * <p>
+     * To match the hovered state of the widget, the mouse must be within
+     * the bounds of the widget, and it should be visible.
+     *
+     * @return True when the widget is hovered, false otherwise.
+     */
     boolean isHovered();
 
+    /**
+     * Sets the parent of the widget to notify on certain events.
+     * <p>
+     * This is mainly used by {@link CompositeWidget} to notify the parent of a resize.
+     *
+     * @param parent The parent to notify.
+     */
     void setParent(@Nullable WidgetChangeListener parent);
 
     @Nullable
@@ -158,12 +187,6 @@ public interface WidgetData extends Area.Mutable {
             this.hovered = hovered;
         }
 
-        /**
-         * Check if the widget is hovered. To match the hovered state of the widget,
-         * the mouse must be within the bounds of the widget, and it should be visible.
-         *
-         * @return true if the widget is hovered.
-         */
         @Override
         public boolean isHovered() {
             return hovered && visible;

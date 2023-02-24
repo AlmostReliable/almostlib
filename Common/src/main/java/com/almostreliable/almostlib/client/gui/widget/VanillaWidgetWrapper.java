@@ -11,6 +11,9 @@ import net.minecraft.client.gui.components.AbstractWidget;
 import net.minecraft.client.gui.components.events.GuiEventListener;
 import org.jetbrains.annotations.Nullable;
 
+/**
+ * A wrapper class to allow vanilla widgets to be used with the AlmostLib widget system.
+ */
 @Environment(EnvType.CLIENT)
 public final class VanillaWidgetWrapper implements AlmostWidget<WidgetData>, GuiEventListener {
 

@@ -21,6 +21,11 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
+/**
+ * A widget containing other widgets.
+ * <p>
+ * Automatically handles layout and events for all its children.
+ */
 public class CompositeWidget implements ContainerEventHandler, NarratableEntry, AlmostWidget<WidgetData>, WidgetChangeListener {
 
     private final WidgetData data;
@@ -62,11 +67,11 @@ public class CompositeWidget implements ContainerEventHandler, NarratableEntry, 
     /**
      * Adds a widget. If the widget is a {@link GuiEventListener}, it will be added to the list of event listeners.
      * <p>
-     * Adding a widget will cause the layout to be recalculated in the next render call.
+     * Adding a widget will cause the layout to be recalculated within the next render call.
      *
-     * @param widget The widget to add
-     * @param <T>    The data type of the widget. {@link WidgetData}
-     * @return The widget that was added
+     * @param widget The widget to add.
+     * @param <T>    The data type of the widget implementing {@link WidgetData}.
+     * @return The widget that was added.
      */
     public <T extends WidgetData> AlmostWidget<T> addWidget(AlmostWidget<T> widget) {
         widgets.add(widget);
@@ -108,7 +113,7 @@ public class CompositeWidget implements ContainerEventHandler, NarratableEntry, 
     }
 
     /**
-     * Removes all widgets from this list.
+     * Removes all widgets from this composite.
      */
     public void clearWidgets() {
         widgets.forEach(w -> w.getData().setParent(null));
@@ -149,6 +154,13 @@ public class CompositeWidget implements ContainerEventHandler, NarratableEntry, 
         markForRecalculation();
     }
 
+    /**
+     * Whether the composite renders children at full width.
+     * <p>
+     * When enabled, each child will have the same width as the composite.
+     *
+     * @return True when full width rendering is enabled, false otherwise.
+     */
     public boolean isFullWidthWidgets() {
         return fullWidthWidgets;
     }

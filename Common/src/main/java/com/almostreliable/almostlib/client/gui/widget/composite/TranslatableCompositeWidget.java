@@ -1,12 +1,12 @@
 package com.almostreliable.almostlib.client.gui.widget.composite;
 
 import com.mojang.blaze3d.vertex.PoseStack;
-import net.minecraft.client.gui.components.events.GuiEventListener;
 
 /**
- * Base composite widget to apply custom translation before rendering. This is useful for things like scrolling containers. You can see an example of this in {@link ScrollableCompositeWidget}.
+ * An implementation of {@link CompositeWidget} allowing custom translation before rendering.<br>
+ * Useful for things like scrollable containers like {@link ScrollableCompositeWidget}.
  * <p>
- * Interface delegates all {@link GuiEventListener} methods to the inner widget. It also translates the mouse coordinates before passing them to the inner widget.
+ * Automatically handles layout, mouse translation and events for all its children.
  */
 public abstract class TranslatableCompositeWidget extends CompositeWidget {
 
