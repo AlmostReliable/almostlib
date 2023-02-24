@@ -61,7 +61,7 @@ public interface WidgetData extends Area.Mutable {
         private boolean visible;
         private float alpha;
         private boolean hovered;
-        private WidgetChangeListener parent;
+        @Nullable private WidgetChangeListener parent;
         private final Area originArea;
 
         public Simple(int x, int y, int width, int height) {
