@@ -69,6 +69,10 @@ public class BlockRegistration extends Registration<Block, BlockEntry<? extends 
         return new Builder<>(id, BlockBehaviour.Properties.of(material), factory);
     }
 
+    public <B extends Block> Builder<B> builder(String id, BlockBehaviour parentBehaviour, Function<BlockBehaviour.Properties, ? extends B> factory) {
+        return AlmostUtils.cast(builder(id, Material.STONE, factory).copyProperties(parentBehaviour));
+    }
+
     public Builder<Block> builder(String id, Material material) {
         return builder(id, material, Block::new);
     }
@@ -158,6 +162,11 @@ public class BlockRegistration extends Registration<Block, BlockEntry<? extends 
             return this;
         }
 
+        public Builder<B> copyProperties(BlockBehaviour parentBehaviour) {
+            properties = BlockBehaviour.Properties.copy(parentBehaviour);
+            return this;
+        }
+
         public Builder<B> noCollision() {
             properties.noCollission();
             return this;
@@ -210,6 +219,11 @@ public class BlockRegistration extends Registration<Block, BlockEntry<? extends 
 
         public Builder<B> strength(float strength) {
             properties.strength(strength);
+            return this;
+        }
+
+        public Builder<B> strength(float destroyTime, float explosionResistance) {
+            properties.strength(destroyTime, explosionResistance);
             return this;
         }
 
