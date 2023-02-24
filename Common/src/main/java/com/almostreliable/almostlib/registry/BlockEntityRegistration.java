@@ -1,8 +1,10 @@
 package com.almostreliable.almostlib.registry;
 
 import com.almostreliable.almostlib.AlmostLib;
+import com.almostreliable.almostlib.util.AlmostUtils;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Registry;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.entity.BlockEntityType;
@@ -14,10 +16,19 @@ import java.util.List;
 import java.util.function.BiFunction;
 import java.util.function.Supplier;
 
-public class BlockEntityRegistration extends GenericRegistration<BlockEntityType<? extends BlockEntity>> {
+public class BlockEntityRegistration extends Registration<BlockEntityType<?>, BlockEntityEntry<? extends BlockEntity>> {
 
     BlockEntityRegistration(String namespace, Registry<BlockEntityType<?>> registry) {
         super(namespace, registry);
+    }
+
+    @Override
+    protected BlockEntityEntry<? extends BlockEntity> createEntry(ResourceLocation id, Supplier<? extends BlockEntityType<?>> supplier) {
+        return new BlockEntityEntry<>(id, AlmostUtils.cast(supplier));
+    }
+
+    public <BE extends BlockEntity> BlockEntityEntry<BE> register(String id, Supplier<? extends BlockEntityType<?>> supplier) {
+        return AlmostUtils.cast(createOrThrowEntry(id, supplier));
     }
 
     public <BE extends BlockEntity> Builder<BE> builder(String id, BiFunction<BlockPos, BlockState, BE> factory) {
@@ -46,7 +57,7 @@ public class BlockEntityRegistration extends GenericRegistration<BlockEntityType
             return this;
         }
 
-        public RegistryEntry<BlockEntityType<BE>> register() {
+        public BlockEntityEntry<BE> register() {
             return BlockEntityRegistration.this.register(id, () -> {
                 Block[] blocks = blockEntrySuppliers
                     .stream()

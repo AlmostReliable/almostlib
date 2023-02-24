@@ -52,10 +52,8 @@ public class BlockRegistration extends Registration<Block, BlockEntry<? extends 
         return this;
     }
 
-    @Override
-    @SuppressWarnings("unchecked")
     public <T extends Block> BlockEntry<T> register(String id, Supplier<? extends T> supplier) {
-        return (BlockEntry<T>) super.register(id, supplier);
+        return AlmostUtils.cast(createOrThrowEntry(id, supplier));
     }
 
     @SuppressWarnings("unchecked")

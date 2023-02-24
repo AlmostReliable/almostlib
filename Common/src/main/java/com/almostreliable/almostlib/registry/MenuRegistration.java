@@ -6,15 +6,23 @@ import com.almostreliable.almostlib.util.AlmostUtils;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Registry;
 import net.minecraft.network.FriendlyByteBuf;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.inventory.AbstractContainerMenu;
 import net.minecraft.world.inventory.MenuType;
 import net.minecraft.world.level.block.entity.BlockEntity;
 
-public class MenuRegistration extends GenericRegistration<MenuType<? extends AbstractContainerMenu>> {
+import java.util.function.Supplier;
 
-    MenuRegistration(String namespace, Registry<MenuType<?>> registry) {
-        super(namespace, registry);
+public class MenuRegistration extends Registration<MenuType<?>, MenuEntry<? extends AbstractContainerMenu>> {
+
+    MenuRegistration(String namespace) {
+        super(namespace, Registry.MENU);
+    }
+
+    @Override
+    protected MenuEntry<? extends AbstractContainerMenu> createEntry(ResourceLocation id, Supplier<? extends MenuType<?>> supplier) {
+        return new MenuEntry<>(id, AlmostUtils.cast(supplier));
     }
 
     /**
@@ -33,11 +41,9 @@ public class MenuRegistration extends GenericRegistration<MenuType<? extends Abs
      * @param <T>     The type of the menu type {@link MenuType<M>}
      * @return The registered menu type
      */
-    public <M extends AbstractContainerMenu, T extends MenuType<? extends M>> RegistryEntry<T> register(String id, MenuFactory<M> factory) {
-        return register(id, () -> {
-            MenuType<M> mt = AlmostLib.PLATFORM.createMenuType(factory);
-            return AlmostUtils.cast(mt);
-        });
+    public <M extends AbstractContainerMenu> MenuEntry<M> register(String id, MenuFactory<M> factory) {
+        var entry = createOrThrowEntry(id, () -> AlmostLib.PLATFORM.createMenuType(factory));
+        return AlmostUtils.cast(entry);
     }
 
     /**
@@ -57,7 +63,7 @@ public class MenuRegistration extends GenericRegistration<MenuType<? extends Abs
      * @param <T>     The type of the menu type {@link MenuType<M>}
      * @return The registered menu type
      */
-    public <M extends AbstractContainerMenu, T extends MenuType<? extends M>, BE extends BlockEntity> RegistryEntry<T> forBlockEntity(String id, Class<BE> entityType, MenuFactory.ForBlockEntity<M, BE> factory) {
+    public <M extends AbstractContainerMenu, BE extends BlockEntity> MenuEntry<M> forBlockEntity(String id, Class<BE> entityType, MenuFactory.ForBlockEntity<M, BE> factory) {
         return register(id, (wid, inventory, buffer) -> {
             BE be = getBlockEntity(entityType, inventory, buffer);
             return factory.apply(wid, inventory, be);
@@ -87,7 +93,7 @@ public class MenuRegistration extends GenericRegistration<MenuType<? extends Abs
      * @param <T>     The type of the menu type {@link MenuType<M>}
      * @return The registered menu type
      */
-    public <M extends AbstractContainerMenu, T extends MenuType<? extends M>, BE extends BlockEntity> RegistryEntry<T> forCustom(String id, Class<BE> entityType, MenuFactory.ForCustom<M, BE> factory) {
+    public <M extends AbstractContainerMenu, BE extends BlockEntity> MenuEntry<M> forCustom(String id, Class<BE> entityType, MenuFactory.ForCustom<M, BE> factory) {
         return register(id, (wid, inventory, buffer) -> {
             BE be = getBlockEntity(entityType, inventory, buffer);
             return factory.apply(wid, inventory, be, buffer);

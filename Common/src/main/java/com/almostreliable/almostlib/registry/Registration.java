@@ -29,13 +29,12 @@ public abstract class Registration<S, RE extends RegistryEntry<? extends S>> {
     }
 
     public static MenuRegistration menus(String namespace) {
-        return new MenuRegistration(namespace, Registry.MENU);
+        return new MenuRegistration(namespace);
     }
 
     private final String namespace;
     private final Registry<S> registry;
-
-    private final Map<ResourceLocation, RegistryEntry<? extends S>> entries = new LinkedHashMap<>();
+    protected final Map<ResourceLocation, RegistryEntry<? extends S>> entries = new LinkedHashMap<>();
     private final Collection<RegistryEntry<? extends S>> entriesView = Collections.unmodifiableCollection(entries.values());
 
     public Registration(String namespace, Registry<S> registry) {
@@ -57,15 +56,14 @@ public abstract class Registration<S, RE extends RegistryEntry<? extends S>> {
 
     protected abstract RE createEntry(ResourceLocation id, Supplier<? extends S> supplier);
 
-    @SuppressWarnings("unchecked")
-    public <T extends S> RegistryEntry<T> register(String id, Supplier<? extends T> supplier) {
+    RE createOrThrowEntry(String id, Supplier<? extends S> supplier) {
         final ResourceLocation fullId = new ResourceLocation(namespace, id);
         if (entries.containsKey(fullId)) {
             throw new IllegalArgumentException("Duplicate registration for " + id + " in " + namespace);
         }
-        RE e = createEntry(fullId, supplier);
-        entries.put(fullId, e);
-        return (RegistryEntry<T>) e;
+        RE entry = createEntry(fullId, supplier);
+        entries.put(fullId, entry);
+        return entry;
     }
 
     public void applyRegister(BiConsumer<ResourceLocation, S> callback) {

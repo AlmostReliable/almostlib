@@ -48,10 +48,8 @@ public class ItemRegistration extends Registration<Item, ItemEntry<? extends Ite
         return this;
     }
 
-    @Override
-    @SuppressWarnings("unchecked")
     public <T extends Item> ItemEntry<T> register(String id, Supplier<? extends T> supplier) {
-        return (ItemEntry<T>) super.register(id, supplier);
+        return AlmostUtils.cast(createOrThrowEntry(id, supplier));
     }
 
     public <T extends Item> ItemEntry<T> simple(String id, Function<Item.Properties, ? extends T> factory) {
