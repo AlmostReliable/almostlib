@@ -12,7 +12,7 @@ import net.minecraft.client.gui.components.events.GuiEventListener;
 import org.jetbrains.annotations.Nullable;
 
 @Environment(EnvType.CLIENT)
-public class VanillaWidgetWrapper implements AlmostWidget<WidgetData>, GuiEventListener {
+public final class VanillaWidgetWrapper implements AlmostWidget<WidgetData>, GuiEventListener {
 
     private final AbstractWidget widget;
     private final Data data;
@@ -97,12 +97,12 @@ public class VanillaWidgetWrapper implements AlmostWidget<WidgetData>, GuiEventL
     }
     //endregion
 
-    public class Data implements WidgetData {
+    public final class Data implements WidgetData {
 
         @Nullable private WidgetChangeListener parent;
         private final Area originArea;
 
-        public Data() {
+        private Data() {
             originArea = Area.of(getX(), getY(), getWidth(), getHeight());
         }
 
