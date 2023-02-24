@@ -1,5 +1,6 @@
 package com.almostreliable.almostlib.client.gui;
 
+import com.almostreliable.almostlib.util.Area;
 import com.mojang.blaze3d.vertex.PoseStack;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
@@ -21,6 +22,28 @@ public class Scrollbar implements GuiEventListener {
     private int scrollFactor = 10;
     private boolean snapOnScrollFactor = false;
     private boolean hoveredSlider = false;
+    private final Area sliderArea = new Area() {
+
+        @Override
+        public int getX() {
+            return Scrollbar.this.data.getX();
+        }
+
+        @Override
+        public int getY() {
+            return Scrollbar.this.getSliderY();
+        }
+
+        @Override
+        public int getWidth() {
+            return Scrollbar.this.data.getWidth();
+        }
+
+        @Override
+        public int getHeight() {
+            return getSliderHeight();
+        }
+    };
 
     public Scrollbar(int x, int y, int width, int height) {
         this.data = WidgetData.of(x, y, width, height);
@@ -81,6 +104,10 @@ public class Scrollbar implements GuiEventListener {
         if (shouldSnap()) {
             this.value = this.value - this.value % scrollFactor;
         }
+    }
+
+    public Area getSliderArea() {
+        return sliderArea;
     }
 
     public boolean shouldSnap() {
