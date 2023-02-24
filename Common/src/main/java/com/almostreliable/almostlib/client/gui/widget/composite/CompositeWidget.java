@@ -21,7 +21,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
-public abstract class CompositeWidget implements ContainerEventHandler, NarratableEntry, AlmostWidget<WidgetData>, WidgetChangeListener {
+public class CompositeWidget implements ContainerEventHandler, NarratableEntry, AlmostWidget<WidgetData>, WidgetChangeListener {
 
     private final WidgetData data;
     @Nullable private GuiEventListener focused;
