@@ -11,9 +11,10 @@ import net.minecraft.sounds.SoundEvents;
 @Environment(EnvType.CLIENT)
 public interface AlmostGuiEventListener<T extends WidgetData> extends GuiEventListener {
 
-    int LEFT_MOUSE_BUTTON = 0;
-    int RIGHT_MOUSE_BUTTON = 1;
-    int MIDDLE_MOUSE_BUTTON = 2;
+    // mouse buttons
+    int LMB = 0;
+    int RMB = 1;
+    int MMB = 2;
 
     T getData();
 
@@ -51,7 +52,7 @@ public interface AlmostGuiEventListener<T extends WidgetData> extends GuiEventLi
      * @return True if the mouse button is valid, false otherwise
      */
     default boolean isValidMouseClickButton(int mouseButton) {
-        return mouseButton == LEFT_MOUSE_BUTTON;
+        return mouseButton == LMB;
     }
 
     default void playClickSound(SoundManager soundManager, int mouseButton) {
