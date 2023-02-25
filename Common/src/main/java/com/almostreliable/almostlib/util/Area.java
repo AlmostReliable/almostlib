@@ -32,16 +32,16 @@ public interface Area {
         return getY() + getHeight();
     }
 
-    default boolean isVerticalInside(double v) {
+    default boolean inVerticalBounds(double v) {
         return getY() <= v && v < getBottom();
     }
 
-    default boolean isHorizontalInside(double h) {
+    default boolean inHorizontalBounds(double h) {
         return getX() <= h && h < getRight();
     }
 
     default boolean inBounds(double x, double y) {
-        return isHorizontalInside(x) && isVerticalInside(y);
+        return inHorizontalBounds(x) && inVerticalBounds(y);
     }
 
     default Area shrink(int amount) {
@@ -88,6 +88,10 @@ public interface Area {
          */
         void setHeight(int height);
 
+        default void setPos(int x, int y) {
+            setX(x);
+            setY(y);
+        }
 
         default void move(int x, int y) {
             setX(getX() + x);

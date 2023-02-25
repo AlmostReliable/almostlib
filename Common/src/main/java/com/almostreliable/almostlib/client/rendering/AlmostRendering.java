@@ -18,8 +18,8 @@ import java.util.*;
 @Environment(EnvType.CLIENT)
 public final class AlmostRendering {
 
-    @Nullable private static List<Component> tooltipLines;
-    @Nullable private static Debug debug = null; // TODO make this configurable
+    @Nullable private static List<Component> TOOLTIP_LINES = null;
+    @Nullable private static Debug DEBUG = null; // TODO make this configurable
 
     private static boolean IS_DEBUG = false;
 
@@ -31,7 +31,7 @@ public final class AlmostRendering {
 
     public static void toggleDebug() {
         IS_DEBUG = !IS_DEBUG;
-        debug = IS_DEBUG ? new Debug() : null;
+        DEBUG = IS_DEBUG ? new Debug() : null;
     }
 
     public static void writeTooltip(Component... component) {
@@ -39,12 +39,12 @@ public final class AlmostRendering {
     }
 
     public static void writeTooltip(List<Component> lines) {
-        tooltipLines = lines;
+        TOOLTIP_LINES = lines;
     }
 
     public static void releaseTooltip(Screen screen, PoseStack poseStack, double mouseX, double mouseY) {
-        if (tooltipLines != null) {
-            screen.renderTooltip(poseStack, tooltipLines, Optional.empty(), (int) mouseX, (int) mouseY);
+        if (TOOLTIP_LINES != null) {
+            screen.renderTooltip(poseStack, TOOLTIP_LINES, Optional.empty(), (int) mouseX, (int) mouseY);
         }
     }
 
@@ -52,15 +52,15 @@ public final class AlmostRendering {
         GuiComponent.fill(poseStack, area.getX(), area.getY(), area.getRight(), area.getBottom(), (int) color);
     }
 
-    public static void border(PoseStack poseStack, Area area, long color, int s) {
-        float alpha = (float) (color >> 24 & 0xFF) / 255.0f;
-        float red = (float) (color >> 16 & 0xFF) / 255.0f;
-        float green = (float) (color >> 8 & 0xFF) / 255.0f;
-        float blue = (float) (color & 0xFF) / 255.0f;
-        border(poseStack, area, s, red, green, blue, alpha);
+    public static void border(PoseStack poseStack, Area area, long color, int strength) {
+        float alpha = (color >> 24 & 0xFF) / 255.0f;
+        float red = (color >> 16 & 0xFF) / 255.0f;
+        float green = (color >> 8 & 0xFF) / 255.0f;
+        float blue = (color & 0xFF) / 255.0f;
+        border(poseStack, area, strength, red, green, blue, alpha);
     }
 
-    private static void border(PoseStack poseStack, Area area, int s, float red, float green, float blue, float alpha) {
+    private static void border(PoseStack poseStack, Area area, int strength, float red, float green, float blue, float alpha) {
         var pose = poseStack.last().pose();
 
         int x = area.getX();
@@ -78,27 +78,27 @@ public final class AlmostRendering {
 
         // Vertices are built counter-clockwise
         // Top line
-        buffer.vertex(pose, x - s, y - s, 0f).color(red, green, blue, alpha).endVertex();
-        buffer.vertex(pose, x - s, y, 0f).color(red, green, blue, alpha).endVertex();
-        buffer.vertex(pose, r + s, y, 0f).color(red, green, blue, alpha).endVertex();
-        buffer.vertex(pose, r + s, y - s, 0f).color(red, green, blue, alpha).endVertex();
+        buffer.vertex(pose, x - strength, y - strength, 0f).color(red, green, blue, alpha).endVertex();
+        buffer.vertex(pose, x - strength, y, 0f).color(red, green, blue, alpha).endVertex();
+        buffer.vertex(pose, r + strength, y, 0f).color(red, green, blue, alpha).endVertex();
+        buffer.vertex(pose, r + strength, y - strength, 0f).color(red, green, blue, alpha).endVertex();
 
         // Right line
         buffer.vertex(pose, r, y, 0f).color(red, green, blue, alpha).endVertex();
         buffer.vertex(pose, r, b, 0f).color(red, green, blue, alpha).endVertex();
-        buffer.vertex(pose, r + s, b, 0f).color(red, green, blue, alpha).endVertex();
-        buffer.vertex(pose, r + s, y, 0f).color(red, green, blue, alpha).endVertex();
+        buffer.vertex(pose, r + strength, b, 0f).color(red, green, blue, alpha).endVertex();
+        buffer.vertex(pose, r + strength, y, 0f).color(red, green, blue, alpha).endVertex();
 
         // Bottom line
-        buffer.vertex(pose, x - s, b, 0f).color(red, green, blue, alpha).endVertex();
-        buffer.vertex(pose, x - s, b + s, 0f).color(red, green, blue, alpha).endVertex();
-        buffer.vertex(pose, r + s, b + s, 0f).color(red, green, blue, alpha).endVertex();
-        buffer.vertex(pose, r + s, b, 0f).color(red, green, blue, alpha).endVertex();
+        buffer.vertex(pose, x - strength, b, 0f).color(red, green, blue, alpha).endVertex();
+        buffer.vertex(pose, x - strength, b + strength, 0f).color(red, green, blue, alpha).endVertex();
+        buffer.vertex(pose, r + strength, b + strength, 0f).color(red, green, blue, alpha).endVertex();
+        buffer.vertex(pose, r + strength, b, 0f).color(red, green, blue, alpha).endVertex();
 
         // Left line
         buffer.vertex(pose, x, y, 0f).color(red, green, blue, alpha).endVertex();
-        buffer.vertex(pose, x - s, y, 0f).color(red, green, blue, alpha).endVertex();
-        buffer.vertex(pose, x - s, b, 0f).color(red, green, blue, alpha).endVertex();
+        buffer.vertex(pose, x - strength, y, 0f).color(red, green, blue, alpha).endVertex();
+        buffer.vertex(pose, x - strength, b, 0f).color(red, green, blue, alpha).endVertex();
         buffer.vertex(pose, x, b, 0f).color(red, green, blue, alpha).endVertex();
 
         BufferUploader.drawWithShader(buffer.end());
@@ -107,20 +107,20 @@ public final class AlmostRendering {
     }
 
     public static void debug(String key, Object value) {
-        if (debug != null) {
-            debug.write(key, value);
+        if (DEBUG != null) {
+            DEBUG.write(key, value);
         }
     }
 
     public static void debug(String category, String key, Object value) {
-        if (debug != null) {
-            debug.write(category, key, value);
+        if (DEBUG != null) {
+            DEBUG.write(category, key, value);
         }
     }
 
     public static void renderAndClearDebug(PoseStack poseStack) {
-        if (debug != null) {
-            debug.renderAndClear(poseStack);
+        if (DEBUG != null) {
+            DEBUG.renderAndClear(poseStack);
         }
     }
 
@@ -149,14 +149,17 @@ public final class AlmostRendering {
             ps.pushPose();
             ps.scale(0.7f, 0.7f, 1);
             for (var e : data.entrySet()) {
-                if (!e.getKey().isEmpty()) {
-                    GuiComponent.drawString(ps, font, "[ " + e.getKey() + " ]", 2, 2 + lineIndex * font.lineHeight, 0xFFFFFF);
+                var category = e.getKey();
+                var valuePair = e.getValue();
+
+                if (!category.isEmpty()) {
+                    GuiComponent.drawString(ps, font, "[ " + category + " ]", 2, 2 + lineIndex * font.lineHeight, 0xFFFFFF);
                 }
 
-                var longestString = e.getValue().stream().map(Tuple::getA).max(Comparator.comparingInt(String::length)).orElse("");
+                var longestString = valuePair.stream().map(Tuple::getA).max(Comparator.comparingInt(String::length)).orElse("");
                 int width = font.width(longestString);
 
-                for (var kv : e.getValue()) {
+                for (var kv : valuePair) {
                     lineIndex++;
                     int y = 2 + lineIndex * font.lineHeight - 1;
                     if (renderBackground) {

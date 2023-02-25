@@ -17,6 +17,7 @@ public interface ClientAction {
     }
 
     interface Receiver {
+
         void onReceiveAction(ServerPlayer player, CompoundTag nbt);
     }
 }

@@ -28,7 +28,7 @@ public class CompositeWidget implements ContainerEventHandler, NarratableEntry, 
     private boolean dragging;
     protected final List<GuiEventListener> eventListeners = new ArrayList<>();
     protected final List<AlmostWidget<?>> widgets = new ArrayList<>();
-    protected boolean requireRecalculation = true;
+    protected boolean requiresRecalculation = true;
     protected Layout layout = Layouts.NOTHING;
     private boolean fullWidthWidgets;
     private int horizontalSpacing;
@@ -41,12 +41,12 @@ public class CompositeWidget implements ContainerEventHandler, NarratableEntry, 
 
     @Override
     public void render(PoseStack stack, int mouseX, int mouseY, float delta) {
-        if (requireRecalculation) {
+        if (requiresRecalculation) {
             calculateLayout();
-            requireRecalculation = false;
+            requiresRecalculation = false;
         }
         if (AlmostRendering.isDebug()) {
-            GuiComponent.fill(stack, data.getX(), data.getY(), data.getRight(), data.getBottom(), 0x80FF0000);
+            GuiComponent.fill(stack, data.getX(), data.getY(), data.getRight(), data.getBottom(), 0x80FF_0000);
         }
         renderWidgets(stack, mouseX, mouseY, delta);
     }
@@ -202,9 +202,7 @@ public class CompositeWidget implements ContainerEventHandler, NarratableEntry, 
     }
 
     @Override
-    public void updateNarration(NarrationElementOutput narrationElementOutput) {
-
-    }
+    public void updateNarration(NarrationElementOutput narrationElementOutput) {}
 
     @Override
     public WidgetData getData() {
@@ -217,7 +215,7 @@ public class CompositeWidget implements ContainerEventHandler, NarratableEntry, 
     }
 
     public void markForRecalculation() {
-        requireRecalculation = true;
+        requiresRecalculation = true;
     }
 
     protected void calculateLayout() {
@@ -227,7 +225,5 @@ public class CompositeWidget implements ContainerEventHandler, NarratableEntry, 
         }
     }
 
-    protected void onLayoutCalculated(Layout.Result result) {
-
-    }
+    protected void onLayoutCalculated(Layout.Result result) {}
 }

@@ -15,8 +15,8 @@ public class ScrollableCompositeWidget extends TranslatableCompositeWidget {
     private final WidgetData data;
     private Area contentArea;
     private final Scrollbar scrollbar;
-    private boolean requiresScrollbarUpdate = true;
-    private int contentHeight = 0;
+    private boolean requiresUpdate = true;
+    private int contentHeight;
 
     public ScrollableCompositeWidget(int x, int y, int width, int height) {
         this(x, y, width, height, Padding.of(0));
@@ -45,9 +45,9 @@ public class ScrollableCompositeWidget extends TranslatableCompositeWidget {
         GuiComponent.disableScissor();
 
         if (scrollbar.getData().isVisible()) {
-            if (requiresScrollbarUpdate) {
+            if (requiresUpdate) {
                 updateScrollbar();
-                requiresScrollbarUpdate = false;
+                requiresUpdate = false;
             }
             scrollbar.updateHovered(mouseX, mouseY);
             renderScrollbar(poseStack, mouseX, mouseY, delta);
@@ -71,7 +71,7 @@ public class ScrollableCompositeWidget extends TranslatableCompositeWidget {
 
     @Override
     public double calcMouseXTranslation(double mouseX) {
-        if (getContentArea().isHorizontalInside(mouseX)) {
+        if (getContentArea().inHorizontalBounds(mouseX)) {
             return super.calcMouseXTranslation(mouseX);
         }
         return -Double.MAX_VALUE;
@@ -79,7 +79,7 @@ public class ScrollableCompositeWidget extends TranslatableCompositeWidget {
 
     @Override
     public double calcMouseYTranslation(double mouseY) {
-        if (getContentArea().isVerticalInside(mouseY)) {
+        if (getContentArea().inVerticalBounds(mouseY)) {
             return super.calcMouseYTranslation(mouseY);
         }
         return -Double.MAX_VALUE;
@@ -87,13 +87,13 @@ public class ScrollableCompositeWidget extends TranslatableCompositeWidget {
 
     public void updateScrollbar() {
         scrollbar.setSliderHeight(Math.min(contentArea.getHeight() * contentArea.getHeight() / getContainerHeight(), data.getHeight()));
-        scrollbar.setMaxScrollableValue(getContainerHeight() - contentArea.getHeight());
+        scrollbar.setMaxScrollableHeight(getContainerHeight() - contentArea.getHeight());
     }
 
     @Override
     public void setPadding(Padding padding) {
         Padding newPadding = Padding.of(padding.top(), padding.right() + scrollbar.getData().getWidth(), padding.bottom(), padding.left());
-        this.contentArea = newPadding.apply(this.getData());
+        this.contentArea = newPadding.apply(getData());
         super.setPadding(newPadding);
     }
 
@@ -128,10 +128,10 @@ public class ScrollableCompositeWidget extends TranslatableCompositeWidget {
     @Override
     protected void onLayoutCalculated(Layout.Result result) {
         contentHeight = result.getHeight();
-        if(contentHeight <= 0) {
+        if (contentHeight <= 0) {
             contentHeight = contentArea.getHeight();
         }
-        requiresScrollbarUpdate = true;
+        requiresUpdate = true;
     }
 
     @Override

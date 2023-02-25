@@ -16,12 +16,12 @@ public class Scrollbar implements GuiEventListener {
     private final WidgetData data;
     private int value;
     private int sliderHeight = 15;
-    private int maxScrollableValue = Integer.MAX_VALUE;
+    private int maxScrollableHeight = Integer.MAX_VALUE;
     private boolean dragging;
     private int dragOffset;
     private int scrollFactor = 10;
-    private boolean snapOnScrollFactor = false;
-    private boolean hoveredSlider = false;
+    private boolean snapOnScrollFactor;
+    private boolean hoveredSlider;
     private final Area sliderArea = new Area() {
 
         @Override
@@ -63,11 +63,11 @@ public class Scrollbar implements GuiEventListener {
     }
 
     public int getSliderY() {
-        if (maxScrollableValue == 0) {
+        if (maxScrollableHeight == 0) {
             return getData().getY();
         }
 
-        return (getData().getHeight() - getSliderHeight()) * value / maxScrollableValue + getData().getY();
+        return (getData().getHeight() - getSliderHeight()) * value / maxScrollableHeight + getData().getY();
     }
 
     public int getSliderHeight() {
@@ -78,8 +78,8 @@ public class Scrollbar implements GuiEventListener {
         return value;
     }
 
-    public void setMaxScrollableValue(int height) {
-        this.maxScrollableValue = Math.max(0, height);
+    public void setMaxScrollableHeight(int height) {
+        this.maxScrollableHeight = Math.max(0, height);
         setValue(value);
     }
 
@@ -100,9 +100,9 @@ public class Scrollbar implements GuiEventListener {
     }
 
     public void setValue(double value) {
-        this.value = (int) Mth.clamp(value, 0d, maxScrollableValue);
+        this.value = (int) Mth.clamp(value, 0d, maxScrollableHeight);
         if (shouldSnap()) {
-            this.value = this.value - this.value % scrollFactor;
+            this.value -= this.value % scrollFactor;
         }
     }
 
@@ -135,7 +135,7 @@ public class Scrollbar implements GuiEventListener {
     }
 
     protected double mapToScrollValue(double v) {
-        return (v * maxScrollableValue / (getData().getHeight() - getSliderHeight()));
+        return v * maxScrollableHeight / (getData().getHeight() - getSliderHeight());
     }
 
     public WidgetData getData() {
@@ -188,7 +188,7 @@ public class Scrollbar implements GuiEventListener {
         if (isHoveredSlider()) {
             GuiComponent.fill(poseStack, getData().getX(), sliderY, getData().getRight(), sliderY + 3, 0xC0_d7db00);
         }
-        String s = String.format("%d/%d", value, maxScrollableValue);
+        String s = String.format("%d/%d", value, maxScrollableHeight);
         GuiComponent.drawString(poseStack, Minecraft.getInstance().font, s, getData().getRight() + 1, getData().getY(), 0xFF_FF0000);
     }
 }

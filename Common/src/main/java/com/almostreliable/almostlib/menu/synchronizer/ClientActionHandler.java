@@ -9,7 +9,7 @@ import net.minecraft.server.level.ServerPlayer;
 
 public class ClientActionHandler implements PacketHandler.C2S<ClientActionHandler.Packet> {
 
-    public static final ResourceLocation CHANNEL_ID = AlmostLib.getRL("client_action");
+    private static final ResourceLocation CHANNEL_ID = AlmostLib.getRL("client_action");
 
     @Override
     public ResourceLocation getChannelId() {
@@ -39,7 +39,7 @@ public class ClientActionHandler implements PacketHandler.C2S<ClientActionHandle
 
     @Override
     public void handle(Packet packet, ServerPlayer player) {
-        if (player.containerMenu == null || player.containerMenu.containerId != packet.containerId()) {
+        if (player.containerMenu.containerId != packet.containerId()) {
             return;
         }
 
