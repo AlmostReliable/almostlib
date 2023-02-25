@@ -1,5 +1,5 @@
 @ParametersAreNonnullByDefault @MethodsReturnNonnullByDefault
-package com.almostreliable.almostlib.menu.synchronizer.handler;
+package com.almostreliable.almostlib.menu.network.synchronizer;
 
 import net.minecraft.MethodsReturnNonnullByDefault;
 

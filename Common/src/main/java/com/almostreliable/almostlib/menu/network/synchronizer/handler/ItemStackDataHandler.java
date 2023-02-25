@@ -1,6 +1,6 @@
-package com.almostreliable.almostlib.menu.synchronizer.handler;
+package com.almostreliable.almostlib.menu.network.synchronizer.handler;
 
-import com.almostreliable.almostlib.menu.synchronizer.AbstractDataHandler;
+import com.almostreliable.almostlib.menu.network.synchronizer.AbstractDataHandler;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.world.item.ItemStack;
 

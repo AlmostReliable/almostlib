@@ -1,4 +1,4 @@
-package com.almostreliable.almostlib.menu.synchronizer;
+package com.almostreliable.almostlib.menu.network;
 
 import com.almostreliable.almostlib.AlmostLib;
 import com.almostreliable.almostlib.network.PacketHandler;
@@ -6,7 +6,9 @@ import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerPlayer;
+import org.jetbrains.annotations.ApiStatus;
 
+@ApiStatus.Internal
 public class ClientActionHandler implements PacketHandler.C2S<ClientActionHandler.Packet> {
 
     private static final ResourceLocation CHANNEL_ID = AlmostLib.getRL("client_action");

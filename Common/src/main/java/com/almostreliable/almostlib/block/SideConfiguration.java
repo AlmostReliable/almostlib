@@ -1,6 +1,6 @@
 package com.almostreliable.almostlib.block;
 
-import com.almostreliable.almostlib.menu.synchronizer.DataHandler;
+import com.almostreliable.almostlib.menu.network.synchronizer.DataHandler;
 import net.minecraft.core.Direction;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.FriendlyByteBuf;

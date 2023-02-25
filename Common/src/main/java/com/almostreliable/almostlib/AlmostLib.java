@@ -1,7 +1,7 @@
 package com.almostreliable.almostlib;
 
-import com.almostreliable.almostlib.menu.synchronizer.ClientActionHandler;
-import com.almostreliable.almostlib.menu.synchronizer.MenuSyncPacket;
+import com.almostreliable.almostlib.menu.network.ClientActionHandler;
+import com.almostreliable.almostlib.menu.network.synchronizer.MenuSyncPacket;
 import com.almostreliable.almostlib.network.NetworkHandler;
 import com.almostreliable.almostlib.network.PacketBus;
 import net.minecraft.resources.ResourceLocation;
