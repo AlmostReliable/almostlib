@@ -27,11 +27,6 @@ public class VariantGenerator implements BlockStateGenerator {
     }
 
     @Override
-    public Block getBlock() {
-        return block;
-    }
-
-    @Override
     public JsonElement get() {
         JsonObject json = new JsonObject();
         JsonObject variants = new JsonObject();
@@ -41,5 +36,10 @@ public class VariantGenerator implements BlockStateGenerator {
         }
         json.add("variants", variants);
         return json;
+    }
+
+    @Override
+    public Block getBlock() {
+        return block;
     }
 }

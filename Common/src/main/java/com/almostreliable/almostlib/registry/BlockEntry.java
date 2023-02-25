@@ -10,6 +10,7 @@ import net.minecraft.world.level.block.Block;
 import java.util.function.Supplier;
 
 public class BlockEntry<B extends Block> extends RegistryEntryImpl<B> implements ItemLike {
+
     public BlockEntry(Registry<B> registry, ResourceLocation id, Supplier<B> supplier) {
         super(registry, id, supplier);
     }

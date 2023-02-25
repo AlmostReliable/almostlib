@@ -8,6 +8,7 @@ import java.util.stream.Collectors;
 
 @SuppressWarnings("unused")
 public class AlmostUtils {
+
     public static <T> Optional<T> cast(Object o, Class<T> type) {
         if (type.isInstance(o)) {
             return Optional.of(type.cast(o));

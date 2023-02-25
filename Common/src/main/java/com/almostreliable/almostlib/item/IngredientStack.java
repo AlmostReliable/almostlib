@@ -17,6 +17,12 @@ public record IngredientStack(Ingredient ingredient, int count) {
         return new IngredientStack(Ingredient.fromJson(json), 1);
     }
 
+    public static IngredientStack fromNetwork(FriendlyByteBuf buffer) {
+        var ingredient = Ingredient.fromNetwork(buffer);
+        var count = buffer.readVarInt();
+        return new IngredientStack(ingredient, count);
+    }
+
     public JsonElement toJson() {
         var json = new JsonObject();
         var ingredientJson = ingredient.toJson();
@@ -25,12 +31,6 @@ public record IngredientStack(Ingredient ingredient, int count) {
             json.addProperty("count", count);
         }
         return json;
-    }
-
-    public static IngredientStack fromNetwork(FriendlyByteBuf buffer) {
-        var ingredient = Ingredient.fromNetwork(buffer);
-        var count = buffer.readVarInt();
-        return new IngredientStack(ingredient, count);
     }
 
     public void toNetwork(FriendlyByteBuf buffer) {

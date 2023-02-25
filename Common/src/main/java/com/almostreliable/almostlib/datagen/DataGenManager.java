@@ -11,9 +11,9 @@ import java.util.List;
 import java.util.function.Consumer;
 
 public class DataGenManager {
-    private static final Queue EMPTY = new Queue() {};
-    public static final String ALMOST_DATA_GEN_PLATFORM = "almost.datagen.platform";
 
+    public static final String ALMOST_DATA_GEN_PLATFORM = "almost.datagen.platform";
+    private static final Queue EMPTY = new Queue() {};
     private final boolean isEnabled;
     private final Queue commonQueue;
     private final Queue forgeQueue;
@@ -78,6 +78,7 @@ public class DataGenManager {
     }
 
     public interface Queue {
+
         default void add(Consumer<DataGenProviders> consumer) {}
 
         default void loot(Consumer<LootTableProvider> consumer) {
@@ -104,6 +105,7 @@ public class DataGenManager {
     }
 
     private static class ExistingQueue implements Queue {
+
         private final List<Consumer<DataGenProviders>> consumers = new ArrayList<>();
 
         private ExistingQueue() {}

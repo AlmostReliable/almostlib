@@ -6,10 +6,10 @@ import java.util.function.Consumer;
 
 public interface DataGenHolder {
 
-    @Nullable
-    DataGenManager getDataGenManager();
-
     default void applyDataGen(Consumer<DataGenManager> consumer) {
         Optional.ofNullable(getDataGenManager()).ifPresent(consumer);
     }
+
+    @Nullable
+    DataGenManager getDataGenManager();
 }

@@ -7,6 +7,7 @@ import net.minecraft.resources.ResourceLocation;
 import java.util.function.Supplier;
 
 public class GenericRegistration<S> extends Registration<S, RegistryEntry<? extends S>> {
+
     GenericRegistration(String namespace, Registry<S> registry) {
         super(namespace, registry);
     }

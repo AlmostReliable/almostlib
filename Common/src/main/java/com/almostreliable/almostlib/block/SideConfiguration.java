@@ -99,10 +99,6 @@ public class SideConfiguration implements DataHandler {
         });
     }
 
-    public boolean isConfigured() {
-        return count(Setting.OFF) != config.size();
-    }
-
     private Direction getDirectionFromSide(BlockSide side) {
         var facing = host.getFacing();
         var top = host.getTop() == null ? facing : host.getTop();
@@ -124,11 +120,15 @@ public class SideConfiguration implements DataHandler {
         return switch (side) {
             case FRONT -> facing;
             case BACK -> facing.getOpposite();
-            case LEFT -> facing == Direction.UP ? top.getCounterClockWise(): top.getClockWise();
+            case LEFT -> facing == Direction.UP ? top.getCounterClockWise() : top.getClockWise();
             case RIGHT -> facing == Direction.UP ? top.getClockWise() : top.getCounterClockWise();
             case TOP -> top;
             case BOTTOM -> top.getOpposite();
         };
+    }
+
+    public boolean isConfigured() {
+        return count(Setting.OFF) != config.size();
     }
 
     public enum Setting {

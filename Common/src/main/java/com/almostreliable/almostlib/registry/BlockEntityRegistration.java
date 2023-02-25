@@ -22,17 +22,17 @@ public class BlockEntityRegistration extends Registration<BlockEntityType<?>, Bl
         super(namespace, registry);
     }
 
-    @Override
-    protected BlockEntityEntry<? extends BlockEntity> createEntry(ResourceLocation id, Supplier<? extends BlockEntityType<?>> supplier) {
-        return new BlockEntityEntry<>(id, AlmostUtils.cast(supplier));
-    }
-
     public <BE extends BlockEntity> BlockEntityEntry<BE> register(String id, Supplier<? extends BlockEntityType<?>> supplier) {
         return AlmostUtils.cast(createOrThrowEntry(id, supplier));
     }
 
     public <BE extends BlockEntity> Builder<BE> builder(String id, BiFunction<BlockPos, BlockState, BE> factory) {
         return new Builder<>(id, factory);
+    }
+
+    @Override
+    protected BlockEntityEntry<? extends BlockEntity> createEntry(ResourceLocation id, Supplier<? extends BlockEntityType<?>> supplier) {
+        return new BlockEntityEntry<>(id, AlmostUtils.cast(supplier));
     }
 
     public class Builder<BE extends BlockEntity> {

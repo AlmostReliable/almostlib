@@ -60,6 +60,24 @@ public final class AlmostRendering {
         border(poseStack, area, strength, red, green, blue, alpha);
     }
 
+    public static void debug(String key, Object value) {
+        if (DEBUG != null) {
+            DEBUG.write(key, value);
+        }
+    }
+
+    public static void debug(String category, String key, Object value) {
+        if (DEBUG != null) {
+            DEBUG.write(category, key, value);
+        }
+    }
+
+    public static void renderAndClearDebug(PoseStack poseStack) {
+        if (DEBUG != null) {
+            DEBUG.renderAndClear(poseStack);
+        }
+    }
+
     private static void border(PoseStack poseStack, Area area, int strength, float red, float green, float blue, float alpha) {
         var pose = poseStack.last().pose();
 
@@ -104,24 +122,6 @@ public final class AlmostRendering {
         BufferUploader.drawWithShader(buffer.end());
         RenderSystem.enableTexture();
         RenderSystem.disableBlend();
-    }
-
-    public static void debug(String key, Object value) {
-        if (DEBUG != null) {
-            DEBUG.write(key, value);
-        }
-    }
-
-    public static void debug(String category, String key, Object value) {
-        if (DEBUG != null) {
-            DEBUG.write(category, key, value);
-        }
-    }
-
-    public static void renderAndClearDebug(PoseStack poseStack) {
-        if (DEBUG != null) {
-            DEBUG.renderAndClear(poseStack);
-        }
     }
 
     private static final class Debug {

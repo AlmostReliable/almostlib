@@ -20,11 +20,6 @@ public class MenuRegistration extends Registration<MenuType<?>, MenuEntry<? exte
         super(namespace, Registry.MENU);
     }
 
-    @Override
-    protected MenuEntry<? extends AbstractContainerMenu> createEntry(ResourceLocation id, Supplier<? extends MenuType<?>> supplier) {
-        return new MenuEntry<>(id, AlmostUtils.cast(supplier));
-    }
-
     /**
      * Registers a menu type for given {@link MenuFactory}.
      *
@@ -98,6 +93,11 @@ public class MenuRegistration extends Registration<MenuType<?>, MenuEntry<? exte
             BE be = getBlockEntity(entityType, inventory, buffer);
             return factory.apply(wid, inventory, be, buffer);
         });
+    }
+
+    @Override
+    protected MenuEntry<? extends AbstractContainerMenu> createEntry(ResourceLocation id, Supplier<? extends MenuType<?>> supplier) {
+        return new MenuEntry<>(id, AlmostUtils.cast(supplier));
     }
 
     private <BE extends BlockEntity> BE getBlockEntity(Class<BE> entityType, Inventory inventory, FriendlyByteBuf buffer) {

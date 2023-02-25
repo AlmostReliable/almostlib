@@ -18,8 +18,8 @@ import net.minecraft.client.gui.GuiComponent;
 public class ScrollableCompositeWidget extends TranslatableCompositeWidget {
 
     private final WidgetData data;
-    private Area contentArea;
     private final Scrollbar scrollbar;
+    private Area contentArea;
     private boolean requiresUpdate = true;
     private int contentHeight;
 
@@ -33,10 +33,6 @@ public class ScrollableCompositeWidget extends TranslatableCompositeWidget {
         this.scrollbar = createScrollbar();
         setPadding(contentPadding);
         setLayout(Layouts.VERTICAL_STACK);
-    }
-
-    protected Scrollbar createScrollbar() {
-        return new Scrollbar(getData().getRight() - 10, getData().getY(), 10, getData().getHeight());
     }
 
     @Override
@@ -60,6 +56,36 @@ public class ScrollableCompositeWidget extends TranslatableCompositeWidget {
                 scrollbar.renderDebug(poseStack);
             }
         }
+    }
+
+    @Override
+    protected void onLayoutCalculated(Layout.Result result) {
+        contentHeight = result.getHeight();
+        if (contentHeight <= 0) {
+            contentHeight = contentArea.getHeight();
+        }
+        requiresUpdate = true;
+    }
+
+    @Override
+    public void setPadding(Padding padding) {
+        Padding newPadding = Padding.of(padding.top(), padding.right() + scrollbar.getData().getWidth(), padding.bottom(), padding.left());
+        this.contentArea = newPadding.apply(getData());
+        super.setPadding(newPadding);
+    }
+
+    @Override
+    public WidgetData getData() {
+        return data;
+    }
+
+    public void updateScrollbar() {
+        scrollbar.setSliderHeight(Math.min(contentArea.getHeight() * contentArea.getHeight() / getContainerHeight(), data.getHeight()));
+        scrollbar.setMaxScrollableHeight(getContainerHeight() - contentArea.getHeight());
+    }
+
+    protected Scrollbar createScrollbar() {
+        return new Scrollbar(getData().getRight() - 10, getData().getY(), 10, getData().getHeight());
     }
 
     protected void renderScrollbar(PoseStack poseStack, int mouseX, int mouseY, float delta) {}
@@ -90,28 +116,16 @@ public class ScrollableCompositeWidget extends TranslatableCompositeWidget {
         return -Double.MAX_VALUE;
     }
 
-    public void updateScrollbar() {
-        scrollbar.setSliderHeight(Math.min(contentArea.getHeight() * contentArea.getHeight() / getContainerHeight(), data.getHeight()));
-        scrollbar.setMaxScrollableHeight(getContainerHeight() - contentArea.getHeight());
+    @Override
+    public boolean mouseClicked(double mouseX, double mouseY, int mouseButton) {
+        return scrollbar.mouseClicked(mouseX, mouseY, mouseButton)
+            || super.mouseClicked(mouseX, mouseY, mouseButton);
     }
 
     @Override
-    public void setPadding(Padding padding) {
-        Padding newPadding = Padding.of(padding.top(), padding.right() + scrollbar.getData().getWidth(), padding.bottom(), padding.left());
-        this.contentArea = newPadding.apply(getData());
-        super.setPadding(newPadding);
-    }
-
-    public Area getContentArea() {
-        return contentArea;
-    }
-
-    protected int getContainerHeight() {
-        return contentHeight;
-    }
-
-    public Scrollbar getScrollbar() {
-        return scrollbar;
+    public boolean mouseDragged(double mouseX, double mouseY, int mouseButton, double dragX, double dragY) {
+        return scrollbar.mouseDragged(mouseX, mouseY, mouseButton, dragX, dragY)
+            || super.mouseDragged(mouseX, mouseY, mouseButton, dragX, dragY);
     }
 
     @Override
@@ -125,29 +139,15 @@ public class ScrollableCompositeWidget extends TranslatableCompositeWidget {
         return data.inBounds(mouseX, mouseY) || super.isMouseOver(mouseX, mouseY);
     }
 
-    @Override
-    public WidgetData getData() {
-        return data;
+    public Area getContentArea() {
+        return contentArea;
     }
 
-    @Override
-    protected void onLayoutCalculated(Layout.Result result) {
-        contentHeight = result.getHeight();
-        if (contentHeight <= 0) {
-            contentHeight = contentArea.getHeight();
-        }
-        requiresUpdate = true;
+    protected int getContainerHeight() {
+        return contentHeight;
     }
 
-    @Override
-    public boolean mouseClicked(double mouseX, double mouseY, int mouseButton) {
-        return scrollbar.mouseClicked(mouseX, mouseY, mouseButton)
-            || super.mouseClicked(mouseX, mouseY, mouseButton);
-    }
-
-    @Override
-    public boolean mouseDragged(double mouseX, double mouseY, int mouseButton, double dragX, double dragY) {
-        return scrollbar.mouseDragged(mouseX, mouseY, mouseButton, dragX, dragY)
-            || super.mouseDragged(mouseX, mouseY, mouseButton, dragX, dragY);
+    public Scrollbar getScrollbar() {
+        return scrollbar;
     }
 }

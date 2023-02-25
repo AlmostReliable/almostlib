@@ -13,6 +13,7 @@ public interface SideConfigurable {
 
     /**
      * Gets the current facing direction of the block.
+     *
      * @return The current facing direction
      */
     Direction getFacing();

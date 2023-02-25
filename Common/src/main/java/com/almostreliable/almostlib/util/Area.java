@@ -6,32 +6,6 @@ public interface Area {
         return new Simple(x, y, width, height);
     }
 
-    int getX();
-
-    int getY();
-
-    /**
-     * Returns the width of the area. Implementations must ensure that the width is always positive.
-     *
-     * @return The width of the area.
-     */
-    int getWidth();
-
-    /**
-     * Returns the height of the area. Implementations must ensure that the height is always positive.
-     *
-     * @return The height of the area.
-     */
-    int getHeight();
-
-    default int getRight() {
-        return getX() + getWidth();
-    }
-
-    default int getBottom() {
-        return getY() + getHeight();
-    }
-
     default boolean inVerticalBounds(double v) {
         return getY() <= v && v < getBottom();
     }
@@ -68,7 +42,43 @@ public interface Area {
         return new Simple(x, y, right - x, bottom - y);
     }
 
+    int getX();
+
+    int getY();
+
+    /**
+     * Returns the width of the area. Implementations must ensure that the width is always positive.
+     *
+     * @return The width of the area.
+     */
+    int getWidth();
+
+    /**
+     * Returns the height of the area. Implementations must ensure that the height is always positive.
+     *
+     * @return The height of the area.
+     */
+    int getHeight();
+
+    default int getRight() {
+        return getX() + getWidth();
+    }
+
+    default int getBottom() {
+        return getY() + getHeight();
+    }
+
     interface Mutable extends Area {
+
+        default void setPos(int x, int y) {
+            setX(x);
+            setY(y);
+        }
+
+        default void move(int x, int y) {
+            setX(getX() + x);
+            setY(getY() + y);
+        }
 
         void setX(int x);
 
@@ -87,16 +97,6 @@ public interface Area {
          * @param height The height of the area.
          */
         void setHeight(int height);
-
-        default void setPos(int x, int y) {
-            setX(x);
-            setY(y);
-        }
-
-        default void move(int x, int y) {
-            setX(getX() + x);
-            setY(getY() + y);
-        }
     }
 
     record Simple(int getX, int getY, int getWidth, int getHeight) implements Area {

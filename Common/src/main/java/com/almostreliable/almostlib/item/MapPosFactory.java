@@ -8,8 +8,11 @@ import javax.annotation.Nullable;
 
 @FunctionalInterface
 public interface MapPosFactory {
+
     @Nullable
     Info apply(ServerLevel level, BlockPos entity);
 
-    record Info(BlockPos pos, Component name) {}
+    record Info(BlockPos pos, Component name) {
+
+    }
 }

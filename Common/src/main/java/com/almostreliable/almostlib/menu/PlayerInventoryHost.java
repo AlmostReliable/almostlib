@@ -8,13 +8,6 @@ import java.util.function.Function;
 public interface PlayerInventoryHost {
 
     /**
-     * Returns the height offset at which the player inventory should start relative to the top of the screen.
-     *
-     * @return The height in pixels.
-     */
-    int getHeightOffset();
-
-    /**
      * Adds the player inventory slots to the menu.
      *
      * @param slotAddFunction The function to add the slots with.
@@ -33,4 +26,11 @@ public interface PlayerInventoryHost {
             slotAddFunction.apply(new Slot(inventory, column, 8 + column * 18, getHeightOffset() + 58));
         }
     }
+
+    /**
+     * Returns the height offset at which the player inventory should start relative to the top of the screen.
+     *
+     * @return The height in pixels.
+     */
+    int getHeightOffset();
 }

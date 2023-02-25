@@ -44,8 +44,6 @@ public abstract class NetworkHandler {
         this.initPackets();
     }
 
-    protected abstract void initPackets();
-
     /**
      * Creates a client to server packet bus for the given packet handler.
      *
@@ -87,6 +85,8 @@ public abstract class NetworkHandler {
         S2CPacketHandlers.add(handler);
         return bus;
     }
+
+    protected abstract void initPackets();
 
     protected abstract <T> void sendToServer(PacketHandler<T> handler, T packet);
 

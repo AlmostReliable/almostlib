@@ -14,6 +14,17 @@ public class ClientActionHandler implements PacketHandler.C2S<ClientActionHandle
     private static final ResourceLocation CHANNEL_ID = AlmostLib.getRL("client_action");
 
     @Override
+    public void handle(Packet packet, ServerPlayer player) {
+        if (player.containerMenu.containerId != packet.containerId()) {
+            return;
+        }
+
+        if (player.containerMenu instanceof ClientAction.Receiver receiver) {
+            receiver.onReceiveAction(player, packet.nbt());
+        }
+    }
+
+    @Override
     public ResourceLocation getChannelId() {
         return CHANNEL_ID;
     }
@@ -21,6 +32,12 @@ public class ClientActionHandler implements PacketHandler.C2S<ClientActionHandle
     @Override
     public Class<Packet> getPacketType() {
         return Packet.class;
+    }
+
+    @Override
+    public void encode(Packet packet, FriendlyByteBuf buffer) {
+        buffer.writeInt(packet.containerId());
+        buffer.writeNbt(packet.nbt());
     }
 
     @Override
@@ -32,24 +49,6 @@ public class ClientActionHandler implements PacketHandler.C2S<ClientActionHandle
         }
         return new Packet(containerId, nbt);
     }
-
-    @Override
-    public void encode(Packet packet, FriendlyByteBuf buffer) {
-        buffer.writeInt(packet.containerId());
-        buffer.writeNbt(packet.nbt());
-    }
-
-    @Override
-    public void handle(Packet packet, ServerPlayer player) {
-        if (player.containerMenu.containerId != packet.containerId()) {
-            return;
-        }
-
-        if (player.containerMenu instanceof ClientAction.Receiver receiver) {
-            receiver.onReceiveAction(player, packet.nbt());
-        }
-    }
-
 
     public record Packet(int containerId, CompoundTag nbt) {
 

@@ -72,10 +72,6 @@ public class NetworkHandlerForge extends NetworkHandler {
         }
     }
 
-    private <T> void assertPacketMismatch(PacketHandler<T> handler, T packet) {
-        Preconditions.checkArgument(handler.getPacketType().isInstance(packet), "Packet type mismatch");
-    }
-
     @Override
     protected <T> void sendToServer(PacketHandler<T> handler, T packet) {
         assertPacketMismatch(handler, packet);
@@ -98,5 +94,9 @@ public class NetworkHandlerForge extends NetworkHandler {
     protected <T> void broadcastChunk(ServerLevel level, BlockPos pos, PacketHandler<T> handler, T packet) {
         assertPacketMismatch(handler, packet);
         channel.send(PacketDistributor.TRACKING_CHUNK.with(() -> level.getChunkAt(pos)), packet);
+    }
+
+    private <T> void assertPacketMismatch(PacketHandler<T> handler, T packet) {
+        Preconditions.checkArgument(handler.getPacketType().isInstance(packet), "Packet type mismatch");
     }
 }

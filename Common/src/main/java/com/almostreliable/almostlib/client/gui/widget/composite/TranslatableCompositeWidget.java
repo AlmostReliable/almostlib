@@ -14,10 +14,6 @@ public abstract class TranslatableCompositeWidget extends CompositeWidget {
         super(x, y, width, height);
     }
 
-    public abstract double getTranslateX();
-
-    public abstract double getTranslateY();
-
     public double calcMouseXTranslation(double mouseX) {
         return mouseX - getTranslateX();
     }
@@ -41,6 +37,13 @@ public abstract class TranslatableCompositeWidget extends CompositeWidget {
         mouseX = calcMouseXTranslation(mouseX);
         mouseY = calcMouseYTranslation(mouseY);
         super.mouseMoved(mouseX, mouseY);
+    }
+
+    @Override
+    public boolean isMouseOver(double mouseX, double mouseY) {
+        mouseX = calcMouseXTranslation(mouseX);
+        mouseY = calcMouseYTranslation(mouseY);
+        return super.isMouseOver(mouseX, mouseY);
     }
 
     @Override
@@ -71,10 +74,7 @@ public abstract class TranslatableCompositeWidget extends CompositeWidget {
         return super.mouseScrolled(mouseX, mouseY, value);
     }
 
-    @Override
-    public boolean isMouseOver(double mouseX, double mouseY) {
-        mouseX = calcMouseXTranslation(mouseX);
-        mouseY = calcMouseYTranslation(mouseY);
-        return super.isMouseOver(mouseX, mouseY);
-    }
+    public abstract double getTranslateX();
+
+    public abstract double getTranslateY();
 }

@@ -11,27 +11,28 @@ import net.minecraft.world.level.levelgen.structure.Structure;
 import javax.annotation.Nullable;
 
 public class LevelUtils {
+
     @Nullable
     public static BlockPos findStructure(BlockPos position, ServerLevel level, ResourceOrTag<Structure> rot, int chunkRadius, boolean skipKnownStructures) {
         return level
-                .registryAccess()
-                .registry(Registry.STRUCTURE_REGISTRY)
-                .flatMap(rot::asHolderSet)
-                .map(holderSet -> level
-                        .getChunkSource()
-                        .getGenerator()
-                        .findNearestMapStructure(level, holderSet, position, chunkRadius, skipKnownStructures))
-                .map(Pair::getFirst)
-                .orElse(null);
+            .registryAccess()
+            .registry(Registry.STRUCTURE_REGISTRY)
+            .flatMap(rot::asHolderSet)
+            .map(holderSet -> level
+                .getChunkSource()
+                .getGenerator()
+                .findNearestMapStructure(level, holderSet, position, chunkRadius, skipKnownStructures))
+            .map(Pair::getFirst)
+            .orElse(null);
     }
 
     @Nullable
     public static BlockPos findBiome(BlockPos position, ServerLevel level, ResourceOrTag<Biome> rot, int chunkRadius) {
         Pair<BlockPos, Holder<Biome>> nearestBiome = level.findClosestBiome3d(rot.asHolderPredicate(),
-                position,
-                chunkRadius * 16,
-                32,
-                64);
+            position,
+            chunkRadius * 16,
+            32,
+            64);
         if (nearestBiome != null) {
             return nearestBiome.getFirst();
         }

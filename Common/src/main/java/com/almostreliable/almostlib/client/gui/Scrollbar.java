@@ -54,60 +54,8 @@ public class Scrollbar implements GuiEventListener {
         getData().setHovered(isMouseOver(mouseX, mouseY));
     }
 
-    public boolean isHoveredSlider() {
-        return hoveredSlider;
-    }
-
-    public boolean isHovered() {
-        return getData().isHovered();
-    }
-
-    public int getSliderY() {
-        if (maxScrollableHeight == 0) {
-            return getData().getY();
-        }
-
-        return (getData().getHeight() - getSliderHeight()) * value / maxScrollableHeight + getData().getY();
-    }
-
-    public int getSliderHeight() {
-        return sliderHeight;
-    }
-
-    public int getValue() {
-        return value;
-    }
-
-    public void setMaxScrollableHeight(int height) {
-        this.maxScrollableHeight = Math.max(0, height);
-        setValue(value);
-    }
-
-    public void setSliderHeight(int height) {
-        this.sliderHeight = Mth.clamp(height, 15, getData().getHeight()) - 1;
-    }
-
-    public void setScrollFactor(int scrollFactor) {
-        this.scrollFactor = scrollFactor;
-    }
-
     public void snapOnScrollFactor(boolean snap) {
         this.snapOnScrollFactor = snap;
-    }
-
-    private int getScrollFactor() {
-        return scrollFactor;
-    }
-
-    public void setValue(double value) {
-        this.value = (int) Mth.clamp(value, 0d, maxScrollableHeight);
-        if (shouldSnap()) {
-            this.value -= this.value % scrollFactor;
-        }
-    }
-
-    public Area getSliderArea() {
-        return sliderArea;
     }
 
     public boolean shouldSnap() {
@@ -116,6 +64,56 @@ public class Scrollbar implements GuiEventListener {
 
     public boolean isMouseOverSlider(double mouseX, double mouseY) {
         return getData().getX() <= mouseX && mouseX <= getData().getRight() && getSliderY() <= mouseY && mouseY <= getSliderY() + getSliderHeight();
+    }
+
+    @Override
+    public boolean mouseClicked(double mouseX, double mouseY, int mouseButton) {
+        if (mouseButton != 0 || !isMouseOver(mouseX, mouseY)) {
+            deactivateDragging();
+            return GuiEventListener.super.mouseClicked(mouseX, mouseY, mouseButton);
+        }
+
+        if (!isHoveredSlider()) {
+            updateValueByMouse(mouseY, getSliderHeight() / 2d);
+        }
+
+        activateDragging(mouseY);
+        return true;
+    }
+
+    @Override
+    public boolean mouseDragged(double mouseX, double mouseY, int mouseButton, double dragX, double dragY) {
+        if (mouseButton == 0 && dragging) {
+            updateValueByMouse(mouseY, dragOffset);
+            return true;
+        }
+        deactivateDragging();
+        return false;
+    }
+
+    @Override
+    public boolean mouseScrolled(double mouseX, double mouseY, double f) {
+        setValue(value - f * getScrollFactor());
+        return true;
+    }
+
+    @Override
+    public boolean isMouseOver(double mouseX, double mouseY) {
+        return getData().isActive() && getData().isVisible() && getData().inBounds(mouseX, mouseY);
+    }
+
+    public void renderDebug(PoseStack poseStack) {
+        var sliderY = getSliderY();
+        GuiComponent.fill(poseStack, getData().getX(), getData().getY(), getData().getRight(), getData().getBottom(), 0x80_000FFF);
+        if (isHovered()) {
+            GuiComponent.fill(poseStack, getData().getX(), getData().getY(), getData().getRight(), getData().getY() + 3, 0xC0_340BA3);
+        }
+        GuiComponent.fill(poseStack, getData().getX(), sliderY, getData().getRight(), sliderY + getSliderHeight(), 0xA0_FF0000);
+        if (isHoveredSlider()) {
+            GuiComponent.fill(poseStack, getData().getX(), sliderY, getData().getRight(), sliderY + 3, 0xC0_d7db00);
+        }
+        String s = String.format("%d/%d", value, maxScrollableHeight);
+        GuiComponent.drawString(poseStack, Minecraft.getInstance().font, s, getData().getRight() + 1, getData().getY(), 0xFF_FF0000);
     }
 
     protected void activateDragging(double mouseY) {
@@ -138,57 +136,59 @@ public class Scrollbar implements GuiEventListener {
         return v * maxScrollableHeight / (getData().getHeight() - getSliderHeight());
     }
 
+    public boolean isHoveredSlider() {
+        return hoveredSlider;
+    }
+
+    public boolean isHovered() {
+        return getData().isHovered();
+    }
+
+    public int getSliderY() {
+        if (maxScrollableHeight == 0) {
+            return getData().getY();
+        }
+
+        return (getData().getHeight() - getSliderHeight()) * value / maxScrollableHeight + getData().getY();
+    }
+
+    public int getSliderHeight() {
+        return sliderHeight;
+    }
+
+    public void setSliderHeight(int height) {
+        this.sliderHeight = Mth.clamp(height, 15, getData().getHeight()) - 1;
+    }
+
+    public int getValue() {
+        return value;
+    }
+
+    public void setValue(double value) {
+        this.value = (int) Mth.clamp(value, 0d, maxScrollableHeight);
+        if (shouldSnap()) {
+            this.value -= this.value % scrollFactor;
+        }
+    }
+
+    private int getScrollFactor() {
+        return scrollFactor;
+    }
+
+    public void setScrollFactor(int scrollFactor) {
+        this.scrollFactor = scrollFactor;
+    }
+
+    public Area getSliderArea() {
+        return sliderArea;
+    }
+
     public WidgetData getData() {
         return data;
     }
 
-    @Override
-    public boolean isMouseOver(double mouseX, double mouseY) {
-        return getData().isActive() && getData().isVisible() && getData().inBounds(mouseX, mouseY);
-    }
-
-    @Override
-    public boolean mouseScrolled(double mouseX, double mouseY, double f) {
-        setValue(value - f * getScrollFactor());
-        return true;
-    }
-
-    @Override
-    public boolean mouseDragged(double mouseX, double mouseY, int mouseButton, double dragX, double dragY) {
-        if (mouseButton == 0 && dragging) {
-            updateValueByMouse(mouseY, dragOffset);
-            return true;
-        }
-        deactivateDragging();
-        return false;
-    }
-
-    @Override
-    public boolean mouseClicked(double mouseX, double mouseY, int mouseButton) {
-        if (mouseButton != 0 || !isMouseOver(mouseX, mouseY)) {
-            deactivateDragging();
-            return GuiEventListener.super.mouseClicked(mouseX, mouseY, mouseButton);
-        }
-
-        if (!isHoveredSlider()) {
-            updateValueByMouse(mouseY, getSliderHeight() / 2d);
-        }
-
-        activateDragging(mouseY);
-        return true;
-    }
-
-    public void renderDebug(PoseStack poseStack) {
-        var sliderY = getSliderY();
-        GuiComponent.fill(poseStack, getData().getX(), getData().getY(), getData().getRight(), getData().getBottom(), 0x80_000FFF);
-        if (isHovered()) {
-            GuiComponent.fill(poseStack, getData().getX(), getData().getY(), getData().getRight(), getData().getY() + 3, 0xC0_340BA3);
-        }
-        GuiComponent.fill(poseStack, getData().getX(), sliderY, getData().getRight(), sliderY + getSliderHeight(), 0xA0_FF0000);
-        if (isHoveredSlider()) {
-            GuiComponent.fill(poseStack, getData().getX(), sliderY, getData().getRight(), sliderY + 3, 0xC0_d7db00);
-        }
-        String s = String.format("%d/%d", value, maxScrollableHeight);
-        GuiComponent.drawString(poseStack, Minecraft.getInstance().font, s, getData().getRight() + 1, getData().getY(), 0xFF_FF0000);
+    public void setMaxScrollableHeight(int height) {
+        this.maxScrollableHeight = Math.max(0, height);
+        setValue(value);
     }
 }

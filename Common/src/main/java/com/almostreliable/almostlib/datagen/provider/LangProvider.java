@@ -4,13 +4,13 @@ import com.google.gson.JsonObject;
 import net.minecraft.data.CachedOutput;
 import net.minecraft.data.DataGenerator;
 import net.minecraft.data.DataProvider;
-import net.minecraft.data.HashCache;
 
 import java.io.IOException;
 import java.nio.file.Path;
 import java.util.*;
 
 public class LangProvider extends AbstractDataProvider {
+
     private final Map<String, String> langs;
 
     public LangProvider(String modId, DataGenerator dataGenerator) {

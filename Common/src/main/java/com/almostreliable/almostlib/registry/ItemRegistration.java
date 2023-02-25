@@ -33,16 +33,6 @@ public class ItemRegistration extends Registration<Item, ItemEntry<? extends Ite
         super(namespace, registry);
     }
 
-    @Override
-    protected ItemEntry<? extends Item> createEntry(ResourceLocation id, Supplier<? extends Item> supplier) {
-        return new ItemEntry<>(getRegistry(), id, AlmostUtils.cast(supplier));
-    }
-
-    @Nullable
-    public CreativeModeTab getDefaultCreativeTab() {
-        return defaultCreativeTab;
-    }
-
     public ItemRegistration defaultCreativeTab(CreativeModeTab tab) {
         this.defaultCreativeTab = tab;
         return this;
@@ -71,6 +61,16 @@ public class ItemRegistration extends Registration<Item, ItemEntry<? extends Ite
     public ItemRegistration dataGen(DataGenManager dataGenManager) {
         this.dataGenManager = dataGenManager;
         return this;
+    }
+
+    @Override
+    protected ItemEntry<? extends Item> createEntry(ResourceLocation id, Supplier<? extends Item> supplier) {
+        return new ItemEntry<>(getRegistry(), id, AlmostUtils.cast(supplier));
+    }
+
+    @Nullable
+    public CreativeModeTab getDefaultCreativeTab() {
+        return defaultCreativeTab;
     }
 
     @Nullable
@@ -177,10 +177,6 @@ public class ItemRegistration extends Registration<Item, ItemEntry<? extends Ite
             return this;
         }
 
-        private String generateDefaultLang() {
-            return Objects.requireNonNullElseGet(defaultLang, () -> AlmostUtils.capitalizeWords(id.replace('_', ' ')));
-        }
-
         public ItemEntry<I> register() {
             final CreativeModeTab tab = ((ItemPropertiesAccessor) properties).getCreativeTab();
             final CreativeModeTab defaultTab = ItemRegistration.this.getDefaultCreativeTab();
@@ -198,6 +194,10 @@ public class ItemRegistration extends Registration<Item, ItemEntry<? extends Ite
             });
 
             return item;
+        }
+
+        private String generateDefaultLang() {
+            return Objects.requireNonNullElseGet(defaultLang, () -> AlmostUtils.capitalizeWords(id.replace('_', ' ')));
         }
     }
 }

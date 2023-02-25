@@ -45,15 +45,6 @@ public abstract class SynchronizedContainerMenu<T extends BlockEntity> extends A
     }
 
     @Override
-    public boolean stillValid(Player player) {
-        return blockEntity.getLevel() != null && stillValid(
-            ContainerLevelAccess.create(blockEntity.getLevel(), blockEntity.getBlockPos()),
-            player,
-            blockEntity.getBlockState().getBlock()
-        );
-    }
-
-    @Override
     public void sendAllDataToRemote() {
         super.sendAllDataToRemote();
         if (sync.hasDataHandlers()) {
@@ -67,6 +58,15 @@ public abstract class SynchronizedContainerMenu<T extends BlockEntity> extends A
             AlmostLib.SYNC_PACKET.send((ServerPlayer) inventory.player, new MenuSyncPacket(containerId, sync::encode));
         }
         super.broadcastChanges();
+    }
+
+    @Override
+    public boolean stillValid(Player player) {
+        return blockEntity.getLevel() != null && stillValid(
+            ContainerLevelAccess.create(blockEntity.getLevel(), blockEntity.getBlockPos()),
+            player,
+            blockEntity.getBlockState().getBlock()
+        );
     }
 
     @ApiStatus.Internal

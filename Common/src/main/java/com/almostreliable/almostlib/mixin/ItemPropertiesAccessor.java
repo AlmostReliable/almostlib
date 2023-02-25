@@ -9,6 +9,7 @@ import javax.annotation.Nullable;
 
 @Mixin(Item.Properties.class)
 public interface ItemPropertiesAccessor {
+
     @Nullable
     @Accessor("category")
     CreativeModeTab getCreativeTab();

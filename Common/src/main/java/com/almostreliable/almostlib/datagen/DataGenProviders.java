@@ -9,6 +9,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class DataGenProviders {
+
     private final BlockStateProvider blockStateProvider;
     private final LangProvider langProvider;
     private final ItemModelProvider itemModelProvider;
@@ -28,7 +29,7 @@ public class DataGenProviders {
 
     public <T> TagsProvider<T> getTagsProvider(Registry<T> registry) {
         return AlmostUtils.cast(tagsProviderMap.computeIfAbsent(registry,
-                r -> new TagsProvider<>(namespace, dataGenerator, r)));
+            r -> new TagsProvider<>(namespace, dataGenerator, r)));
     }
 
     public BlockStateProvider getBlockStateProvider() {

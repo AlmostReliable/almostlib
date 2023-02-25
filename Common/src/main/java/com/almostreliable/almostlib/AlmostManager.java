@@ -52,15 +52,6 @@ public class AlmostManager {
     }
 
     /**
-     * Gets the namespace that is assigned to this manager.
-     *
-     * @return The namespace.
-     */
-    public String getNamespace() {
-        return namespace;
-    }
-
-    /**
      * Creates a new {@link ResourceLocation} for the given path within this manager's namespace.
      *
      * @param path The path to use.
@@ -118,5 +109,14 @@ public class AlmostManager {
      */
     public void initRegistriesToLoader() {
         AlmostLib.PLATFORM.initRegistrations(items, blocks, blockEntities, menus);
+    }
+
+    /**
+     * Gets the namespace that is assigned to this manager.
+     *
+     * @return The namespace.
+     */
+    public String getNamespace() {
+        return namespace;
     }
 }

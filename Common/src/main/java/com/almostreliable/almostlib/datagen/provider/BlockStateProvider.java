@@ -49,11 +49,6 @@ public class BlockStateProvider extends AbstractDataProvider {
         }
     }
 
-    private Path getBlockStatePath(BlockStateGenerator blockStateGenerator) {
-        ResourceLocation key = Registry.BLOCK.getKey(blockStateGenerator.getBlock());
-        return getAssetsPath().resolve(key.getNamespace() + "/blockstates/" + key.getPath() + ".json");
-    }
-
     public void addBlockState(BlockStateGenerator blockStateGenerator) {
         Block block = blockStateGenerator.getBlock();
         if (blockStateGenerators.stream().anyMatch(g -> g.getBlock() == block)) {
@@ -65,10 +60,6 @@ public class BlockStateProvider extends AbstractDataProvider {
 
     public void addModel(ResourceLocation resourceLocation, Supplier<JsonElement> supplier) {
         modelConsumer.accept(resourceLocation, supplier);
-    }
-
-    public ModelConsumer getModelConsumer() {
-        return modelConsumer;
     }
 
     public void createVariant(Block block, Consumer<PartialBlockStateModel> consumer) {
@@ -92,5 +83,14 @@ public class BlockStateProvider extends AbstractDataProvider {
             generator.add(model);
         }
         addBlockState(generator);
+    }
+
+    private Path getBlockStatePath(BlockStateGenerator blockStateGenerator) {
+        ResourceLocation key = Registry.BLOCK.getKey(blockStateGenerator.getBlock());
+        return getAssetsPath().resolve(key.getNamespace() + "/blockstates/" + key.getPath() + ".json");
+    }
+
+    public ModelConsumer getModelConsumer() {
+        return modelConsumer;
     }
 }

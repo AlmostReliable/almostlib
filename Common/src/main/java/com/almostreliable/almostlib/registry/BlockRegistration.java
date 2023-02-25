@@ -34,17 +34,12 @@ import java.util.function.*;
 
 public class BlockRegistration extends Registration<Block, BlockEntry<? extends Block>> implements DataGenHolder {
 
+    private final Map<BlockEntry<? extends Block>, RenderLayerType> renderLayers = new HashMap<>();
     @Nullable private ItemRegistration itemRegistration;
     @Nullable private DataGenManager dataGenManager;
-    private final Map<BlockEntry<? extends Block>, RenderLayerType> renderLayers = new HashMap<>();
 
     BlockRegistration(String namespace, Registry<Block> registry) {
         super(namespace, registry);
-    }
-
-    @Override
-    protected BlockEntry<? extends Block> createEntry(ResourceLocation id, Supplier<? extends Block> supplier) {
-        return new BlockEntry<>(getRegistry(), id, AlmostUtils.cast(supplier));
     }
 
     public BlockRegistration itemRegistration(ItemRegistration itemRegistration) {
@@ -97,6 +92,11 @@ public class BlockRegistration extends Registration<Block, BlockEntry<? extends 
     public void setupRenderLayers(BiConsumer<Block, RenderLayerType> consumer) {
         renderLayers.forEach((block, type) -> consumer.accept(block.get(), type));
         renderLayers.clear();
+    }
+
+    @Override
+    protected BlockEntry<? extends Block> createEntry(ResourceLocation id, Supplier<? extends Block> supplier) {
+        return new BlockEntry<>(getRegistry(), id, AlmostUtils.cast(supplier));
     }
 
     @Override
@@ -339,10 +339,6 @@ public class BlockRegistration extends Registration<Block, BlockEntry<? extends 
             return this;
         }
 
-        private String generateDefaultLang() {
-            return Objects.requireNonNullElseGet(defaultLang, () -> AlmostUtils.capitalizeWords(id.replace('_', ' ')));
-        }
-
         public BlockEntry<B> register() {
             BlockEntry<B> block = BlockRegistration.this.register(id, generateDefaultLang(), () -> factory.apply(properties));
 
@@ -374,6 +370,10 @@ public class BlockRegistration extends Registration<Block, BlockEntry<? extends 
 
             applyRenderLayer(block);
             return block;
+        }
+
+        private String generateDefaultLang() {
+            return Objects.requireNonNullElseGet(defaultLang, () -> AlmostUtils.capitalizeWords(id.replace('_', ' ')));
         }
 
         private void applyRenderLayer(BlockEntry<B> block) {

@@ -27,6 +27,11 @@ public class RegistryEntryImpl<T> implements RegistryEntry<T> {
     }
 
     @Override
+    public Optional<Holder<T>> asHolder() {
+        return registry.getHolder(this.key);
+    }
+
+    @Override
     public ResourceLocation getId() {
         return id;
     }
@@ -34,11 +39,6 @@ public class RegistryEntryImpl<T> implements RegistryEntry<T> {
     @Override
     public ResourceKey<T> getKey() {
         return key;
-    }
-
-    @Override
-    public Optional<Holder<T>> asHolder() {
-        return registry.getHolder(this.key);
     }
 
     @Override

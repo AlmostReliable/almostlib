@@ -11,6 +11,7 @@ import net.minecraft.world.level.saveddata.maps.MapItemSavedData;
 import javax.annotation.Nullable;
 
 public class MapItemGenerator {
+
     protected final MapPosFactory factory;
     @Nullable protected Component displayName;
     protected MapDecoration.Type destinationType = MapDecoration.Type.RED_X;
@@ -59,11 +60,11 @@ public class MapItemGenerator {
         if (info == null) return null;
 
         ItemStack map = MapItem.create(level,
-                info.pos().getX(),
-                info.pos().getZ(),
-                this.mapViewScale,
-                this.trackPosition,
-                this.unlimitedTracking);
+            info.pos().getX(),
+            info.pos().getZ(),
+            this.mapViewScale,
+            this.trackPosition,
+            this.unlimitedTracking);
 
         if (renderBiomePreviewMap) MapItem.renderBiomePreviewMap(level, map);
         MapItemSavedData.addTargetDecoration(map, info.pos(), "+", this.destinationType);

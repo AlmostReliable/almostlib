@@ -7,10 +7,12 @@ import net.minecraft.world.level.block.entity.BlockEntity;
 
 @FunctionalInterface
 public interface MenuFactory<M extends AbstractContainerMenu> {
+
     M apply(int id, Inventory inventory, FriendlyByteBuf buffer);
 
     @FunctionalInterface
     interface ForBlockEntity<M extends AbstractContainerMenu, BE extends BlockEntity> {
+
         M apply(int id, Inventory inventory, BE blockEntity);
     }
 

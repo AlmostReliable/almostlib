@@ -16,8 +16,9 @@ public interface Tickable {
 
     /**
      * Handles the ticking for the given object.
+     *
      * @param level The level to determine if the object is on the client or server.
-     * @param o The object to tick.
+     * @param o     The object to tick.
      */
     static void handleTick(Level level, Object o) {
         if (o instanceof Tickable tickable) {

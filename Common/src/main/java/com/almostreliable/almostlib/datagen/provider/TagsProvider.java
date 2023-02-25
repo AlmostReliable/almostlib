@@ -4,7 +4,6 @@ import com.almostreliable.almostlib.AlmostLib;
 import com.almostreliable.almostlib.registry.RegistryEntry;
 import com.google.common.collect.Maps;
 import com.google.gson.JsonElement;
-import com.google.gson.JsonObject;
 import com.mojang.serialization.DataResult;
 import com.mojang.serialization.JsonOps;
 import net.minecraft.core.Registry;
@@ -22,6 +21,7 @@ import java.util.Objects;
 import java.util.stream.Collectors;
 
 public class TagsProvider<T> extends AbstractDataProvider {
+
     public final Map<ResourceLocation, TagBuilder> builders = Maps.newLinkedHashMap();
     private final Registry<T> registry;
 
@@ -36,15 +36,20 @@ public class TagsProvider<T> extends AbstractDataProvider {
             List<TagEntry> invalidEntries = entry.getValue().build().stream().filter(this::isInvalid).toList();
             if (!invalidEntries.isEmpty()) {
                 throw new IllegalStateException(
-                        "Invalid entries in tag " + entry.getKey() + ": " + invalidEntries.stream().map(
-                                Objects::toString).collect(Collectors.joining(",")));
+                    "Invalid entries in tag " + entry.getKey() + ": " + invalidEntries.stream().map(
+                        Objects::toString).collect(Collectors.joining(",")));
             }
 
             DataResult<JsonElement> result = TagFile.CODEC.encodeStart(JsonOps.INSTANCE,
-                    new TagFile(entry.getValue().build(), false));
+                new TagFile(entry.getValue().build(), false));
             JsonElement json = result.getOrThrow(false, AlmostLib.LOGGER::error);
             DataProvider.saveStable(cachedOutput, json, getTagPath(entry.getKey()));
         }
+    }
+
+    public TagAppender<T> tag(TagKey<T> tagKey) {
+        TagBuilder builder = this.builders.computeIfAbsent(tagKey.location(), ($) -> new TagBuilder());
+        return new TagAppender<>(builder, this.registry);
     }
 
     protected boolean isInvalid(TagEntry entry) {
@@ -53,7 +58,7 @@ public class TagsProvider<T> extends AbstractDataProvider {
 
     protected Path getTagPath(ResourceLocation resourceLocation) {
         return getDataPath().resolve(
-                resourceLocation.getNamespace() + "/" + TagManager.getTagDir(registry.key()) + "/" +
+            resourceLocation.getNamespace() + "/" + TagManager.getTagDir(registry.key()) + "/" +
                 resourceLocation.getPath() + ".json");
     }
 
@@ -62,12 +67,8 @@ public class TagsProvider<T> extends AbstractDataProvider {
         return namespace + " " + getClass().getSimpleName();
     }
 
-    public TagAppender<T> tag(TagKey<T> tagKey) {
-        TagBuilder builder = this.builders.computeIfAbsent(tagKey.location(), ($) -> new TagBuilder());
-        return new TagAppender<>(builder, this.registry);
-    }
-
     public record TagAppender<T>(TagBuilder builder, Registry<T> registry) {
+
         @SafeVarargs
         public final TagAppender<T> add(T... entries) {
             for (T entry : entries) {

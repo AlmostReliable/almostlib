@@ -19,13 +19,6 @@ public interface WidgetData extends Area.Mutable {
     }
 
     /**
-     * Get the origin area of the widget. This is the area that the widget was created with.
-     *
-     * @return The origin area of the widget.
-     */
-    Area getOriginArea();
-
-    /**
      * Restore the origin area of the widget.
      */
     default void restoreOrigin() {
@@ -44,19 +37,24 @@ public interface WidgetData extends Area.Mutable {
         setHeight(area.getHeight());
     }
 
-    void setActive(boolean active);
+    /**
+     * Get the origin area of the widget. This is the area that the widget was created with.
+     *
+     * @return The origin area of the widget.
+     */
+    Area getOriginArea();
 
     boolean isActive();
 
-    void setVisible(boolean visible);
+    void setActive(boolean active);
 
     boolean isVisible();
 
-    void setAlpha(float alpha);
+    void setVisible(boolean visible);
 
     float getAlpha();
 
-    void setHovered(boolean hovered);
+    void setAlpha(float alpha);
 
     /**
      * Checks if the widget is hovered.
@@ -68,6 +66,11 @@ public interface WidgetData extends Area.Mutable {
      */
     boolean isHovered();
 
+    void setHovered(boolean hovered);
+
+    @Nullable
+    WidgetChangeListener getParent();
+
     /**
      * Sets the parent of the widget to notify on certain events.
      * <p>
@@ -77,11 +80,9 @@ public interface WidgetData extends Area.Mutable {
      */
     void setParent(@Nullable WidgetChangeListener parent);
 
-    @Nullable
-    WidgetChangeListener getParent();
-
     class Simple implements WidgetData {
 
+        private final Area originArea;
         private int x;
         private int y;
         private int width;
@@ -91,7 +92,6 @@ public interface WidgetData extends Area.Mutable {
         private float alpha;
         private boolean hovered;
         @Nullable private WidgetChangeListener parent;
-        private final Area originArea;
 
         public Simple(int x, int y, int width, int height) {
             this.x = x;

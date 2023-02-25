@@ -12,6 +12,16 @@ import java.util.function.Supplier;
 
 public abstract class Registration<S, RE extends RegistryEntry<? extends S>> {
 
+    protected final Map<ResourceLocation, RegistryEntry<? extends S>> entries = new LinkedHashMap<>();
+    private final String namespace;
+    private final Registry<S> registry;
+    private final Collection<RegistryEntry<? extends S>> entriesView = Collections.unmodifiableCollection(entries.values());
+
+    public Registration(String namespace, Registry<S> registry) {
+        this.namespace = namespace;
+        this.registry = registry;
+    }
+
     public static ItemRegistration items(String namespace) {
         return new ItemRegistration(namespace, Registry.ITEM);
     }
@@ -32,26 +42,8 @@ public abstract class Registration<S, RE extends RegistryEntry<? extends S>> {
         return new MenuRegistration(namespace);
     }
 
-    private final String namespace;
-    private final Registry<S> registry;
-    protected final Map<ResourceLocation, RegistryEntry<? extends S>> entries = new LinkedHashMap<>();
-    private final Collection<RegistryEntry<? extends S>> entriesView = Collections.unmodifiableCollection(entries.values());
-
-    public Registration(String namespace, Registry<S> registry) {
-        this.namespace = namespace;
-        this.registry = registry;
-    }
-
-    public Collection<RegistryEntry<? extends S>> getEntries() {
-        return entriesView;
-    }
-
-    public String getNamespace() {
-        return namespace;
-    }
-
-    public Registry<S> getRegistry() {
-        return registry;
+    public void applyRegister(BiConsumer<ResourceLocation, S> callback) {
+        getEntries().forEach(entry -> callback.accept(entry.getId(), entry.get()));
     }
 
     protected abstract RE createEntry(ResourceLocation id, Supplier<? extends S> supplier);
@@ -66,7 +58,15 @@ public abstract class Registration<S, RE extends RegistryEntry<? extends S>> {
         return entry;
     }
 
-    public void applyRegister(BiConsumer<ResourceLocation, S> callback) {
-        getEntries().forEach(entry -> callback.accept(entry.getId(), entry.get()));
+    public Collection<RegistryEntry<? extends S>> getEntries() {
+        return entriesView;
+    }
+
+    public String getNamespace() {
+        return namespace;
+    }
+
+    public Registry<S> getRegistry() {
+        return registry;
     }
 }

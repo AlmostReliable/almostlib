@@ -49,6 +49,7 @@ public class WeightedList<T> {
     }
 
     public static class Builder<T> {
+
         private final List<Entry<T>> entries = new ArrayList<>();
 
         public Builder<T> add(int weight, T value) {
@@ -61,5 +62,7 @@ public class WeightedList<T> {
         }
     }
 
-    private record Entry<T>(int weight, T value) {}
+    private record Entry<T>(int weight, T value) {
+
+    }
 }

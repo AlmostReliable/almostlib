@@ -39,16 +39,8 @@ public class PartialBlockStateModel implements Supplier<JsonElement>, Predicate<
         return new PartialBlockStateModel(state, properties);
     }
 
-    public BlockState getBlockState() {
-        return state;
-    }
-
     public <T extends Comparable<T>> T getValue(Property<T> property) {
         return AlmostUtils.cast(Objects.requireNonNull(filteredStates.get(property), "Property " + property + " does not exist in " + filteredStates));
-    }
-
-    protected String propertiesToString() {
-        return filteredStates.entrySet().stream().map(e -> e.getKey().getName() + "=" + e.getValue()).collect(Collectors.joining(","));
     }
 
     @Override
@@ -104,5 +96,13 @@ public class PartialBlockStateModel implements Supplier<JsonElement>, Predicate<
             }
         }
         return true;
+    }
+
+    protected String propertiesToString() {
+        return filteredStates.entrySet().stream().map(e -> e.getKey().getName() + "=" + e.getValue()).collect(Collectors.joining(","));
+    }
+
+    public BlockState getBlockState() {
+        return state;
     }
 }

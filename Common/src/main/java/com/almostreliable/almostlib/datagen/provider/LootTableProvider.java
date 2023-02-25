@@ -5,7 +5,6 @@ import com.google.common.collect.Multimap;
 import net.minecraft.data.CachedOutput;
 import net.minecraft.data.DataGenerator;
 import net.minecraft.data.DataProvider;
-import net.minecraft.data.HashCache;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.level.ItemLike;
 import net.minecraft.world.level.block.Block;
@@ -21,6 +20,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class LootTableProvider extends AbstractDataProvider {
+
     Map<ResourceLocation, LootTable> lootTables = new HashMap<>();
 
     public LootTableProvider(String namespace, DataGenerator dataGenerator) {
@@ -30,8 +30,8 @@ public class LootTableProvider extends AbstractDataProvider {
     @Override
     public void run(CachedOutput cachedOutput) throws IOException {
         ValidationContext validation = new ValidationContext(LootContextParamSets.ALL_PARAMS,
-                resourceLocation -> null,
-                lootTables::get);
+            resourceLocation -> null,
+            lootTables::get);
 
         lootTables.forEach((resourceLocation, lootTable) -> {
             LootTables.validate(validation, resourceLocation, lootTable);
@@ -56,16 +56,12 @@ public class LootTableProvider extends AbstractDataProvider {
 
     public void dropOther(Block block, ItemLike itemLike) {
         LootPool.Builder pool = LootPool
-                .lootPool()
-                .when(ExplosionCondition.survivesExplosion())
-                .setRolls(ConstantValue.exactly(1))
-                .add(LootItem.lootTableItem(itemLike));
+            .lootPool()
+            .when(ExplosionCondition.survivesExplosion())
+            .setRolls(ConstantValue.exactly(1))
+            .add(LootItem.lootTableItem(itemLike));
         LootTable.Builder builder = LootTable.lootTable().withPool(pool);
         add(block, builder);
-    }
-
-    private Path createLootTablePath(ResourceLocation location) {
-        return getDataPath().resolve(location.getNamespace() + "/loot_tables/" + location.getPath() + ".json");
     }
 
     public void add(Block block, LootTable.Builder builder) {
@@ -75,12 +71,16 @@ public class LootTableProvider extends AbstractDataProvider {
     public void add(ResourceLocation location, LootTable.Builder builder) {
         if (location.equals(BuiltInLootTables.EMPTY)) {
             throw new IllegalStateException(
-                    "Cannot add the empty built-in loot table. Some block has 'noDrops' set to true but also calls this");
+                "Cannot add the empty built-in loot table. Some block has 'noDrops' set to true but also calls this");
         }
 
         LootTable result = lootTables.put(location, builder.build());
         if (result != null) {
             throw new IllegalStateException("Duplicate loot table " + location);
         }
+    }
+
+    private Path createLootTablePath(ResourceLocation location) {
+        return getDataPath().resolve(location.getNamespace() + "/loot_tables/" + location.getPath() + ".json");
     }
 }

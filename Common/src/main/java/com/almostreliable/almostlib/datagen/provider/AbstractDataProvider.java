@@ -9,6 +9,7 @@ import net.minecraft.resources.ResourceLocation;
 import java.nio.file.Path;
 
 public abstract class AbstractDataProvider implements DataProvider {
+
     protected static final Gson GSON = new GsonBuilder().setPrettyPrinting().disableHtmlEscaping().create();
     protected final String namespace;
     protected final DataGenerator dataGenerator;
@@ -17,6 +18,10 @@ public abstract class AbstractDataProvider implements DataProvider {
         this.namespace = namespace;
         this.dataGenerator = dataGenerator;
         dataGenerator.addProvider(true, this);
+    }
+
+    protected Path getModelPath(ResourceLocation resourceLocation) {
+        return getAssetsPath().resolve(resourceLocation.getNamespace() + "/models/" + resourceLocation.getPath() + ".json");
     }
 
     @Override
@@ -30,9 +35,5 @@ public abstract class AbstractDataProvider implements DataProvider {
 
     protected Path getDataPath() {
         return dataGenerator.getOutputFolder().resolve("data/");
-    }
-
-    protected Path getModelPath(ResourceLocation resourceLocation) {
-        return getAssetsPath().resolve(resourceLocation.getNamespace() + "/models/" + resourceLocation.getPath() + ".json");
     }
 }

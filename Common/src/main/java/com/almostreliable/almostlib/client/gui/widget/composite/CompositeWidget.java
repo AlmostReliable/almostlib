@@ -122,59 +122,9 @@ public class CompositeWidget implements ContainerEventHandler, NarratableEntry, 
         markForRecalculation();
     }
 
-    public Collection<AlmostWidget<?>> getWidgets() {
-        return widgets;
-    }
-
-    public Layout getLayout() {
-        return layout;
-    }
-
-    public void setLayout(Layout layout) {
-        this.layout = layout;
-    }
-
-    public void setFullWidthWidgets(boolean fullWidth) {
-        this.fullWidthWidgets = fullWidth;
-        markForRecalculation();
-    }
-
-    public void setHorizontalSpacing(int spacing) {
-        this.horizontalSpacing = spacing;
-        markForRecalculation();
-    }
-
-    public void setVerticalSpacing(int spacing) {
-        this.verticalSpacing = spacing;
-        markForRecalculation();
-    }
-
-    public void setPadding(Padding padding) {
-        this.padding = padding;
-        markForRecalculation();
-    }
-
-    /**
-     * Whether the composite renders children at full width.
-     * <p>
-     * When enabled, each child will have the same width as the composite.
-     *
-     * @return True when full width rendering is enabled, false otherwise.
-     */
-    public boolean isFullWidthWidgets() {
-        return fullWidthWidgets;
-    }
-
-    public int getHorizontalSpacing() {
-        return horizontalSpacing;
-    }
-
-    public int getVerticalSpacing() {
-        return verticalSpacing;
-    }
-
-    public Padding getPadding() {
-        return padding;
+    @Override
+    public List<? extends GuiEventListener> children() {
+        return eventListeners;
     }
 
     @Override
@@ -199,8 +149,8 @@ public class CompositeWidget implements ContainerEventHandler, NarratableEntry, 
     }
 
     @Override
-    public List<? extends GuiEventListener> children() {
-        return eventListeners;
+    public NarrationPriority narrationPriority() {
+        return NarrationPriority.NONE;
     }
 
     @Override
@@ -209,17 +159,7 @@ public class CompositeWidget implements ContainerEventHandler, NarratableEntry, 
     }
 
     @Override
-    public NarrationPriority narrationPriority() {
-        return NarrationPriority.NONE;
-    }
-
-    @Override
     public void updateNarration(NarrationElementOutput narrationElementOutput) {}
-
-    @Override
-    public WidgetData getData() {
-        return data;
-    }
 
     @Override
     public void onWidgetResize(AlmostWidget<?> widget) {
@@ -238,4 +178,64 @@ public class CompositeWidget implements ContainerEventHandler, NarratableEntry, 
     }
 
     protected void onLayoutCalculated(Layout.Result result) {}
+
+    public Collection<AlmostWidget<?>> getWidgets() {
+        return widgets;
+    }
+
+    public Layout getLayout() {
+        return layout;
+    }
+
+    public void setLayout(Layout layout) {
+        this.layout = layout;
+    }
+
+    /**
+     * Whether the composite renders children at full width.
+     * <p>
+     * When enabled, each child will have the same width as the composite.
+     *
+     * @return True when full width rendering is enabled, false otherwise.
+     */
+    public boolean isFullWidthWidgets() {
+        return fullWidthWidgets;
+    }
+
+    public void setFullWidthWidgets(boolean fullWidth) {
+        this.fullWidthWidgets = fullWidth;
+        markForRecalculation();
+    }
+
+    public int getHorizontalSpacing() {
+        return horizontalSpacing;
+    }
+
+    public void setHorizontalSpacing(int spacing) {
+        this.horizontalSpacing = spacing;
+        markForRecalculation();
+    }
+
+    public int getVerticalSpacing() {
+        return verticalSpacing;
+    }
+
+    public void setVerticalSpacing(int spacing) {
+        this.verticalSpacing = spacing;
+        markForRecalculation();
+    }
+
+    public Padding getPadding() {
+        return padding;
+    }
+
+    public void setPadding(Padding padding) {
+        this.padding = padding;
+        markForRecalculation();
+    }
+
+    @Override
+    public WidgetData getData() {
+        return data;
+    }
 }

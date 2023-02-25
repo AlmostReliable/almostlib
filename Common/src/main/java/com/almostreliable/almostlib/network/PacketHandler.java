@@ -8,13 +8,13 @@ import net.minecraft.server.level.ServerPlayer;
 
 public interface PacketHandler<T> {
 
-    ResourceLocation getChannelId();
-
-    Class<T> getPacketType();
-
     void encode(T packet, FriendlyByteBuf buffer);
 
     T decode(FriendlyByteBuf buffer);
+
+    ResourceLocation getChannelId();
+
+    Class<T> getPacketType();
 
     interface C2S<T> extends PacketHandler<T> {
 

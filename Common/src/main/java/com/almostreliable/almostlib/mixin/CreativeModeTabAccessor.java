@@ -6,6 +6,7 @@ import org.spongepowered.asm.mixin.gen.Accessor;
 
 @Mixin(CreativeModeTab.class)
 public interface CreativeModeTabAccessor {
+
     @Accessor("TABS")
     static void setTabs(CreativeModeTab[] tabs) {
         throw new AssertionError();
