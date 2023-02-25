@@ -1,8 +1,9 @@
 package com.almostreliable.almostlib;
 
+import com.almostreliable.almostlib.menu.network.ClientActionHandler;
+import com.almostreliable.almostlib.menu.network.synchronizer.MenuSyncPacket;
 import com.almostreliable.almostlib.network.NetworkHandler;
 import com.almostreliable.almostlib.network.PacketBus;
-import com.almostreliable.almostlib.menu.synchronizer.MenuSyncPacket;
 import net.minecraft.resources.ResourceLocation;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -17,6 +18,7 @@ public class AlmostLib {
 
     private static final NetworkHandler NETWORK_HANDLER = NetworkHandler.create(BuildConfig.MOD_ID, "simple");
     public static final PacketBus.S2C<MenuSyncPacket> SYNC_PACKET = NETWORK_HANDLER.S2C(new MenuSyncPacket());
+    public static final PacketBus.C2S<ClientActionHandler.Packet> CLIENT_ACTION_HANDLER = NETWORK_HANDLER.C2S(new ClientActionHandler());
 
     @ApiStatus.Internal
     public static ResourceLocation getRL(String path) {
@@ -28,5 +30,9 @@ public class AlmostLib {
             .load(clazz)
             .findFirst()
             .orElseThrow(() -> new NullPointerException("Failed to load service for class: " + clazz.getName()));
+    }
+
+    public static void initNetworkHandler() {
+        NETWORK_HANDLER.init();
     }
 }

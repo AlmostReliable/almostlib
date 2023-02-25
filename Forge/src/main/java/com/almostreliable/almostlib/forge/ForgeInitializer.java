@@ -1,5 +1,6 @@
 package com.almostreliable.almostlib.forge;
 
+import com.almostreliable.almostlib.AlmostLib;
 import com.almostreliable.almostlib.BuildConfig;
 import net.minecraftforge.fml.common.Mod;
 
@@ -7,6 +8,6 @@ import net.minecraftforge.fml.common.Mod;
 public class ForgeInitializer {
 
     public ForgeInitializer() {
+        AlmostLib.initNetworkHandler();
     }
-
 }
