@@ -1,7 +1,7 @@
 package com.almostreliable.almostlib;
 
 import com.almostreliable.almostlib.menu.network.ClientActionHandler;
-import com.almostreliable.almostlib.menu.network.synchronizer.MenuSyncPacket;
+import com.almostreliable.almostlib.menu.network.synchronizer.MenuSyncHandler;
 import com.almostreliable.almostlib.network.NetworkHandler;
 import com.almostreliable.almostlib.network.PacketBus;
 import net.minecraft.resources.ResourceLocation;
@@ -17,7 +17,7 @@ public class AlmostLib {
     public static final AlmostLibPlatform PLATFORM = loadService(AlmostLibPlatform.class);
 
     private static final NetworkHandler NETWORK_HANDLER = NetworkHandler.create(BuildConfig.MOD_ID, "simple");
-    public static final PacketBus.S2C<MenuSyncPacket> SYNC_PACKET = NETWORK_HANDLER.S2C(new MenuSyncPacket());
+    public static final PacketBus.S2C<MenuSyncHandler.Packet> SYNC_PACKET = NETWORK_HANDLER.S2C(new MenuSyncHandler());
     public static final PacketBus.C2S<ClientActionHandler.Packet> CLIENT_ACTION_HANDLER = NETWORK_HANDLER.C2S(new ClientActionHandler());
 
     @ApiStatus.Internal

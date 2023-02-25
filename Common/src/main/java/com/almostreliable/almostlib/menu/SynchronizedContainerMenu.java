@@ -1,7 +1,7 @@
 package com.almostreliable.almostlib.menu;
 
 import com.almostreliable.almostlib.AlmostLib;
-import com.almostreliable.almostlib.menu.network.synchronizer.MenuSyncPacket;
+import com.almostreliable.almostlib.menu.network.synchronizer.MenuSyncHandler;
 import com.almostreliable.almostlib.menu.network.synchronizer.MenuSynchronizer;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.server.level.ServerPlayer;
@@ -48,14 +48,14 @@ public abstract class SynchronizedContainerMenu<T extends BlockEntity> extends A
     public void sendAllDataToRemote() {
         super.sendAllDataToRemote();
         if (sync.hasDataHandlers()) {
-            AlmostLib.SYNC_PACKET.send((ServerPlayer) inventory.player, new MenuSyncPacket(containerId, sync::encodeAll));
+            AlmostLib.SYNC_PACKET.send((ServerPlayer) inventory.player, MenuSyncHandler.of(containerId, sync::encodeAll));
         }
     }
 
     @Override
     public void broadcastChanges() {
         if (!inventory.player.level.isClientSide && sync.hasChanged()) {
-            AlmostLib.SYNC_PACKET.send((ServerPlayer) inventory.player, new MenuSyncPacket(containerId, sync::encode));
+            AlmostLib.SYNC_PACKET.send((ServerPlayer) inventory.player, MenuSyncHandler.of(containerId, sync::encode));
         }
         super.broadcastChanges();
     }
