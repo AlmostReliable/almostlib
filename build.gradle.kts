@@ -18,6 +18,8 @@ val modAuthor: String by project
 val githubRepo: String by project
 val githubUser: String by project
 val sharedRunDir: String by project
+val autoServiceVersion: String by project
+val manifoldVersion: String by project
 
 plugins {
     java
@@ -42,6 +44,7 @@ allprojects {
     repositories {
         mavenLocal()
         mavenCentral()
+        maven("https://oss.sonatype.org/content/repositories/snapshots/") // Manifold
         flatDir {
             name = extraModsPrefix
             dir(file("$extraModsPrefix-$minecraftVersion"))
@@ -52,6 +55,7 @@ allprojects {
         withType<JavaCompile> {
             options.encoding = "UTF-8"
             options.release.set(17)
+            options.compilerArgs.add("-Xplugin:Manifold no-bootstrap")
         }
     }
 
@@ -101,8 +105,10 @@ subprojects {
         /**
          * Non-Minecraft dependencies
          */
-        compileOnly("com.google.auto.service:auto-service:1.0.1")
-        annotationProcessor("com.google.auto.service:auto-service:1.0.1")
+        compileOnly("com.google.auto.service:auto-service:$autoServiceVersion")
+        annotationProcessor("com.google.auto.service:auto-service:$autoServiceVersion")
+        compileOnly("systems.manifold:manifold-ext-rt:$manifoldVersion")
+        annotationProcessor("systems.manifold:manifold-ext:$manifoldVersion")
     }
 
     /**
@@ -136,33 +142,44 @@ subprojects {
         compileOnly()
     }
 
-    /**
-     * Resource processing for defined targets. This will replace `${key}` with the specified values from the map below.
-     */
-    tasks.processResources {
-        val resourceTargets = listOf("META-INF/mods.toml", "pack.mcmeta", "fabric.mod.json")
+    tasks {
+        /**
+         * Resource processing for defined targets. This will replace `${key}` with the specified values from the map below.
+         */
+        processResources {
+            val resourceTargets = listOf("META-INF/mods.toml", "pack.mcmeta", "fabric.mod.json")
 
-        val replaceProperties = mapOf(
-            "version" to project.version as String,
-            "license" to license,
-            "modId" to modId,
-            "modName" to modName,
-            "minecraftVersion" to minecraftVersion,
-            "modAuthor" to modAuthor,
-            "modDescription" to modDescription,
-            "fabricApiVersion" to fabricApiVersion,
-            "forgeVersion" to forgeVersion,
-            "forgeFMLVersion" to forgeVersion.substringBefore("."), // Only use major version as FML error message sucks. The error message for wrong Forge version is way better.
-            "githubUser" to githubUser,
-            "githubRepo" to githubRepo
-        )
+            val replaceProperties = mapOf(
+                "version" to project.version as String,
+                "license" to license,
+                "modId" to modId,
+                "modName" to modName,
+                "minecraftVersion" to minecraftVersion,
+                "modAuthor" to modAuthor,
+                "modDescription" to modDescription,
+                "fabricApiVersion" to fabricApiVersion,
+                "forgeVersion" to forgeVersion,
+                "forgeFMLVersion" to forgeVersion.substringBefore("."), // Only use major version as FML error message sucks. The error message for wrong Forge version is way better.
+                "githubUser" to githubUser,
+                "githubRepo" to githubRepo
+            )
 
-        println("[Process Resources] Replacing properties in resources: ")
-        replaceProperties.forEach { (key, value) -> println("\t -> $key = $value") }
+            println("[Process Resources] Replacing properties in resources: ")
+            replaceProperties.forEach { (key, value) -> println("\t -> $key = $value") }
 
-        inputs.properties(replaceProperties)
-        filesMatching(resourceTargets) {
-            expand(replaceProperties)
+            inputs.properties(replaceProperties)
+            filesMatching(resourceTargets) {
+                expand(replaceProperties)
+            }
+        }
+
+        /**
+         * Exposing of Manifold extension methods to all projects depending on the lib.
+         */
+        named<Jar>("jar") {
+            manifest {
+                attributes["Contains-Sources"] = "java,class"
+            }
         }
     }
 }
