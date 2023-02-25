@@ -16,12 +16,14 @@ import org.jetbrains.annotations.Nullable;
 import java.util.*;
 
 @Environment(EnvType.CLIENT)
-public class AlmostRendering {
+public final class AlmostRendering {
 
     @Nullable private static List<Component> tooltipLines;
     @Nullable private static Debug debug = null; // TODO make this configurable
 
     private static boolean IS_DEBUG = false;
+
+    private AlmostRendering() {}
 
     public static boolean isDebug() {
         return IS_DEBUG;
@@ -122,11 +124,11 @@ public class AlmostRendering {
         }
     }
 
-    private static class Debug {
+    private static final class Debug {
 
         private final Map<String, List<Tuple<String, String>>> data = new LinkedHashMap<>();
 
-        public Debug() {
+        private Debug() {
             data.put("", new ArrayList<>());
         }
 
