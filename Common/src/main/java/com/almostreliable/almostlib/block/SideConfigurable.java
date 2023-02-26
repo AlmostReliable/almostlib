@@ -1,11 +1,14 @@
 package com.almostreliable.almostlib.block;
 
 import net.minecraft.core.Direction;
+import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.entity.BlockEntity;
 
 import javax.annotation.Nullable;
 
 /**
- * An interface for handling side configuration.
+ * Implemented by {@link Block}s or {@link BlockEntity}s that can be configured to
+ * have different behavior on each side.
  * <p>
  * After implementation, an instance can be passed to a {@link SideConfiguration} constructor.
  */

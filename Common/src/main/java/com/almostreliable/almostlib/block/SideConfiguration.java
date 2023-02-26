@@ -67,6 +67,22 @@ public class SideConfiguration implements DataHandler {
         }
     }
 
+    public void reset(Direction direction) {
+        config.put(direction, Setting.OFF);
+    }
+
+    public void reset(BlockSide side) {
+        reset(getDirectionFromSide(side));
+    }
+
+    public void toggle(Direction direction) {
+        set(direction, getNextSetting(get(direction)));
+    }
+
+    public void toggle(BlockSide side) {
+        toggle(getDirectionFromSide(side));
+    }
+
     public Setting get(Direction direction) {
         return config.get(direction);
     }
@@ -97,6 +113,24 @@ public class SideConfiguration implements DataHandler {
                 consumer.accept(dir);
             }
         });
+    }
+
+    public Setting getNextSetting(Setting setting) {
+        return switch (setting) {
+            case OFF -> Setting.IN;
+            case IN -> Setting.OUT;
+            case OUT -> Setting.IO;
+            case IO -> Setting.OFF;
+        };
+    }
+
+    public Setting getPreviousSetting(Setting setting) {
+        return switch (setting) {
+            case OFF -> Setting.IO;
+            case IN -> Setting.OFF;
+            case OUT -> Setting.IN;
+            case IO -> Setting.OUT;
+        };
     }
 
     private Direction getDirectionFromSide(BlockSide side) {
