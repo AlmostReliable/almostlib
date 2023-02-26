@@ -25,7 +25,7 @@ public class MenuSyncHandler implements PacketHandler.S2C<MenuSyncHandler.Packet
     @Override
     public void handle(Packet packet) {
         var player = Minecraft.getInstance().player;
-        if (player == null && player.containerMenu instanceof SynchronizedContainerMenu<?> menu &&
+        if (player != null && player.containerMenu instanceof SynchronizedContainerMenu<?> menu &&
             packet.containerId == menu.containerId) {
             menu.receiveServerData(packet.data);
         }
