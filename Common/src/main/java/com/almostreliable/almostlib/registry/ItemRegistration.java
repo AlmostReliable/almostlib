@@ -84,7 +84,7 @@ public class ItemRegistration extends Registration<Item, ItemEntry<? extends Ite
         private final Function<Item.Properties, ? extends I> factory;
         private final String id;
         private Item.Properties properties;
-        private final List<BiConsumer<RegistryEntry<I>, ItemModelProvider>> itemModelGenerators = new ArrayList<>();
+        private final List<BiConsumer<ItemEntry<I>, ItemModelProvider>> itemModelGenerators = new ArrayList<>();
         private final Set<TagKey<Item>> tags = new HashSet<>();
 
         @Nullable private String defaultLang;
@@ -162,7 +162,7 @@ public class ItemRegistration extends Registration<Item, ItemEntry<? extends Ite
             return this;
         }
 
-        public Builder<I> model(BiConsumer<RegistryEntry<I>, ItemModelProvider> model) {
+        public Builder<I> model(BiConsumer<ItemEntry<I>, ItemModelProvider> model) {
             itemModelGenerators.add(model);
             return this;
         }
