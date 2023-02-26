@@ -247,14 +247,19 @@ public class BlockRegistration extends Registration<Block, BlockEntry<? extends 
             return this;
         }
 
-        public Builder<B> requiresCorrectToolForDrops(Tiers toolTier) {
+        public Builder<B> requiresCorrectToolForDrops(ToolType tool, ToolType... tools) {
+            effectiveTools(tool, tools);
+            return requiresCorrectToolForDrops();
+        }
+
+        public Builder<B> requiresCorrectToolForDrops(Tiers toolTier, ToolType tool, ToolType... tools) {
             blockTags(switch (toolTier) {
                 case STONE -> BlockTags.NEEDS_STONE_TOOL;
                 case IRON -> BlockTags.NEEDS_IRON_TOOL;
                 case DIAMOND -> BlockTags.NEEDS_DIAMOND_TOOL;
                 default -> throw new IllegalStateException("Unexpected value: " + toolTier);
             });
-            return requiresCorrectToolForDrops();
+            return requiresCorrectToolForDrops(tool, tools);
         }
 
         public Builder<B> color(MaterialColor materialColor) {
@@ -319,7 +324,8 @@ public class BlockRegistration extends Registration<Block, BlockEntry<? extends 
             return this;
         }
 
-        public Builder<B> effectiveTools(ToolType... tools) {
+        public Builder<B> effectiveTools(ToolType tool, ToolType... tools) {
+            blockTags(tool.mineableBlockTag);
             blockTags(AlmostUtils.cast(Arrays.stream(tools).map(t -> t.mineableBlockTag).toArray(TagKey[]::new)));
             return this;
         }
