@@ -111,6 +111,11 @@ subprojects {
         annotationProcessor("systems.manifold:manifold-ext:$manifoldVersion")
     }
 
+    tasks {
+        named<Task>("publishToMavenLocal") {
+            version = "$version.${System.currentTimeMillis() / 1000}"
+        }
+    }
     /**
      * Maven publishing
      */
