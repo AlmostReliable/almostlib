@@ -5,7 +5,6 @@ import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import org.jetbrains.annotations.ApiStatus;
 
-@ApiStatus.Internal
 public abstract class PacketBus<T> {
 
     protected final PacketHandler<T> handler;

@@ -1,8 +1,11 @@
 package com.almostreliable.almostlib.fabric.network;
 
+import com.almostreliable.almostlib.AlmostLib;
 import com.almostreliable.almostlib.network.NetworkHandler;
 import com.almostreliable.almostlib.network.PacketHandler;
 import com.almostreliable.almostlib.util.AlmostUtils;
+import net.fabricmc.api.EnvType;
+import net.fabricmc.api.Environment;
 import net.fabricmc.fabric.api.client.networking.v1.ClientPlayNetworking;
 import net.fabricmc.fabric.api.networking.v1.PacketByteBufs;
 import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking;
@@ -24,20 +27,30 @@ public class NetworkHandlerFabric extends NetworkHandler {
 
     @Override
     public void initPackets() {
-        for (PacketHandler.S2C<?> packetHandler : S2CPacketHandlers) {
-            ClientPlayNetworking.PlayChannelHandler fabricHandler = (client, listener, buffer, response) -> {
-                var packet = packetHandler.decode(buffer);
-                client.execute(() -> packetHandler.handle(AlmostUtils.cast(packet)));
-            };
-            ClientPlayNetworking.registerGlobalReceiver(packetHandler.getChannelId(), fabricHandler);
+        if (AlmostLib.PLATFORM.isClient()) {
+            initPacketsClient();
         }
+        initPacketsServer();
+    }
 
+    private void initPacketsServer() {
         for (PacketHandler.C2S<?> packetHandler : C2SPacketHandlers) {
             ServerPlayNetworking.PlayChannelHandler fabricHandler = (server, player, handler, buffer, responseSender) -> {
                 var packet = packetHandler.decode(buffer);
                 server.execute(() -> packetHandler.handle(AlmostUtils.cast(packet), player));
             };
             ServerPlayNetworking.registerGlobalReceiver(packetHandler.getChannelId(), fabricHandler);
+        }
+    }
+
+    @Environment(EnvType.CLIENT)
+    private void initPacketsClient() {
+        for (PacketHandler.S2C<?> packetHandler : S2CPacketHandlers) {
+            ClientPlayNetworking.PlayChannelHandler fabricHandler = (client, listener, buffer, response) -> {
+                var packet = packetHandler.decode(buffer);
+                client.execute(() -> packetHandler.handle(AlmostUtils.cast(packet)));
+            };
+            ClientPlayNetworking.registerGlobalReceiver(packetHandler.getChannelId(), fabricHandler);
         }
     }
 
