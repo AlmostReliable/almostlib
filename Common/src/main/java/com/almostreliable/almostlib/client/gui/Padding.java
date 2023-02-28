@@ -25,4 +25,20 @@ public record Padding(int top, int right, int bottom, int left) {
     public Area apply(Area rect) {
         return new Area.Simple(rect.getX() + left, rect.getY() + top, rect.getWidth() - left - right, rect.getHeight() - top - bottom);
     }
+
+    public Padding addTop(int top) {
+        return new Padding(this.top + top, right, bottom, left);
+    }
+
+    public Padding addRight(int right) {
+        return new Padding(top, this.right + right, bottom, left);
+    }
+
+    public Padding addBottom(int bottom) {
+        return new Padding(top, right, this.bottom + bottom, left);
+    }
+
+    public Padding addLeft(int left) {
+        return new Padding(top, right, bottom, this.left + left);
+    }
 }

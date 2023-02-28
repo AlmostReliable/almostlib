@@ -69,7 +69,7 @@ public class ScrollableCompositeWidget extends TranslatableCompositeWidget {
 
     @Override
     public void setPadding(Padding padding) {
-        Padding newPadding = Padding.of(padding.top(), padding.right() + scrollbar.getData().getWidth(), padding.bottom(), padding.left());
+        Padding newPadding = padding.addRight(scrollbar.getData().getWidth());
         this.contentArea = newPadding.apply(getData());
         super.setPadding(newPadding);
     }
@@ -149,5 +149,12 @@ public class ScrollableCompositeWidget extends TranslatableCompositeWidget {
 
     public Scrollbar getScrollbar() {
         return scrollbar;
+    }
+
+    @Override
+    public void resize(int width, int height) {
+        super.resize(width, height);
+        scrollbar.getData().setHeight(height); // TODO could not fit into all cases
+        setPadding(getPadding().addRight(-scrollbar.getData().getWidth()));
     }
 }
