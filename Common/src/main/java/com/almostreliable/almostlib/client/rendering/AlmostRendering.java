@@ -20,8 +20,8 @@ public final class AlmostRendering {
 
     @Nullable private static List<Component> TOOLTIP_LINES = null;
     @Nullable private static Debug DEBUG = null; // TODO make this configurable
-
     private static boolean IS_DEBUG = false;
+    private static float renderScale = 1.0f;
 
     private AlmostRendering() {}
 
@@ -32,6 +32,47 @@ public final class AlmostRendering {
     public static void toggleDebug() {
         IS_DEBUG = !IS_DEBUG;
         DEBUG = IS_DEBUG ? new Debug() : null;
+    }
+
+    /**
+     * Enable scissor test for the given area. This will also apply the current render scale, which can be changed with {@link #setRenderScale(float)}.
+     * <p>
+     * After rendering, {@link #endScissor()} must be called.
+     *
+     * @param area The area to enable scissor for.
+     */
+    public static void enableScissor(Area area) {
+        enableScissor(area.getX(), area.getY(), area.getWidth(), area.getHeight());
+    }
+
+    /**
+     * Enable scissor test for the given position. This will also apply the current render scale, which can be changed with {@link #setRenderScale(float)}.
+     * <p>
+     * After rendering, {@link #endScissor()} must be called.
+     *
+     * @param x      The x position.
+     * @param y      The y position.
+     * @param width  The width.
+     * @param height The height.
+     */
+    public static void enableScissor(int x, int y, int width, int height) {
+        GuiComponent.enableScissor(x, y, (int) (x + width * renderScale), (int) (y + height * renderScale));
+    }
+
+    public static void endScissor() {
+        RenderSystem.disableScissor();
+    }
+
+    public static void setRenderScale(float scale) {
+        renderScale = scale;
+    }
+
+    public static float getRenderScale() {
+        return renderScale;
+    }
+
+    public static void resetRenderScale() {
+        renderScale = 1.0f;
     }
 
     public static void writeTooltip(Component... component) {
@@ -49,7 +90,36 @@ public final class AlmostRendering {
     }
 
     public static void fill(PoseStack poseStack, Area area, long color) {
-        GuiComponent.fill(poseStack, area.getX(), area.getY(), area.getRight(), area.getBottom(), (int) color);
+        fill(poseStack, area.getX(), area.getY(), area.getRight(), area.getBottom(), 0, color);
+    }
+
+    public static void fill(PoseStack poseStack, Area area, int depth, long color) {
+        fill(poseStack, area.getX(), area.getY(), area.getRight(), area.getBottom(), depth, color);
+    }
+
+    public static void fill(PoseStack poseStack, int x1, int y1, int x2, int y2, long color) {
+        fill(poseStack, x1, y1, x2, y2, 0, color);
+    }
+
+    public static void fill(PoseStack poseStack, int x1, int y1, int x2, int y2, int depth, long color) {
+        var matrix4f = poseStack.last().pose();
+        float alpha = (color >> 24 & 255) / 255.0F;
+        float red = (color >> 16 & 255) / 255.0F;
+        float green = (color >> 8 & 255) / 255.0F;
+        float blue = (color & 255) / 255.0F;
+        BufferBuilder bufferBuilder = Tesselator.getInstance().getBuilder();
+        RenderSystem.enableBlend();
+        RenderSystem.disableTexture();
+        RenderSystem.defaultBlendFunc();
+        RenderSystem.setShader(GameRenderer::getPositionColorShader);
+        bufferBuilder.begin(VertexFormat.Mode.QUADS, DefaultVertexFormat.POSITION_COLOR);
+        bufferBuilder.vertex(matrix4f, x1, y2, depth).color(red, green, blue, alpha).endVertex();
+        bufferBuilder.vertex(matrix4f, x2, y2, depth).color(red, green, blue, alpha).endVertex();
+        bufferBuilder.vertex(matrix4f, x2, y1, depth).color(red, green, blue, alpha).endVertex();
+        bufferBuilder.vertex(matrix4f, x1, y1, depth).color(red, green, blue, alpha).endVertex();
+        BufferUploader.drawWithShader(bufferBuilder.end());
+        RenderSystem.enableTexture();
+        RenderSystem.disableBlend();
     }
 
     public static void border(PoseStack poseStack, Area area, long color, int strength) {

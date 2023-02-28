@@ -41,9 +41,9 @@ public class ScrollableCompositeWidget extends TranslatableCompositeWidget {
             GuiComponent.fill(poseStack, getData().getX(), getData().getY(), getData().getRight(), getData().getBottom(), 0x80_00FF00);
         }
 
-        GuiComponent.enableScissor(getContentArea().getX(), getContentArea().getY(), getContentArea().getRight(), getContentArea().getBottom());
+        AlmostRendering.enableScissor(getContentArea());
         super.render(poseStack, mouseX, mouseY, delta);
-        GuiComponent.disableScissor();
+        AlmostRendering.endScissor();
 
         if (scrollbar.getData().isVisible()) {
             if (requiresUpdate) {
