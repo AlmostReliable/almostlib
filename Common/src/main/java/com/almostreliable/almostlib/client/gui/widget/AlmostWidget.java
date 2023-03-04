@@ -2,9 +2,12 @@ package com.almostreliable.almostlib.client.gui.widget;
 
 import com.almostreliable.almostlib.client.gui.WidgetData;
 import com.almostreliable.almostlib.client.gui.widget.composite.CompositeWidget;
+import com.mojang.blaze3d.vertex.PoseStack;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 import net.minecraft.client.gui.components.Widget;
+import net.minecraft.client.gui.narration.NarratableEntry;
+import net.minecraft.client.gui.narration.NarrationElementOutput;
 import net.minecraft.resources.ResourceLocation;
 
 /**
@@ -12,7 +15,7 @@ import net.minecraft.resources.ResourceLocation;
  * order to add convenience functionality.
  */
 @Environment(EnvType.CLIENT)
-public interface AlmostWidget<T extends WidgetData> extends Widget {
+public interface AlmostWidget<T extends WidgetData> extends Widget, NarratableEntry {
 
     static ResourceLocation getTexture(String namespace, String... path) {
         return new ResourceLocation(namespace, "textures/" + String.join("/", path) + ".png");
@@ -37,5 +40,30 @@ public interface AlmostWidget<T extends WidgetData> extends Widget {
         }
     }
 
+    /**
+     * Updates the hovered state of the widget. Widgets may call this in their {@link #render(PoseStack, int, int, float)} method.
+     *
+     * @param mouseX The x coordinate of the mouse.
+     * @param mouseY The y coordinate of the mouse.
+     */
+    default void updateHovered(int mouseX, int mouseY) {
+        getData().setHovered(getData().inBounds(mouseX, mouseY));
+    }
+
     T getData();
+
+    @Override
+    default NarrationPriority narrationPriority() {
+        return NarrationPriority.NONE;
+    }
+
+    @Override
+    default void updateNarration(NarrationElementOutput narrationElementOutput) {
+        // no-op
+    }
+
+    @Override
+    default boolean isActive() {
+        return getData().isActive();
+    }
 }
