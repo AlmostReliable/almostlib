@@ -8,7 +8,8 @@ import com.almostreliable.almostlib.client.gui.widget.layout.Layouts;
 import com.almostreliable.almostlib.client.rendering.AlmostRendering;
 import com.almostreliable.almostlib.util.Area;
 import com.mojang.blaze3d.vertex.PoseStack;
-import net.minecraft.client.gui.GuiComponent;
+
+import javax.annotation.Nullable;
 
 /**
  * A scrollable implementation of {@link TranslatableCompositeWidget}.
@@ -22,6 +23,8 @@ public class ScrollableCompositeWidget extends TranslatableCompositeWidget {
     private Area contentArea;
     private boolean requiresUpdate = true;
     private int contentHeight;
+    @Nullable private Area scissorArea;
+    @Nullable private Padding scissorsPadding;
 
     public ScrollableCompositeWidget(int x, int y, int width, int height) {
         this(x, y, width, height, Padding.of(0));
@@ -38,10 +41,11 @@ public class ScrollableCompositeWidget extends TranslatableCompositeWidget {
     @Override
     public void render(PoseStack poseStack, int mouseX, int mouseY, float delta) {
         if (AlmostRendering.isDebug()) {
-            GuiComponent.fill(poseStack, getData().getX(), getData().getY(), getData().getRight(), getData().getBottom(), 0x80_00FF00);
+            AlmostRendering.fill(poseStack, getData(), 0x8000_FF00);
+            AlmostRendering.fill(poseStack, getScissorArea(), 0x8000_FFFF);
         }
 
-        AlmostRendering.enableScissor(getContentArea());
+        AlmostRendering.enableScissor(getScissorArea());
         super.render(poseStack, mouseX, mouseY, delta);
         AlmostRendering.endScissor();
 
@@ -69,9 +73,9 @@ public class ScrollableCompositeWidget extends TranslatableCompositeWidget {
 
     @Override
     public void setPadding(Padding padding) {
-        Padding newPadding = padding.addRight(scrollbar.getData().getWidth());
-        this.contentArea = newPadding.apply(getData());
-        super.setPadding(newPadding);
+        Padding paddingWithScrollbar = padding.addRight(scrollbar.getData().getWidth());
+        super.setPadding(paddingWithScrollbar);
+        updateContentArea();
     }
 
     @Override
@@ -102,7 +106,7 @@ public class ScrollableCompositeWidget extends TranslatableCompositeWidget {
 
     @Override
     public double calcMouseXTranslation(double mouseX) {
-        if (getContentArea().inHorizontalBounds(mouseX)) {
+        if (getScissorArea().inHorizontalBounds(mouseX)) {
             return super.calcMouseXTranslation(mouseX);
         }
         return -Double.MAX_VALUE;
@@ -110,7 +114,7 @@ public class ScrollableCompositeWidget extends TranslatableCompositeWidget {
 
     @Override
     public double calcMouseYTranslation(double mouseY) {
-        if (getContentArea().inVerticalBounds(mouseY)) {
+        if (getScissorArea().inVerticalBounds(mouseY)) {
             return super.calcMouseYTranslation(mouseY);
         }
         return -Double.MAX_VALUE;
@@ -139,8 +143,31 @@ public class ScrollableCompositeWidget extends TranslatableCompositeWidget {
         return data.inBounds(mouseX, mouseY) || super.isMouseOver(mouseX, mouseY);
     }
 
+    public Area getScissorArea() {
+        if (scissorArea == null) {
+            return getContentArea();
+        }
+
+        return scissorArea;
+    }
+
+    public void setScissorPadding(@Nullable Padding padding) {
+        this.scissorsPadding = padding;
+        updateScissorArea();
+    }
+
     public Area getContentArea() {
         return contentArea;
+    }
+
+    private void updateContentArea() {
+        this.contentArea = getPadding().apply(getData());
+    }
+
+    private void updateScissorArea() {
+        if (scissorsPadding != null) {
+            this.scissorArea = scissorsPadding.apply(getData());
+        }
     }
 
     protected int getContainerHeight() {
@@ -155,6 +182,7 @@ public class ScrollableCompositeWidget extends TranslatableCompositeWidget {
     public void resize(int width, int height) {
         super.resize(width, height);
         scrollbar.getData().setHeight(height); // TODO could not fit into all cases
-        setPadding(getPadding().addRight(-scrollbar.getData().getWidth()));
+        updateContentArea();
+        updateScissorArea();
     }
 }
