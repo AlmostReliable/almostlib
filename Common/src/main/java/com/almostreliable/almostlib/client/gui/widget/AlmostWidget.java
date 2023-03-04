@@ -6,9 +6,9 @@ import com.mojang.blaze3d.vertex.PoseStack;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 import net.minecraft.client.gui.components.Widget;
-import net.minecraft.client.gui.narration.NarratableEntry;
-import net.minecraft.client.gui.narration.NarrationElementOutput;
 import net.minecraft.resources.ResourceLocation;
+
+import javax.annotation.OverridingMethodsMustInvokeSuper;
 
 /**
  * Implemented by all kinds of widgets holding {@link WidgetData} in
@@ -19,6 +19,11 @@ public interface AlmostWidget<T extends WidgetData> extends Widget {
 
     static ResourceLocation getTexture(String namespace, String... path) {
         return new ResourceLocation(namespace, "textures/" + String.join("/", path) + ".png");
+    }
+
+    @Override
+    default void render(PoseStack poseStack, int mouseX, int mouseY, float delta) {
+        updateHovered(mouseX, mouseY);
     }
 
     /**
