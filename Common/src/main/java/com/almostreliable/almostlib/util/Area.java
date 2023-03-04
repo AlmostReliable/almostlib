@@ -6,6 +6,10 @@ public interface Area {
         return new Simple(x, y, width, height);
     }
 
+    static Area of(int width, int height) {
+        return of(0, 0, width, height);
+    }
+
     default boolean inVerticalBounds(double v) {
         return getY() <= v && v < getBottom();
     }
