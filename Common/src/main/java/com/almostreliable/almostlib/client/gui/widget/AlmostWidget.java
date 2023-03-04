@@ -15,7 +15,7 @@ import net.minecraft.resources.ResourceLocation;
  * order to add convenience functionality.
  */
 @Environment(EnvType.CLIENT)
-public interface AlmostWidget<T extends WidgetData> extends Widget, NarratableEntry {
+public interface AlmostWidget<T extends WidgetData> extends Widget {
 
     static ResourceLocation getTexture(String namespace, String... path) {
         return new ResourceLocation(namespace, "textures/" + String.join("/", path) + ".png");
@@ -51,19 +51,4 @@ public interface AlmostWidget<T extends WidgetData> extends Widget, NarratableEn
     }
 
     T getData();
-
-    @Override
-    default NarrationPriority narrationPriority() {
-        return NarrationPriority.NONE;
-    }
-
-    @Override
-    default void updateNarration(NarrationElementOutput narrationElementOutput) {
-        // no-op
-    }
-
-    @Override
-    default boolean isActive() {
-        return getData().isActive();
-    }
 }

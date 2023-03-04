@@ -4,6 +4,8 @@ import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.components.events.GuiEventListener;
+import net.minecraft.client.gui.narration.NarratableEntry;
+import net.minecraft.client.gui.narration.NarrationElementOutput;
 import net.minecraft.client.resources.sounds.SimpleSoundInstance;
 import net.minecraft.client.sounds.SoundManager;
 import net.minecraft.sounds.SoundEvents;
@@ -14,7 +16,7 @@ import net.minecraft.sounds.SoundEvents;
  * @param <T> The type of data this widget uses.
  */
 @Environment(EnvType.CLIENT)
-public interface AlmostGuiEventListener<T extends WidgetData> extends GuiEventListener {
+public interface AlmostGuiEventListener<T extends WidgetData> extends GuiEventListener, NarratableEntry {
 
     // mouse buttons
     int LMB = 0;
@@ -123,4 +125,20 @@ public interface AlmostGuiEventListener<T extends WidgetData> extends GuiEventLi
         return getData().isActive() && getData().isVisible() && getData().inBounds(mouseX, mouseY);
     }
     //endregion
+
+
+    @Override
+    default NarrationPriority narrationPriority() {
+        return NarrationPriority.NONE;
+    }
+
+    @Override
+    default void updateNarration(NarrationElementOutput narrationElementOutput) {
+
+    }
+
+    @Override
+    default boolean isActive() {
+        return getData().isActive();
+    }
 }
