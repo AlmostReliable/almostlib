@@ -8,8 +8,6 @@ import net.fabricmc.api.Environment;
 import net.minecraft.client.gui.components.Widget;
 import net.minecraft.resources.ResourceLocation;
 
-import javax.annotation.OverridingMethodsMustInvokeSuper;
-
 /**
  * Implemented by all kinds of widgets holding {@link WidgetData} in
  * order to add convenience functionality.
