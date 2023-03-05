@@ -1,6 +1,6 @@
 package com.almostreliable.almostlib.client.gui.widget;
 
-import com.almostreliable.almostlib.client.rendering.AlmostRendering;
+import com.almostreliable.almostlib.client.rendering.ScissorStack;
 import com.mojang.blaze3d.vertex.PoseStack;
 import net.minecraft.client.gui.components.Widget;
 import net.minecraft.client.gui.components.events.GuiEventListener;
@@ -41,7 +41,7 @@ public class ScaleWidget implements Widget, GuiEventListener, NarratableEntry {
 
     @Override
     public void render(PoseStack poseStack, int mouseX, int mouseY, float delta) {
-        AlmostRendering.setRenderScale(getScale());
+        ScissorStack.setRenderScale(getScale());
         poseStack.pushPose();
         {
             poseStack.translate(widget.getData().getX(), widget.getData().getY(), 0);
@@ -52,7 +52,7 @@ public class ScaleWidget implements Widget, GuiEventListener, NarratableEntry {
             widget.render(poseStack, mouseX, mouseY, delta); // 50 : 40
         }
         poseStack.popPose();
-        AlmostRendering.resetRenderScale();
+        ScissorStack.resetRenderScale();
     }
 
     @Override

@@ -6,6 +6,7 @@ import com.almostreliable.almostlib.client.gui.WidgetData;
 import com.almostreliable.almostlib.client.gui.widget.layout.Layout;
 import com.almostreliable.almostlib.client.gui.widget.layout.Layouts;
 import com.almostreliable.almostlib.client.rendering.AlmostRendering;
+import com.almostreliable.almostlib.client.rendering.ScissorStack;
 import com.almostreliable.almostlib.util.Area;
 import com.mojang.blaze3d.vertex.PoseStack;
 
@@ -45,9 +46,11 @@ public class ScrollableCompositeWidget extends TranslatableCompositeWidget {
             AlmostRendering.fill(poseStack, getScissorArea(), 0x8000_FFFF);
         }
 
-        AlmostRendering.enableScissor(getScissorArea());
+        ScissorStack.push(getScissorArea());
+        ScissorStack.setTranslation(getTranslateX(), getTranslateY());
         super.render(poseStack, mouseX, mouseY, delta);
-        AlmostRendering.endScissor();
+        ScissorStack.resetTranslation();
+        ScissorStack.pop();
 
         if (scrollbar.getData().isVisible()) {
             if (requiresUpdate) {
@@ -95,12 +98,12 @@ public class ScrollableCompositeWidget extends TranslatableCompositeWidget {
     protected void renderScrollbar(PoseStack poseStack, int mouseX, int mouseY, float delta) {}
 
     @Override
-    public double getTranslateX() {
+    public int getTranslateX() {
         return 0;
     }
 
     @Override
-    public double getTranslateY() {
+    public int getTranslateY() {
         return -scrollbar.getValue();
     }
 

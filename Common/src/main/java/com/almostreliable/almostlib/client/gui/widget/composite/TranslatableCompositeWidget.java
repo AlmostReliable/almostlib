@@ -74,7 +74,7 @@ public abstract class TranslatableCompositeWidget extends CompositeWidget {
         return super.mouseScrolled(mouseX, mouseY, value);
     }
 
-    public abstract double getTranslateX();
+    public abstract int getTranslateX();
 
-    public abstract double getTranslateY();
+    public abstract int getTranslateY();
 }

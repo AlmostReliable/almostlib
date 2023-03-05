@@ -34,35 +34,6 @@ public final class AlmostRendering {
         DEBUG = IS_DEBUG ? new Debug() : null;
     }
 
-    /**
-     * Enable scissor test for the given area. This will also apply the current render scale, which can be changed with {@link #setRenderScale(float)}.
-     * <p>
-     * After rendering, {@link #endScissor()} must be called.
-     *
-     * @param area The area to enable scissor for.
-     */
-    public static void enableScissor(Area area) {
-        enableScissor(area.getX(), area.getY(), area.getWidth(), area.getHeight());
-    }
-
-    /**
-     * Enable scissor test for the given position. This will also apply the current render scale, which can be changed with {@link #setRenderScale(float)}.
-     * <p>
-     * After rendering, {@link #endScissor()} must be called.
-     *
-     * @param x      The x position.
-     * @param y      The y position.
-     * @param width  The width.
-     * @param height The height.
-     */
-    public static void enableScissor(int x, int y, int width, int height) {
-        GuiComponent.enableScissor(x, y, (int) (x + width * renderScale), (int) (y + height * renderScale));
-    }
-
-    public static void endScissor() {
-        RenderSystem.disableScissor();
-    }
-
     public static void setRenderScale(float scale) {
         renderScale = scale;
     }
