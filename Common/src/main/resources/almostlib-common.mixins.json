@@ -8,7 +8,8 @@
     "ItemPropertiesAccessor"
   ],
   "client": [
-    "AbstractWidgetAccessor"
+    "AbstractWidgetAccessor",
+    "BufferSourceAccessor"
   ],
   "injectors": {
     "defaultRequire": 1
