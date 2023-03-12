@@ -34,6 +34,7 @@ public final class VanillaWidgetWrapper implements AlmostWidget<WidgetData>, Gui
         return data;
     }
 
+    @SuppressWarnings("MethodDoesntCallSuperMethod")
     @Override
     public void render(PoseStack stack, int mouseX, int mouseY, float delta) {
         widget.render(stack, mouseX, mouseY, delta);

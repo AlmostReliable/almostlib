@@ -8,6 +8,8 @@ import net.fabricmc.api.Environment;
 import net.minecraft.client.gui.components.Widget;
 import net.minecraft.resources.ResourceLocation;
 
+import javax.annotation.OverridingMethodsMustInvokeSuper;
+
 /**
  * Implemented by all kinds of widgets holding {@link WidgetData} in
  * order to add convenience functionality.
@@ -19,6 +21,7 @@ public interface AlmostWidget<T extends WidgetData> extends Widget {
         return new ResourceLocation(namespace, "textures/" + String.join("/", path) + ".png");
     }
 
+    @OverridingMethodsMustInvokeSuper
     @Override
     default void render(PoseStack poseStack, int mouseX, int mouseY, float delta) {
         updateHovered(mouseX, mouseY);
