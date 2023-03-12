@@ -46,6 +46,14 @@ public interface Area {
         return new Simple(x, y, right - x, bottom - y);
     }
 
+    default Area union(Area other) {
+        int x = Math.min(getX(), other.getX());
+        int y = Math.min(getY(), other.getY());
+        int right = Math.max(getRight(), other.getRight());
+        int bottom = Math.max(getBottom(), other.getBottom());
+        return new Simple(x, y, right - x, bottom - y);
+    }
+
     int getX();
 
     int getY();
