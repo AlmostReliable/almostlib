@@ -9,7 +9,8 @@
   ],
   "client": [
     "AbstractWidgetAccessor",
-    "BufferSourceAccessor", "RenderBuffersAccessor", "RenderTypeAccessor"
+    "RenderBuffersAccessor",
+    "RenderTypeAccessor"
   ],
   "injectors": {
     "defaultRequire": 1
