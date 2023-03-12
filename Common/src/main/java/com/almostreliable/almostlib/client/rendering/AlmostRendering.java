@@ -101,6 +101,10 @@ public final class AlmostRendering {
         border(poseStack, area, strength, red, green, blue, alpha);
     }
 
+    public static void innerBorder(PoseStack poseStack, Area area, long color, int strength) {
+        border(poseStack, area.shrink(strength), color, strength);
+    }
+
     public static void debug(String key, Object value) {
         if (DEBUG != null) {
             DEBUG.write(key, value);
