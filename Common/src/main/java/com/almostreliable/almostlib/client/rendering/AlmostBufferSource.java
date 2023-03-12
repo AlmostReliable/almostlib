@@ -14,10 +14,12 @@ import net.minecraft.client.renderer.RenderBuffers;
 import net.minecraft.client.renderer.RenderType;
 
 import java.util.Map;
+import java.util.function.Consumer;
 
 public class AlmostBufferSource extends MultiBufferSource.BufferSource {
 
     public static final AlmostBufferSource INSTANCE = create(Minecraft.getInstance().renderBuffers());
+
     private final Map<RenderType, RenderType> vanillaToAlmostRenderTypes = new Object2ObjectLinkedOpenHashMap<>();
     private float alpha = 1f;
 
@@ -47,6 +49,13 @@ public class AlmostBufferSource extends MultiBufferSource.BufferSource {
     public void renderWithAlpha(float alpha, Runnable runnable) {
         setAlpha(alpha);
         runnable.run();
+        endBatch();
+        resetAlpha();
+    }
+
+    public void renderWithAlpha(float alpha, Consumer<AlmostBufferSource> consumer) {
+        setAlpha(alpha);
+        consumer.accept(this);
         endBatch();
         resetAlpha();
     }
