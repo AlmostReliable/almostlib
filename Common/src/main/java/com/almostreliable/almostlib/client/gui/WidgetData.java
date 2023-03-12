@@ -18,6 +18,10 @@ public interface WidgetData extends Area.Mutable {
         return new Simple(x, y, width, height);
     }
 
+    static WidgetData of(Area area) {
+        return of(area.getX(), area.getY(), area.getWidth(), area.getHeight());
+    }
+
     /**
      * Restore the origin area of the widget.
      */
