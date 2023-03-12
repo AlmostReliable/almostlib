@@ -35,7 +35,7 @@ public interface AlmostGuiEventListener<T extends WidgetData> extends GuiEventLi
      *
      * @param mouseX      The x position of the mouse.
      * @param mouseY      The y position of the mouse.
-     * @param mouseButton The mouse button that was clicked.
+     * @param mouseButton The mouse button that was pressed.
      */
     default void onClick(double mouseX, double mouseY, int mouseButton) {}
 
@@ -59,10 +59,11 @@ public interface AlmostGuiEventListener<T extends WidgetData> extends GuiEventLi
      *
      * @param mouseX The x position of the mouse.
      * @param mouseY The y position of the mouse.
+     * @param mouseButton The mouse button that was pressed.
      * @param dragX  The x direction the mouse has been dragged in.
      * @param dragY  The y direction the mouse has been dragged in.
      */
-    default void onDrag(double mouseX, double mouseY, double dragX, double dragY) {}
+    default void onDrag(double mouseX, double mouseY, int mouseButton, double dragX, double dragY) {}
 
     /**
      * Defines which mouse buttons are valid click buttons for this widget.
@@ -114,7 +115,7 @@ public interface AlmostGuiEventListener<T extends WidgetData> extends GuiEventLi
     @Override
     default boolean mouseDragged(double mouseX, double mouseY, int mouseButton, double dragX, double dragY) {
         if (getData().isActive() && getData().isVisible() && isValidMouseClickButton(mouseButton)) {
-            onDrag(mouseX, mouseY, dragX, dragY);
+            onDrag(mouseX, mouseY, mouseButton, dragX, dragY);
             return true;
         }
         return false;
