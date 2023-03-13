@@ -10,6 +10,14 @@ public interface Area {
         return of(0, 0, width, height);
     }
 
+    static Mutable mutableOf(int x, int y, int width, int height) {
+        return new Mutable.Simple(x, y, width, height);
+    }
+
+    static Mutable mutableOf(int width, int height) {
+        return mutableOf(0, 0, width, height);
+    }
+
     default boolean inVerticalBounds(double v) {
         return getY() <= v && v < getBottom();
     }
@@ -109,6 +117,65 @@ public interface Area {
          * @param height The height of the area.
          */
         void setHeight(int height);
+
+        final class Simple implements Mutable {
+
+            private int x;
+            private int y;
+            private int width;
+            private int height;
+
+            private Simple(int x, int y, int width, int height) {
+                this.x = x;
+                this.y = y;
+                this.width = width;
+                this.height = height;
+            }
+
+            @Override
+            public void setX(int x) {
+                this.x = x;
+            }
+
+            @Override
+            public void setY(int y) {
+                this.y = y;
+            }
+
+            @Override
+            public void setWidth(int width) {
+                this.width = width;
+            }
+
+            @Override
+            public void setHeight(int height) {
+                this.height = height;
+            }
+
+            @Override
+            public int getX() {
+                return x;
+            }
+
+            @Override
+            public int getY() {
+                return y;
+            }
+
+            @Override
+            public int getWidth() {
+                return width;
+            }
+
+            @Override
+            public int getHeight() {
+                return height;
+            }
+
+            public Mutable.Simple copy() {
+                return new Mutable.Simple(getX(), getY(), getWidth(), getHeight());
+            }
+        }
     }
 
     record Simple(int getX, int getY, int getWidth, int getHeight) implements Area {
@@ -120,6 +187,10 @@ public interface Area {
             if (getHeight < 0) {
                 throw new IllegalArgumentException("Height must be positive");
             }
+        }
+
+        public Simple copy() {
+            return new Simple(getX, getY, getWidth, getHeight);
         }
     }
 }
