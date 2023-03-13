@@ -8,12 +8,15 @@ import net.minecraft.client.gui.narration.NarratableEntry;
 import net.minecraft.client.gui.narration.NarrationElementOutput;
 
 /**
- * A wrapper widget to scale the rendering of another widget. The widget will translate the mouse coordinates before passing them to the wrapped widget.
+ * A wrapper widget that contains another widget and allows it to be scaled.
+ * <p>
+ * If the child widget is a {@link GuiEventListener}, it will be notified of mouse events.<br>
+ * The mouse coordinates will be translated before being passed to the child widget.
  */
 public class ScaleWidget implements Widget, GuiEventListener, NarratableEntry {
 
-    private static final GuiEventListener EMPTY_LISTENER = new GuiEventListener() {
-    };
+    private static final GuiEventListener EMPTY_LISTENER = new GuiEventListener() {};
+
     private final AlmostWidget<?> widget;
     private final GuiEventListener listener;
     private float scale = 1.0f;
