@@ -20,6 +20,20 @@ public abstract class AlmostContainerScreen<M extends AbstractContainerMenu> ext
     }
 
     @Override
+    public boolean mouseClicked(double mouseX, double mouseY, int mouseButton) {
+        if (mouseButton == AlmostGuiEventListener.RMB) {
+            for (var listener : children()) {
+                if (listener.mouseClicked(mouseX, mouseY, mouseButton)) {
+                    setFocused(listener);
+                    setDragging(true);
+                    return true;
+                }
+            }
+        }
+        return super.mouseClicked(mouseX, mouseY, mouseButton);
+    }
+
+    @Override
     public boolean mouseDragged(double mouseX, double mouseY, int mouseButton, double dragX, double dragY) {
         return (isDragging() && getFocused() instanceof AlmostGuiEventListener<?> focused &&
                     focused.mouseDragged(mouseX, mouseY, mouseButton, dragX, dragY)) ||
