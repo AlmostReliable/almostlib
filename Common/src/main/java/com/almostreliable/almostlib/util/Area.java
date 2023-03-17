@@ -80,6 +80,14 @@ public interface Area {
      */
     int getHeight();
 
+    default int getCenterX() {
+        return getX() + getWidth() / 2;
+    }
+
+    default int getCenterY() {
+        return getY() + getHeight() / 2;
+    }
+
     default int getRight() {
         return getX() + getWidth();
     }
