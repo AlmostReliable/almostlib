@@ -9,6 +9,7 @@
   ],
   "client": [
     "AbstractWidgetAccessor",
+    "ChatScreenMixin",
     "RenderBuffersAccessor",
     "RenderTypeAccessor"
   ],
