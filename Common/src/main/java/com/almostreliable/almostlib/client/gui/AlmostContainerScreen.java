@@ -35,8 +35,7 @@ public abstract class AlmostContainerScreen<M extends AbstractContainerMenu> ext
 
     @Override
     public boolean mouseDragged(double mouseX, double mouseY, int mouseButton, double dragX, double dragY) {
-        return (isDragging() && getFocused() instanceof AlmostGuiEventListener<?> focused &&
-                    focused.mouseDragged(mouseX, mouseY, mouseButton, dragX, dragY)) ||
+        return (isDragging() && getFocused() != null && getFocused().mouseDragged(mouseX, mouseY, mouseButton, dragX, dragY)) ||
             super.mouseDragged(mouseX, mouseY, mouseButton, dragX, dragY);
     }
 
@@ -44,7 +43,7 @@ public abstract class AlmostContainerScreen<M extends AbstractContainerMenu> ext
     public boolean mouseReleased(double mouseX, double mouseY, int mouseButton) {
         setDragging(false);
         return getChildAt(mouseX, mouseY)
-            .filter(child -> child instanceof AlmostGuiEventListener<?> listener && listener.mouseReleased(mouseX, mouseY, mouseButton))
+            .filter(child -> child.mouseReleased(mouseX, mouseY, mouseButton))
             .isPresent() ||
             super.mouseReleased(mouseX, mouseY, mouseButton);
     }
