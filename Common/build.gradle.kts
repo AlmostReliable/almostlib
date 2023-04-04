@@ -26,6 +26,9 @@ dependencies {
      * do NOT use other classes from the Fabric loader
      */
     modImplementation("net.fabricmc:fabric-loader:$fabricLoaderVersion")
+
+    implementation("com.electronwill.night-config:toml:3.6.0")
+    include("com.electronwill.night-config:toml:3.6.0")
 }
 
 buildConfig {
