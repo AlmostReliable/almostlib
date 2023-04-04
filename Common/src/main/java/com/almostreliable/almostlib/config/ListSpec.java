@@ -1,17 +1,27 @@
 package com.almostreliable.almostlib.config;
 
+import javax.annotation.Nullable;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.function.Function;
+import java.util.function.Supplier;
 
 public class ListSpec<T> extends ValueSpec<List<T>> {
 
-    private static final int NO_LIMIT = -1;
-    private int limit = NO_LIMIT;
+    private static final int DEACTIVATED = -1;
+    private int limit = DEACTIVATED;
+    private int forceLength = DEACTIVATED;
+    @Nullable private Supplier<T> forceLengthFillValue;
 
     protected ListSpec(ConfigBuilder owner, List<String> path, List<T> defaultValue, Class<T> elementType, Function<Object, T> rawElementConverter) {
         super(owner, path, defaultValue, o -> Conversions.toList(o, elementType, rawElementConverter));
+    }
+
+    public ListSpec<T> forceLength(int length, Supplier<T> defaultFillValue) {
+        forceLength = length;
+        forceLengthFillValue = defaultFillValue;
+        return this;
     }
 
     public ListSpec<T> limit(int limit) {
@@ -23,7 +33,14 @@ public class ListSpec<T> extends ValueSpec<List<T>> {
     protected List<T> convertValue(Object rawValue) {
         List<T> value = super.convertValue(rawValue);
 
-        if (limit != NO_LIMIT && value.size() > limit) {
+        if (forceLength != DEACTIVATED && value.size() < forceLength && forceLengthFillValue != null) {
+            owner.markDirty();
+            while (value.size() < forceLength) {
+                value.add(forceLengthFillValue.get());
+            }
+        }
+
+        if (limit != DEACTIVATED && value.size() > limit) {
             owner.markDirty();
             return value.subList(0, limit);
         }
