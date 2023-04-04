@@ -1,6 +1,11 @@
 package com.almostreliable.almostlib.config;
 
+import com.almostreliable.almostlib.AlmostLib;
+
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Locale;
+import java.util.function.Function;
 
 public class Conversions {
 
@@ -34,5 +39,22 @@ public class Conversions {
         }
 
         throw new RuntimeException("Could not convert " + o + " to enum " + enumType.getSimpleName());
+    }
+
+    public static <T> List<T> toList(Object o, Class<T> type, Function<Object, T> converter) {
+        if (!(o instanceof List<?> list)) {
+            throw new RuntimeException("Could not convert " + o + " to list");
+        }
+
+        List<T> result = new ArrayList<>();
+        for (Object element : list) {
+            try {
+                result.add(converter.apply(element));
+            } catch (Exception e) {
+                AlmostLib.LOGGER.warn("Could not convert " + element + " to " + type + ". Will be skipped.");
+            }
+        }
+
+        return result;
     }
 }

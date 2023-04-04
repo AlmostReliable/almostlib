@@ -5,6 +5,7 @@ import com.electronwill.nightconfig.core.CommentedConfig;
 import com.electronwill.nightconfig.core.file.FileNotFoundAction;
 import com.electronwill.nightconfig.core.io.IndentStyle;
 import com.electronwill.nightconfig.core.io.NewlineStyle;
+import com.electronwill.nightconfig.core.io.ParsingMode;
 import com.electronwill.nightconfig.core.io.WritingMode;
 import com.electronwill.nightconfig.toml.TomlParser;
 import com.electronwill.nightconfig.toml.TomlWriter;
@@ -49,9 +50,15 @@ public class Config<T> implements Supplier<T> {
             return new ConfigBuilder();
         }
 
-        TomlParser parser = new TomlParser();
-        CommentedConfig config = parser.parse(file, FileNotFoundAction.READ_NOTHING);
-        return new ConfigBuilder(config);
+        try {
+            TomlParser parser = new TomlParser();
+            CommentedConfig config = ConfigBuilder.defaultConfig();
+            parser.parse(file, config, ParsingMode.REPLACE, FileNotFoundAction.READ_NOTHING);
+            return new ConfigBuilder(config);
+        } catch (Exception e) {
+            AlmostLib.LOGGER.error("Failed to load config file", e);
+            return new ConfigBuilder();
+        }
     }
 
     private T read() {

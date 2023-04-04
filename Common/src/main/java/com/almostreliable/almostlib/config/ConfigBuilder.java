@@ -2,13 +2,12 @@ package com.almostreliable.almostlib.config;
 
 import com.electronwill.nightconfig.core.CommentedConfig;
 import com.electronwill.nightconfig.core.UnmodifiableConfig;
+import com.electronwill.nightconfig.toml.TomlFormat;
 
 import javax.annotation.Nullable;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.function.Function;
 import java.util.stream.Collectors;
 
 public class ConfigBuilder {
@@ -17,8 +16,12 @@ public class ConfigBuilder {
     private final List<String> path;
     private final AtomicBoolean requiresSave;
 
+    static CommentedConfig defaultConfig() {
+        return CommentedConfig.of(() -> Collections.synchronizedMap(new LinkedHashMap<>()), TomlFormat.instance());
+    }
+
     ConfigBuilder() {
-        this.config = CommentedConfig.inMemoryConcurrent();
+        this.config = defaultConfig();
         this.requiresSave = new AtomicBoolean(true);
         this.path = List.of();
     }
@@ -115,6 +118,42 @@ public class ConfigBuilder {
         var spec = new ValueSpec<>(this, createPath(name), defaultValue, o -> Conversions.toEnum(o, enumType));
         spec.possibleValues((Object[]) enumType.getEnumConstants());
         return spec;
+    }
+
+    public <T> ListSpec<T> listValue(String name, Class<T> type, List<T> defaultValue, Function<Object, T> elementConverter) {
+        return new ListSpec<>(this, createPath(name), defaultValue, type, elementConverter);
+    }
+
+    public ListSpec<Integer> intListValue(String name, List<Integer> defaultValue) {
+        return listValue(name, Integer.class, defaultValue, Conversions::toInt);
+    }
+
+    public ListSpec<Integer> intListValue(String name) {
+        return intListValue(name, List.of());
+    }
+
+    public ListSpec<Long> longListValue(String name, List<Long> defaultValue) {
+        return listValue(name, Long.class, defaultValue, Conversions::toLong);
+    }
+
+    public ListSpec<Long> longListValue(String name) {
+        return longListValue(name, List.of());
+    }
+
+    public ListSpec<Float> floatListValue(String name, List<Float> defaultValue) {
+        return listValue(name, Float.class, defaultValue, Conversions::toFloat);
+    }
+
+    public ListSpec<Float> floatListValue(String name) {
+        return floatListValue(name, List.of());
+    }
+
+    public ListSpec<Double> doubleListValue(String name, List<Double> defaultValue) {
+        return listValue(name, Double.class, defaultValue, Conversions::toDouble);
+    }
+
+    public ListSpec<Double> doubleListValue(String name) {
+        return doubleListValue(name, List.of());
     }
 
     public ConfigBuilder category(String name, String comment) {

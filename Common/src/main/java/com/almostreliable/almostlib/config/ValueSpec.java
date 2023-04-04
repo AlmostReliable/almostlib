@@ -12,11 +12,11 @@ public class ValueSpec<T> {
     protected final List<String> path;
     protected final T defaultValue;
     protected final Function<Object, T> rawValueConverter;
-    private final ConfigBuilder owner;
+    protected final ConfigBuilder owner;
     @Nullable private String comment;
     @Nullable private String valueComment;
 
-    ValueSpec(ConfigBuilder owner, List<String> path, T defaultValue, Function<Object, T> rawValueConverter) {
+    protected ValueSpec(ConfigBuilder owner, List<String> path, T defaultValue, Function<Object, T> rawValueConverter) {
         this.owner = owner;
         this.path = path;
         this.defaultValue = defaultValue;
@@ -42,7 +42,7 @@ public class ValueSpec<T> {
      *
      * @return the raw value from the config
      */
-    T convertValue(Object rawValue) {
+    protected T convertValue(Object rawValue) {
         return rawValueConverter.apply(rawValue);
     }
 
@@ -69,7 +69,7 @@ public class ValueSpec<T> {
         }
     }
 
-    void onRead() {
+    protected void onRead() {
         String c = comment == null ? "" : comment;
         if (valueComment != null) {
             c += "\n" + valueComment;

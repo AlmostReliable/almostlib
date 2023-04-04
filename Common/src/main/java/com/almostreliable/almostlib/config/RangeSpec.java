@@ -30,16 +30,16 @@ public class RangeSpec<T extends Comparable<T>> extends ValueSpec<T> {
     }
 
     @Override
-    T convertValue(Object rawValue) {
-        T value = rawValueConverter.apply(rawValue);
+    protected T convertValue(Object rawValue) {
+        T value = super.convertValue(rawValue);
 
         if (minValue != null && value.compareTo(minValue) < 0) {
-            // TODO config save state = true
+            owner.markDirty();
             return minValue;
         }
 
         if (maxValue != null && value.compareTo(maxValue) > 0) {
-            // TODO config save state = true
+            owner.markDirty();
             return maxValue;
         }
 
