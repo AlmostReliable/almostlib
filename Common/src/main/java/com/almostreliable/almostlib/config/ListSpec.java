@@ -1,6 +1,8 @@
 package com.almostreliable.almostlib.config;
 
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 import java.util.function.Function;
 
 public class ListSpec<T> extends ValueSpec<List<T>> {
@@ -27,5 +29,14 @@ public class ListSpec<T> extends ValueSpec<List<T>> {
         }
 
         return value;
+    }
+
+    /**
+     * Read the config value as a set instead of a list. This will preserve order in the config file, but not in the result set.
+     *
+     * @return the config value as a set
+     */
+    public Set<T> readAsSet() {
+        return new HashSet<>(read());
     }
 }
