@@ -63,12 +63,12 @@ public class SideConfiguration implements DataHandler {
 
     public void reset() {
         for (var direction : Direction.values()) {
-            config.put(direction, Setting.OFF);
+            reset(direction);
         }
     }
 
     public void reset(Direction direction) {
-        config.put(direction, Setting.OFF);
+        set(direction, Setting.OFF);
     }
 
     public void reset(BlockSide side) {
