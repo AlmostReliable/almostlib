@@ -75,12 +75,20 @@ public class SideConfiguration implements DataHandler {
         reset(getDirectionFromSide(side));
     }
 
-    public void toggle(Direction direction) {
+    public void cycleNext(Direction direction) {
         set(direction, getNextSetting(get(direction)));
     }
 
-    public void toggle(BlockSide side) {
-        toggle(getDirectionFromSide(side));
+    public void cycleNext(BlockSide side) {
+        cycleNext(getDirectionFromSide(side));
+    }
+
+    public void cyclePrevious(Direction direction) {
+        set(direction, getPreviousSetting(get(direction)));
+    }
+
+    public void cyclePrevious(BlockSide side) {
+        cyclePrevious(getDirectionFromSide(side));
     }
 
     public Setting get(Direction direction) {
