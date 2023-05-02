@@ -8,6 +8,7 @@ import com.almostreliable.almostlib.client.gui.widget.VanillaWidgetWrapper;
 import com.almostreliable.almostlib.client.gui.widget.layout.Layout;
 import com.almostreliable.almostlib.client.gui.widget.layout.Layouts;
 import com.almostreliable.almostlib.client.rendering.AlmostRendering;
+import com.almostreliable.almostlib.util.Area;
 import com.mojang.blaze3d.vertex.PoseStack;
 import net.minecraft.client.gui.components.AbstractWidget;
 import net.minecraft.client.gui.components.events.ContainerEventHandler;
@@ -41,6 +42,10 @@ public class CompositeWidget implements ContainerEventHandler, NarratableEntry, 
 
     public CompositeWidget(int x, int y, int width, int height) {
         this.data = WidgetData.of(x, y, width, height);
+    }
+
+    public CompositeWidget(Area area) {
+        this.data = WidgetData.of(area);
     }
 
     @Override

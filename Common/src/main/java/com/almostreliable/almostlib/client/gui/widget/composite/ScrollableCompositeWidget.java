@@ -27,16 +27,28 @@ public class ScrollableCompositeWidget extends TranslatableCompositeWidget {
     @Nullable private Area scissorArea;
     @Nullable private Padding scissorsPadding;
 
-    public ScrollableCompositeWidget(int x, int y, int width, int height) {
-        this(x, y, width, height, Padding.of(0));
-    }
-
     public ScrollableCompositeWidget(int x, int y, int width, int height, Padding contentPadding) {
         super(x, y, width, height);
         this.data = WidgetData.of(x, y, width, height);
         this.scrollbar = createScrollbar();
         setPadding(contentPadding);
         setLayout(Layouts.VERTICAL_STACK);
+    }
+
+    public ScrollableCompositeWidget(int x, int y, int width, int height) {
+        this(x, y, width, height, Padding.of(0));
+    }
+
+    public ScrollableCompositeWidget(Area area, Padding contentPadding) {
+        super(area);
+        this.data = WidgetData.of(area);
+        this.scrollbar = createScrollbar();
+        setPadding(contentPadding);
+        setLayout(Layouts.VERTICAL_STACK);
+    }
+
+    public ScrollableCompositeWidget(Area area) {
+        this(area, Padding.of(0));
     }
 
     @Override

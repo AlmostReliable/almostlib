@@ -1,5 +1,6 @@
 package com.almostreliable.almostlib.client.gui.widget.composite;
 
+import com.almostreliable.almostlib.util.Area;
 import com.mojang.blaze3d.vertex.PoseStack;
 
 /**
@@ -12,6 +13,10 @@ public abstract class TranslatableCompositeWidget extends CompositeWidget {
 
     public TranslatableCompositeWidget(int x, int y, int width, int height) {
         super(x, y, width, height);
+    }
+
+    public TranslatableCompositeWidget(Area area) {
+        super(area);
     }
 
     public double calcMouseXTranslation(double mouseX) {

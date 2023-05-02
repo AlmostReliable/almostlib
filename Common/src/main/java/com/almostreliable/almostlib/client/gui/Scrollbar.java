@@ -49,6 +49,10 @@ public class Scrollbar implements GuiEventListener {
         this.data = WidgetData.of(x, y, width, height);
     }
 
+    public Scrollbar(Area area) {
+        this.data = WidgetData.of(area);
+    }
+
     public void updateHovered(int mouseX, int mouseY) {
         hoveredSlider = isMouseOverSlider(mouseX, mouseY);
         getData().setHovered(isMouseOver(mouseX, mouseY));
