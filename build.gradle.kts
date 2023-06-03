@@ -24,10 +24,10 @@ val manifoldVersion: String by project
 plugins {
     java
     `maven-publish`
-    id("architectury-plugin") version ("3.4-SNAPSHOT")
-    id("io.github.juuxel.loom-quiltflower") version "1.8.0" apply false
-    id("dev.architectury.loom") version ("1.0.302") apply false
-    id("com.github.johnrengelman.shadow") version "7.1.2" apply false
+    id("architectury-plugin") version ("3.4.+")
+    id("io.github.juuxel.loom-quiltflower") version "1.10.0" apply false
+    id("dev.architectury.loom") version ("1.2.+") apply false
+    id("com.github.johnrengelman.shadow") version "8.1.1" apply false
 }
 
 architectury {
@@ -71,7 +71,7 @@ subprojects {
     apply(plugin = "maven-publish")
     apply(plugin = "io.github.juuxel.loom-quiltflower")
 
-    base.archivesName.set("$modId-${project.name.toLowerCase()}")
+    base.archivesName.set("$modId-${project.name.lowercase()}")
     version = "$minecraftVersion-$modVersion"
 
     val loom = project.extensions.getByName<LoomGradleExtensionAPI>("loom")
@@ -92,12 +92,12 @@ subprojects {
          */
         fileTree("$extraModsPrefix-$minecraftVersion") { include("**/*.jar") }
             .forEach { f ->
-                val sepIndex = f.nameWithoutExtension.lastIndexOf('-');
+                val sepIndex = f.nameWithoutExtension.lastIndexOf('-')
                 if (sepIndex == -1) {
                     throw IllegalArgumentException("Invalid mod name: '${f.nameWithoutExtension}'. Expected format: 'modName-version.jar'")
                 }
-                val mod = f.nameWithoutExtension.substring(0, sepIndex);
-                val version = f.nameWithoutExtension.substring(sepIndex + 1);
+                val mod = f.nameWithoutExtension.substring(0, sepIndex)
+                val version = f.nameWithoutExtension.substring(sepIndex + 1)
                 println("Extra mod ${f.nameWithoutExtension} detected.")
                 "modLocalRuntime"("extra-mods:$mod:$version")
             }
@@ -121,7 +121,7 @@ subprojects {
      */
     publishing {
         publications {
-            val mpm = project.properties["maven-publish-method"] as String;
+            val mpm = project.properties["maven-publish-method"] as String
             println("[Publish Task] Publishing method for project '${project.name}: $mpm")
             register(mpm, MavenPublication::class) {
                 artifactId = base.archivesName.get()
@@ -201,7 +201,7 @@ subprojects {
 
     extensions.configure<LoomGradleExtensionAPI> {
         runs {
-            forEach { it ->
+            forEach {
                 it.runDir(if (sharedRunDir.toBoolean()) "../run" else "run")
                 // Allows DCEVM hot-swapping when using the JetBrains Runtime (https://github.com/JetBrains/JetBrainsRuntime).
                 it.vmArgs("-XX:+IgnoreUnrecognizedVMOptions", "-XX:+AllowEnhancedClassRedefinition")
@@ -240,7 +240,6 @@ subprojects {
         named<RemapJarTask>("remapJar") {
             inputFile.set(named<ShadowJar>("shadowJar").get().archiveFile)
             dependsOn("shadowJar")
-            classifier = null
         }
 
         named<Jar>("jar") {

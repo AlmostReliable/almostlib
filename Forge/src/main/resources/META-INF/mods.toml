@@ -10,14 +10,14 @@ displayName = "${modName}"
 authors = "${modAuthor}"
 description = '''${modDescription}'''
 
-[[dependencies.${modId}]]
+[[dependencies."${modId}"]]
 modId = "forge"
 mandatory = true
 versionRange = "[${forgeVersion},)"
 ordering = "NONE"
 side = "BOTH"
 
-[[dependencies.${modId}]]
+[[dependencies."${modId}"]]
 modId = "minecraft"
 mandatory = true
 versionRange = "[${minecraftVersion},)"
