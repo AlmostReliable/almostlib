@@ -111,11 +111,6 @@ subprojects {
         annotationProcessor("systems.manifold:manifold-ext:$manifoldVersion")
     }
 
-    tasks {
-        named<Task>("publishToMavenLocal") {
-            version = "$version.${System.currentTimeMillis() / 1000}"
-        }
-    }
     /**
      * Maven publishing
      */
@@ -185,6 +180,14 @@ subprojects {
             manifest {
                 attributes["Contains-Sources"] = "java,class"
             }
+        }
+
+        /**
+         * When publishing to Maven Local, use a timestamp as version so projects can always
+         * use the latest version without having to use a dummy version.
+         */
+        named<Task>("publishToMavenLocal") {
+            version = "$version.${System.currentTimeMillis() / 1000}"
         }
     }
 }
