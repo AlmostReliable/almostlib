@@ -19,6 +19,7 @@ val githubRepo: String by project
 val githubUser: String by project
 val sharedRunDir: String by project
 val autoServiceVersion: String by project
+val parchmentVersion: String by project
 val manifoldVersion: String by project
 
 plugins {
@@ -44,6 +45,7 @@ allprojects {
     repositories {
         mavenLocal()
         mavenCentral()
+        maven("https://maven.parchmentmc.org") // Parchment
         maven("https://oss.sonatype.org/content/repositories/snapshots/") // Manifold
         flatDir {
             name = extraModsPrefix
@@ -85,7 +87,10 @@ subprojects {
          * Kotlin accessor methods are not generated in this gradle, they can be accessed through quoted names.
          */
         "minecraft"("com.mojang:minecraft:$minecraftVersion")
-        "mappings"(loom.officialMojangMappings())
+        "mappings"(loom.layered {
+            officialMojangMappings()
+            parchment("org.parchmentmc.data:parchment-$minecraftVersion:$parchmentVersion@zip")
+        })
 
         /**
          * Helps to load mods in development through an extra directory. Sadly this does not support transitive dependencies. :-(
