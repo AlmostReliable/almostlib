@@ -1,3 +1,5 @@
+import net.fabricmc.loom.task.RemapJarTask
+
 val minecraftVersion: String by project
 val fabricLoaderVersion: String by project
 val fabricApiVersion: String by project
@@ -26,4 +28,11 @@ dependencies {
 
     common(project(":Common", "namedElements")) { isTransitive = false }
     shadowCommon(project(":Common", "transformProductionFabric")) { isTransitive = false }
+}
+
+tasks {
+    // allow discovery of AWs from dependencies
+    named<RemapJarTask>("remapJar") {
+        injectAccessWidener.set(true)
+    }
 }
