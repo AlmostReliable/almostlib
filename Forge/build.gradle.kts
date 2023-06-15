@@ -29,8 +29,10 @@ loom {
 val common by configurations
 val shadowCommon by configurations
 dependencies {
+    // loader
     forge("net.minecraftforge:forge:$minecraftVersion-$forgeVersion")
 
+    // common module
     common(project(":Common", "namedElements")) { isTransitive = false }
     shadowCommon(project(":Common", "transformProductionForge")) { isTransitive = false }
 }

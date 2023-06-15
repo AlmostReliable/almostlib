@@ -23,9 +23,11 @@ loom {
 val common by configurations
 val shadowCommon by configurations
 dependencies {
+    // loader
     modImplementation("net.fabricmc:fabric-loader:$fabricLoaderVersion")
     modApi("net.fabricmc.fabric-api:fabric-api:$fabricApiVersion+$minecraftVersion")
 
+    // common module
     common(project(":Common", "namedElements")) { isTransitive = false }
     shadowCommon(project(":Common", "transformProductionFabric")) { isTransitive = false }
 }

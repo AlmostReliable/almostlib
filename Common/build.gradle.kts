@@ -1,3 +1,5 @@
+import org.cadixdev.mercury.shadow.org.eclipse.jdt.internal.core.util.Util.packageName
+
 val enabledPlatforms: String by project
 val fabricLoaderVersion: String by project
 val modId: String by project
@@ -20,7 +22,8 @@ loom {
 }
 
 dependencies {
-    // The Fabric loader is required here to use the @Environment annotations and to get the mixin dependencies.
+    // loader
+    // required here for the @Environment annotations and the mixin dependencies
     // Do NOT use other classes from the Fabric loader!
     modImplementation("net.fabricmc:fabric-loader:$fabricLoaderVersion")
 }
@@ -30,4 +33,5 @@ buildConfig {
     buildConfigField("String", "MOD_NAME", "\"$modName\"")
     buildConfigField("String", "MOD_VERSION", "\"$version\"")
     packageName(modPackage)
+    useJavaOutput()
 }
