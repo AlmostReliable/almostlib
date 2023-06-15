@@ -1,6 +1,5 @@
 {
   "required": true,
-  "minVersion": "0.8.5",
   "package": "com.almostreliable.almostlib.mixin",
   "compatibilityLevel": "JAVA_17",
   "mixins": [

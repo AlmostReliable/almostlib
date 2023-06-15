@@ -3,6 +3,7 @@ import net.fabricmc.loom.task.RemapJarTask
 val minecraftVersion: String by project
 val fabricLoaderVersion: String by project
 val fabricApiVersion: String by project
+val teamRebornEnergyApiVersion: String by project
 
 plugins {
     id("com.github.johnrengelman.shadow") version ("8.1.1")
@@ -31,6 +32,11 @@ dependencies {
     common(project(":Common", "namedElements")) { isTransitive = false }
     shadowCommon(project(":Common", "transformProductionFabric")) { isTransitive = false }
     testImplementation(project(":Common", "namedElements"))
+
+//    // Team Reborn Energy API.
+//    modApi("teamreborn:energy:$teamRebornEnergyApiVersion") {
+//        exclude(group = "net.fabricmc", module = "fabric-api")
+//    }
 }
 
 tasks {

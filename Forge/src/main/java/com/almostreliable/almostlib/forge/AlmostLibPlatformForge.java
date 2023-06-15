@@ -124,20 +124,20 @@ public class AlmostLibPlatformForge implements AlmostLibPlatform {
     @Override
     public <T> void initRegistration(Registration<T, ?> registration) {
         FMLJavaModLoadingContext
-                .get()
-                .getModEventBus()
-                .addListener((RegisterEvent event) -> {
-                    if (!registration.getRegistry().key().equals(event.getRegistryKey())) {
-                        return;
-                    }
+            .get()
+            .getModEventBus()
+            .addListener((RegisterEvent event) -> {
+                if (!registration.getRegistry().key().equals(event.getRegistryKey())) {
+                    return;
+                }
 
-                    BiConsumer<ResourceLocation, Object> registerConsumer = createRegisterConsumer(event.getForgeRegistry(),
-                        event.getVanillaRegistry());
-                    if (registerConsumer == null) {
-                        throw new IllegalArgumentException("Neither forge registry nor vanilla registry is present");
-                    }
-                    registration.applyRegister(registerConsumer::accept);
-                });
+                BiConsumer<ResourceLocation, Object> registerConsumer = createRegisterConsumer(event.getForgeRegistry(),
+                    event.getVanillaRegistry());
+                if (registerConsumer == null) {
+                    throw new IllegalArgumentException("Neither forge registry nor vanilla registry is present");
+                }
+                registration.applyRegister(registerConsumer::accept);
+            });
     }
 
     @Nullable
