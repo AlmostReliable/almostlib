@@ -1,12 +1,17 @@
 package com.almostreliable.almostlib.forge.component;
 
 import com.almostreliable.almostlib.component.ItemContainerAdapter;
+import com.almostreliable.almostlib.component.ItemView;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraftforge.items.IItemHandler;
 import net.minecraftforge.items.IItemHandlerModifiable;
 import net.minecraftforge.items.ItemHandlerHelper;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.Iterator;
+import java.util.NoSuchElementException;
 
 public class ItemContainerAdapterImpl implements ItemContainerAdapter {
 
@@ -100,7 +105,7 @@ public class ItemContainerAdapterImpl implements ItemContainerAdapter {
     }
 
     @Override
-    public Iterator<ItemStack> iterator() {
+    public Iterator<ItemView> iterator() {
         return new Iterator<>() {
             int index = 0;
 
@@ -110,11 +115,78 @@ public class ItemContainerAdapterImpl implements ItemContainerAdapter {
             }
 
             @Override
-            public ItemStack next() {
-                ItemStack next = itemHandler.getStackInSlot(index);
+            public ItemView next() {
+                if (!hasNext()) {
+                    throw new NoSuchElementException();
+                }
+
+                ItemView view = new ForgeItemView(itemHandler, index);
                 index++;
-                return next;
+                return view;
             }
         };
+    }
+
+    private record ForgeItemView(IItemHandler handler, int slot) implements ItemView {
+
+        @Override
+        public Item getItem() {
+            return handler.getStackInSlot(slot).getItem();
+        }
+
+        @Override
+        public long getAmount() {
+            return handler.getStackInSlot(slot).getCount();
+        }
+
+        @Nullable
+        @Override
+        public CompoundTag getNbt() {
+            return handler.getStackInSlot(slot).getTag();
+        }
+
+        @Override
+        public void clear() {
+            if (handler instanceof IItemHandlerModifiable m) {
+                m.setStackInSlot(slot, ItemStack.EMPTY);
+            } else {
+                handler.extractItem(slot, Integer.MAX_VALUE, false);
+            }
+        }
+
+        @Override
+        public boolean canInsert() {
+            return true;
+        }
+
+        @Override
+        public boolean canExtract() {
+            return true;
+        }
+
+        @Override
+        public long extract(long amount, boolean simulate) {
+            ItemStack extractItem = handler.extractItem(slot, (int) amount, simulate);
+            if (extractItem.isEmpty()) {
+                return 0;
+            }
+
+            return extractItem.getCount();
+        }
+
+        @Override
+        public long insert(ItemStack item, long amount, boolean simulate) {
+            ItemStack itemStack = handler.insertItem(slot, item, simulate);
+            if (itemStack.isEmpty()) {
+                return 0;
+            }
+
+            return itemStack.getCount();
+        }
+
+        @Override
+        public long insert(long amount, boolean simulate) {
+            return insert(handler.getStackInSlot(slot), amount, simulate);
+        }
     }
 }

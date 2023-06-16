@@ -7,8 +7,10 @@ import com.almostreliable.almostlib.util.Tickable;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.Registry;
+import net.minecraft.tags.ItemTags;
 import net.minecraft.world.Container;
 import net.minecraft.world.item.Item;
+import net.minecraft.world.item.Items;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
@@ -51,18 +53,45 @@ public class CoalGenerator extends BlockEntity implements ComponentHolder, Ticka
         BlockPos upperPos = getBlockPos().relative(Direction.UP);
         ItemContainerAdapter itemContainer = Services.COMPONENTS.findItemContainer(level, upperPos);
         if (itemContainer != null) {
-//            Registry.ITEM.getRandom(level.random).ifPresent(holder -> {
-//                Item item = holder.value();
-//                itemContainer.insert(item.getDefaultInstance(), 2, false);
-//            });
 
-            if (foo > 5) {
-                itemContainer.clear();
+            Registry.ITEM.getRandom(level.random).ifPresent(holder -> {
+                Item item = holder.value();
+                if (item == Items.AIR || item == Items.COAL) {
+                    return;
+                }
+
+                itemContainer.insert(item.getDefaultInstance(), 2, false);
+            });
+
+
+            //            if(killIfNeeded(itemContainer)) {
+            ////                itemContainer.clear();
+            //            }
+
+            if (foo > 10) {
+                killIfNeeded(itemContainer);
+                //                itemContainer.clear();
                 foo = 0;
+            }
+
+            for (ItemView view : itemContainer) {
+                if (view.getItem() == Items.COAL) {
+                    itemContainer.clear();
+                    break;
+                }
             }
         }
     }
 
+    public boolean killIfNeeded(ItemContainerAdapter itemContainer) {
+        for (ItemView view : itemContainer) {
+            view.extract(32, false);
+            if (view.getItem().builtInRegistryHolder().is(ItemTags.STAIRS)) {
+            }
+        }
+
+        return false;
+    }
 
     public Container getItemContainer(@Nullable Direction side) {
         return null;
