@@ -5,11 +5,11 @@ import net.fabricmc.fabric.api.transfer.v1.transaction.Transaction;
 import team.reborn.energy.api.EnergyStorage;
 
 @SuppressWarnings("UnstableApiUsage")
-public class EnergyContainerAdapterImpl implements EnergyContainer {
+public class EnergyStorageWrapper implements EnergyContainer {
 
     private final EnergyStorage storage;
 
-    public EnergyContainerAdapterImpl(EnergyStorage storage) {
+    public EnergyStorageWrapper(EnergyStorage storage) {
         this.storage = storage;
     }
 

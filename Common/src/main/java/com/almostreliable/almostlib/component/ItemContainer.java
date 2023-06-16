@@ -2,7 +2,7 @@ package com.almostreliable.almostlib.component;
 
 import net.minecraft.world.item.ItemStack;
 
-public interface ItemContainerAdapter extends Iterable<ItemView> {
+public interface ItemContainer extends Iterable<ItemView> {
 
     boolean contains(ItemStack stack);
 

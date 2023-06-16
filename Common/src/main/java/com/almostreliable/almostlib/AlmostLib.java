@@ -1,6 +1,5 @@
 package com.almostreliable.almostlib;
 
-import com.almostreliable.almostlib.component.CoalGenerator;
 import com.almostreliable.almostlib.menu.network.ClientActionHandler;
 import com.almostreliable.almostlib.menu.network.synchronizer.MenuSyncHandler;
 import com.almostreliable.almostlib.network.NetworkHandler;

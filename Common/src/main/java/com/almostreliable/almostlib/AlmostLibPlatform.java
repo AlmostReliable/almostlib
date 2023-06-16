@@ -1,11 +1,9 @@
 package com.almostreliable.almostlib;
 
 import com.almostreliable.almostlib.client.MenuFactory;
-import com.almostreliable.almostlib.component.ItemContainerAdapter;
 import com.almostreliable.almostlib.network.NetworkHandler;
 import com.almostreliable.almostlib.registry.Registration;
 import net.minecraft.core.BlockPos;
-import net.minecraft.core.Direction;
 import net.minecraft.core.Registry;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.resources.ResourceKey;
@@ -26,7 +24,6 @@ import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
-import org.jetbrains.annotations.Nullable;
 
 import java.nio.file.Path;
 import java.util.function.BiFunction;

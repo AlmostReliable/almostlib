@@ -37,7 +37,7 @@ public class RebornEnergyCompatImpl implements RebornEnergyCompat {
 
         var storage = EnergyStorage.SIDED.find(blockEntity.getLevel(), blockEntity.getBlockPos(), blockEntity.getBlockState(), blockEntity, direction);
         if (storage != null) {
-            return new EnergyContainerAdapterImpl(storage);
+            return new EnergyStorageWrapper(storage);
         }
 
         return null;
@@ -48,7 +48,7 @@ public class RebornEnergyCompatImpl implements RebornEnergyCompat {
     public EnergyContainer find(Level world, BlockPos pos, @Nullable Direction direction) {
         var storage = EnergyStorage.SIDED.find(world, pos, world.getBlockState(pos), null, direction);
         if (storage != null) {
-            return new EnergyContainerAdapterImpl(storage);
+            return new EnergyStorageWrapper(storage);
         }
 
         return null;

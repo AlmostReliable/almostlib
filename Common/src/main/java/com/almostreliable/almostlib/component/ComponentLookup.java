@@ -10,20 +10,20 @@ import javax.annotation.Nullable;
 public interface ComponentLookup {
 
     @Nullable
-    default ItemContainerAdapter findItemContainer(BlockEntity blockEntity) {
+    default ItemContainer findItemContainer(BlockEntity blockEntity) {
         return findItemContainer(blockEntity, null);
     }
 
     @Nullable
-    ItemContainerAdapter findItemContainer(BlockEntity blockEntity, @Nullable Direction direction);
+    ItemContainer findItemContainer(BlockEntity blockEntity, @Nullable Direction direction);
 
     @Nullable
-    default ItemContainerAdapter findItemContainer(Level world, BlockPos pos) {
+    default ItemContainer findItemContainer(Level world, BlockPos pos) {
         return findItemContainer(world, pos, null);
     }
 
     @Nullable
-    ItemContainerAdapter findItemContainer(Level world, BlockPos pos, @Nullable Direction direction);
+    ItemContainer findItemContainer(Level world, BlockPos pos, @Nullable Direction direction);
 
     @Nullable
     default EnergyContainer findEnergyContainer(BlockEntity blockEntity) {

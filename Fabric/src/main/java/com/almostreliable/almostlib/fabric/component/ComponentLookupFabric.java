@@ -2,9 +2,8 @@ package com.almostreliable.almostlib.fabric.component;
 
 import com.almostreliable.almostlib.component.ComponentLookup;
 import com.almostreliable.almostlib.component.EnergyContainer;
-import com.almostreliable.almostlib.component.ItemContainerAdapter;
+import com.almostreliable.almostlib.component.ItemContainer;
 import com.almostreliable.almostlib.fabric.compat.energy.RebornEnergyCompat;
-import com.almostreliable.almostlib.fabric.component.ItemContainerAdapterImpl;
 import com.google.auto.service.AutoService;
 import net.fabricmc.fabric.api.transfer.v1.item.ItemStorage;
 import net.fabricmc.fabric.api.transfer.v1.item.ItemVariant;
@@ -22,14 +21,14 @@ public class ComponentLookupFabric implements ComponentLookup {
 
     @Nullable
     @Override
-    public ItemContainerAdapter findItemContainer(BlockEntity blockEntity, @Nullable Direction direction) {
+    public ItemContainer findItemContainer(BlockEntity blockEntity, @Nullable Direction direction) {
         if (blockEntity.getLevel() == null) {
             return null;
         }
 
         Storage<ItemVariant> storage = ItemStorage.SIDED.find(blockEntity.getLevel(), blockEntity.getBlockPos(), blockEntity.getBlockState(), blockEntity, direction);
         if (storage != null) {
-            return new ItemContainerAdapterImpl(storage);
+            return new ItemStorageWrapper(storage);
         }
 
         return null;
@@ -37,10 +36,10 @@ public class ComponentLookupFabric implements ComponentLookup {
 
     @Nullable
     @Override
-    public ItemContainerAdapter findItemContainer(Level world, BlockPos pos, @Nullable Direction direction) {
+    public ItemContainer findItemContainer(Level world, BlockPos pos, @Nullable Direction direction) {
         Storage<ItemVariant> storage = ItemStorage.SIDED.find(world, pos, direction);
         if (storage != null) {
-            return new ItemContainerAdapterImpl(storage);
+            return new ItemStorageWrapper(storage);
         }
 
         return null;

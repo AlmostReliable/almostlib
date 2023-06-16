@@ -1,6 +1,6 @@
 package com.almostreliable.almostlib.forge.component;
 
-import com.almostreliable.almostlib.component.ItemContainerAdapter;
+import com.almostreliable.almostlib.component.ItemContainer;
 import com.almostreliable.almostlib.component.ItemView;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.world.item.Item;
@@ -13,11 +13,11 @@ import org.jetbrains.annotations.Nullable;
 import java.util.Iterator;
 import java.util.NoSuchElementException;
 
-public class ItemContainerAdapterImpl implements ItemContainerAdapter {
+public class ItemHandlerWrapper implements ItemContainer {
 
     protected final IItemHandler itemHandler;
 
-    public ItemContainerAdapterImpl(IItemHandler itemHandler) {
+    public ItemHandlerWrapper(IItemHandler itemHandler) {
         this.itemHandler = itemHandler;
     }
 

@@ -1,6 +1,6 @@
 package com.almostreliable.almostlib.fabric.component;
 
-import com.almostreliable.almostlib.component.ItemContainerAdapter;
+import com.almostreliable.almostlib.component.ItemContainer;
 import com.almostreliable.almostlib.component.ItemView;
 import net.fabricmc.fabric.api.transfer.v1.item.ItemVariant;
 import net.fabricmc.fabric.api.transfer.v1.storage.Storage;
@@ -15,11 +15,11 @@ import javax.annotation.Nullable;
 import java.util.Iterator;
 
 @SuppressWarnings("UnstableApiUsage")
-public class ItemContainerAdapterImpl implements ItemContainerAdapter {
+public class ItemStorageWrapper implements ItemContainer {
 
     private final Storage<ItemVariant> storage;
 
-    public ItemContainerAdapterImpl(Storage<ItemVariant> storage) {
+    public ItemStorageWrapper(Storage<ItemVariant> storage) {
         this.storage = storage;
     }
 
