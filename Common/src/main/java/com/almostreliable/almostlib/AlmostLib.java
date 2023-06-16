@@ -4,11 +4,7 @@ import com.almostreliable.almostlib.menu.network.ClientActionHandler;
 import com.almostreliable.almostlib.menu.network.synchronizer.MenuSyncHandler;
 import com.almostreliable.almostlib.network.NetworkHandler;
 import com.almostreliable.almostlib.network.PacketBus;
-import com.almostreliable.almostlib.registry.BlockEntityEntry;
-import com.almostreliable.almostlib.registry.BlockEntry;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraft.world.item.CreativeModeTab;
-import net.minecraft.world.level.material.Material;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.jetbrains.annotations.ApiStatus;
@@ -39,16 +35,4 @@ public class AlmostLib {
     public static void initNetworkHandler() {
         NETWORK_HANDLER.init();
     }
-
-    public static AlmostManager AM = AlmostManager.create("almostlib").defaultCreativeTab(CreativeModeTab.TAB_COMBAT);
-
-    public static BlockEntry<CoalGenerator.Blog> COAL_BLOCK = AM.blocks()
-        .builder("coal_foo", Material.CACTUS, CoalGenerator.Blog::new)
-        .defaultItem()
-        .register();
-
-    public static BlockEntityEntry<CoalGenerator> COAL_BE = AM.blockEntities()
-        .builder("coal_foo", CoalGenerator::new)
-        .block(COAL_BLOCK)
-        .register();
 }

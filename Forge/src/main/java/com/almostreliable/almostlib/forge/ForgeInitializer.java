@@ -19,7 +19,6 @@ public class ForgeInitializer {
         AlmostLib.initNetworkHandler();
         MinecraftForge.EVENT_BUS.addGenericListener(BlockEntity.class, this::attachBlockCapabilities);
         FMLJavaModLoadingContext.get().getModEventBus().addListener(ForgeInitializer::onGameTestRun);
-        AlmostLib.AM.initRegistriesToLoader();
     }
 
     private void attachBlockCapabilities(AttachCapabilitiesEvent<BlockEntity> event) {

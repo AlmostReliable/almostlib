@@ -13,7 +13,6 @@ public class FabricInitializer implements ModInitializer {
     @Override
     public void onInitialize() {
         AlmostLib.initNetworkHandler();
-        AlmostLib.AM.initRegistriesToLoader();
         applyBlockEntityLookups();
 
         var gametests = System.getProperty("fabric-api.gametest");
