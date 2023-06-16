@@ -1,9 +1,7 @@
-package com.almostreliable.almostlib.fabric.compat;
+package com.almostreliable.almostlib.fabric.compat.energy;
 
 import com.almostreliable.almostlib.component.ComponentHolder;
 import com.almostreliable.almostlib.component.EnergyContainer;
-import com.almostreliable.almostlib.fabric.component.EnergyContainerAdapterImpl;
-import com.almostreliable.almostlib.fabric.component.EnergyContainerWrapper;
 import com.google.auto.service.AutoService;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;

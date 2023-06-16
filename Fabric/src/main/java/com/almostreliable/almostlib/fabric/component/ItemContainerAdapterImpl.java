@@ -69,6 +69,19 @@ public class ItemContainerAdapterImpl implements ItemContainerAdapter {
     }
 
     @Override
+    public void clear() {
+        try (var tn = Transaction.openOuter()) {
+            for (StorageView<ItemVariant> view : storage) {
+                if (!view.isResourceBlank()) {
+                    view.extract(view.getResource(), view.getAmount(), tn);
+                }
+            }
+
+            tn.commit();
+        }
+    }
+
+    @Override
     public Iterator<ItemStack> iterator() {
         return new Iterator<>() {
             final Iterator<StorageView<ItemVariant>> iterator = storage.iterator();

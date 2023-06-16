@@ -3,11 +3,11 @@ package com.almostreliable.almostlib.forge.component;
 import com.almostreliable.almostlib.component.EnergyContainer;
 import net.minecraftforge.energy.IEnergyStorage;
 
-public class EnergyComponentWrapper implements IEnergyStorage {
+public class ForgeEnergyStorageWrapper implements IEnergyStorage {
 
     private final EnergyContainer component;
 
-    public EnergyComponentWrapper(EnergyContainer component) {
+    public ForgeEnergyStorageWrapper(EnergyContainer component) {
         this.component = component;
     }
 

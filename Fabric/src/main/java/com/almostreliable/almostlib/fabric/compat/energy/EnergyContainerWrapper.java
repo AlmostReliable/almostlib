@@ -1,4 +1,4 @@
-package com.almostreliable.almostlib.fabric.component;
+package com.almostreliable.almostlib.fabric.compat.energy;
 
 import com.almostreliable.almostlib.component.EnergyContainer;
 import com.google.common.base.Preconditions;

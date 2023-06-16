@@ -1,10 +1,11 @@
-package com.almostreliable.almostlib.forge;
+package com.almostreliable.almostlib.forge.component;
 
 import com.almostreliable.almostlib.component.ComponentLookup;
 import com.almostreliable.almostlib.component.EnergyContainer;
 import com.almostreliable.almostlib.component.ItemContainerAdapter;
 import com.almostreliable.almostlib.forge.component.EnergyContainerAdapterImpl;
 import com.almostreliable.almostlib.forge.component.ItemContainerAdapterImpl;
+import com.google.auto.service.AutoService;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.world.level.Level;
@@ -13,6 +14,8 @@ import net.minecraftforge.common.capabilities.ForgeCapabilities;
 
 import javax.annotation.Nullable;
 
+
+@AutoService(ComponentLookup.class)
 public class ComponentLookupForge implements ComponentLookup {
 
     @Nullable
@@ -34,13 +37,13 @@ public class ComponentLookupForge implements ComponentLookup {
 
     @Nullable
     @Override
-    public EnergyContainer findEnergyContainer(BlockEntity blockEntity, @org.jetbrains.annotations.Nullable Direction direction) {
+    public EnergyContainer findEnergyContainer(BlockEntity blockEntity, @Nullable Direction direction) {
         return blockEntity.getCapability(ForgeCapabilities.ENERGY, direction).map(EnergyContainerAdapterImpl::new).orElse(null);
     }
 
     @Nullable
     @Override
-    public EnergyContainer findEnergyContainer(Level world, BlockPos pos, @org.jetbrains.annotations.Nullable Direction direction) {
+    public EnergyContainer findEnergyContainer(Level world, BlockPos pos, @Nullable Direction direction) {
         BlockEntity blockEntity = world.getBlockEntity(pos);
         if (blockEntity != null) {
             return findEnergyContainer(blockEntity, direction);

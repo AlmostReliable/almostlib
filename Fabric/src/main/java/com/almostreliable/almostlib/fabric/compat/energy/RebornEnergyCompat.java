@@ -1,4 +1,4 @@
-package com.almostreliable.almostlib.fabric.compat;
+package com.almostreliable.almostlib.fabric.compat.energy;
 
 import com.almostreliable.almostlib.AlmostLib;
 import com.almostreliable.almostlib.component.EnergyContainer;
@@ -20,12 +20,12 @@ public interface RebornEnergyCompat {
         }
 
         @Override
-        public EnergyContainer find(BlockEntity blockEntity, @org.jetbrains.annotations.Nullable Direction direction) {
+        public EnergyContainer find(BlockEntity blockEntity, @Nullable Direction direction) {
             return null;
         }
 
         @Override
-        public EnergyContainer find(Level world, BlockPos pos, @org.jetbrains.annotations.Nullable Direction direction) {
+        public EnergyContainer find(Level world, BlockPos pos, @Nullable Direction direction) {
             return null;
         }
     };

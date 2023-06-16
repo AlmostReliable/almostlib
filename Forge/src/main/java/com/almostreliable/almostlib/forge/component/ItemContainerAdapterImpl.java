@@ -3,6 +3,7 @@ package com.almostreliable.almostlib.forge.component;
 import com.almostreliable.almostlib.component.ItemContainerAdapter;
 import net.minecraft.world.item.ItemStack;
 import net.minecraftforge.items.IItemHandler;
+import net.minecraftforge.items.IItemHandlerModifiable;
 import net.minecraftforge.items.ItemHandlerHelper;
 
 import java.util.Iterator;
@@ -38,25 +39,19 @@ public class ItemContainerAdapterImpl implements ItemContainerAdapter {
     @Override
     public ItemStack insert(ItemStack filter, int amount, boolean simulate) {
         int toInsert = Math.min(amount, filter.getMaxStackSize());
-        ItemStack result = ItemStack.EMPTY;
+
+        ItemStack remainder = filter.copy();
+        remainder.setCount(toInsert);
 
         for (int slot = 0; slot < size(); slot++) {
-            if (toInsert <= 0) {
-                break;
-            }
+            remainder = itemHandler.insertItem(slot, remainder, simulate);
 
-            ItemStack itemToInsert = filter.copy();
-            itemToInsert.setCount(toInsert);
-            ItemStack remainder = itemHandler.insertItem(slot, itemToInsert, simulate);
             if (remainder.isEmpty()) {
                 return ItemStack.EMPTY;
             }
-
-            toInsert -= remainder.getCount();
-            result = remainder;
         }
 
-        return result;
+        return remainder;
     }
 
     @Override
@@ -87,6 +82,21 @@ public class ItemContainerAdapterImpl implements ItemContainerAdapter {
         }
 
         return result;
+    }
+
+    @Override
+    public void clear() {
+        if (itemHandler instanceof IItemHandlerModifiable m) {
+            for (int i = 0; i < size(); i++) {
+                m.setStackInSlot(i, ItemStack.EMPTY);
+            }
+
+            return;
+        }
+
+        for (int i = 0; i < size(); i++) {
+            itemHandler.extractItem(i, Integer.MAX_VALUE, false);
+        }
     }
 
     @Override

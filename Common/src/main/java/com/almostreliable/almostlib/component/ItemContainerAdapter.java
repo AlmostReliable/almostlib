@@ -19,4 +19,6 @@ public interface ItemContainerAdapter extends Iterable<ItemStack> {
     }
 
     ItemStack extract(ItemStack filter, int amount, boolean simulate);
+
+    void clear();
 }

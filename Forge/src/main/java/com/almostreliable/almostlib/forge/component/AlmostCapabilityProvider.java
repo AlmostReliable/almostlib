@@ -43,7 +43,7 @@ public class AlmostCapabilityProvider implements ICapabilityProvider {
         if (capability == ForgeCapabilities.ENERGY) {
             var container = componentHolder.getEnergyContainer(direction);
             if (container != null) {
-                return capabilityCache.computeIfAbsent(container, $ -> LazyOptional.of(() -> new EnergyComponentWrapper(container))).cast();
+                return capabilityCache.computeIfAbsent(container, $ -> LazyOptional.of(() -> new ForgeEnergyStorageWrapper(container))).cast();
             }
         }
 

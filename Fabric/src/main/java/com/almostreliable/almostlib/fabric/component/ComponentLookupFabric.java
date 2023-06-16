@@ -1,10 +1,11 @@
-package com.almostreliable.almostlib.fabric;
+package com.almostreliable.almostlib.fabric.component;
 
 import com.almostreliable.almostlib.component.ComponentLookup;
 import com.almostreliable.almostlib.component.EnergyContainer;
 import com.almostreliable.almostlib.component.ItemContainerAdapter;
-import com.almostreliable.almostlib.fabric.compat.RebornEnergyCompat;
+import com.almostreliable.almostlib.fabric.compat.energy.RebornEnergyCompat;
 import com.almostreliable.almostlib.fabric.component.ItemContainerAdapterImpl;
+import com.google.auto.service.AutoService;
 import net.fabricmc.fabric.api.transfer.v1.item.ItemStorage;
 import net.fabricmc.fabric.api.transfer.v1.item.ItemVariant;
 import net.fabricmc.fabric.api.transfer.v1.storage.Storage;
@@ -16,6 +17,7 @@ import net.minecraft.world.level.block.entity.BlockEntity;
 import javax.annotation.Nullable;
 
 @SuppressWarnings("UnstableApiUsage")
+@AutoService(ComponentLookup.class)
 public class ComponentLookupFabric implements ComponentLookup {
 
     @Nullable

@@ -2,7 +2,7 @@ package com.almostreliable.almostlib.fabric;
 
 import com.almostreliable.almostlib.AlmostLib;
 import com.almostreliable.almostlib.component.ComponentHolder;
-import com.almostreliable.almostlib.fabric.compat.RebornEnergyCompat;
+import com.almostreliable.almostlib.fabric.compat.energy.RebornEnergyCompat;
 import com.almostreliable.almostlib.gametest.GameTestLoader;
 import net.fabricmc.api.ModInitializer;
 import net.fabricmc.fabric.api.transfer.v1.item.ItemStorage;
@@ -13,6 +13,7 @@ public class FabricInitializer implements ModInitializer {
     @Override
     public void onInitialize() {
         AlmostLib.initNetworkHandler();
+        AlmostLib.AM.initRegistriesToLoader();
         applyBlockEntityLookups();
 
         var gametests = System.getProperty("fabric-api.gametest");

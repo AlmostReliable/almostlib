@@ -33,10 +33,11 @@ dependencies {
     shadowCommon(project(":Common", "transformProductionFabric")) { isTransitive = false }
     testImplementation(project(":Common", "namedElements"))
 
-//    // Team Reborn Energy API.
-//    modApi("teamreborn:energy:$teamRebornEnergyApiVersion") {
-//        exclude(group = "net.fabricmc", module = "fabric-api")
-//    }
+
+    // Team Reborn Energy API. (modApi does not work hahaYes)
+    modImplementation("teamreborn:energy:$teamRebornEnergyApiVersion") {
+        exclude(group = "net.fabricmc", module = "fabric-api")
+    }
 }
 
 tasks {
