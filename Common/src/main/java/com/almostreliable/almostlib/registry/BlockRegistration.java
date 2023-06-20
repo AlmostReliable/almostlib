@@ -227,6 +227,11 @@ public class BlockRegistration extends Registration<Block, BlockEntry<? extends 
             return this;
         }
 
+        public Builder<B> indestructible() {
+            properties.strength(-1.0F, 3_600_000.0F);
+            return this;
+        }
+
         public Builder<B> randomTicks() {
             properties.randomTicks();
             return this;
