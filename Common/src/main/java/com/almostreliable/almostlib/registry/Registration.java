@@ -12,10 +12,10 @@ import java.util.function.Supplier;
 
 public abstract class Registration<S, RE extends RegistryEntry<? extends S>> {
 
-    protected final Map<ResourceLocation, RegistryEntry<? extends S>> entries = new LinkedHashMap<>();
+    protected final Map<ResourceLocation, RE> entries = new LinkedHashMap<>();
     private final String namespace;
     private final Registry<S> registry;
-    private final Collection<RegistryEntry<? extends S>> entriesView = Collections.unmodifiableCollection(entries.values());
+    private final Collection<RE> entriesView = Collections.unmodifiableCollection(entries.values());
 
     public Registration(String namespace, Registry<S> registry) {
         this.namespace = namespace;
@@ -42,6 +42,10 @@ public abstract class Registration<S, RE extends RegistryEntry<? extends S>> {
         return new MenuRegistration(namespace);
     }
 
+    public static RecipeRegistration recipes(String namespace) {
+        return new RecipeRegistration(namespace);
+    }
+
     public void applyRegister(BiConsumer<ResourceLocation, S> callback) {
         getEntries().forEach(entry -> callback.accept(entry.getId(), entry.get()));
     }
@@ -58,7 +62,7 @@ public abstract class Registration<S, RE extends RegistryEntry<? extends S>> {
         return entry;
     }
 
-    public Collection<RegistryEntry<? extends S>> getEntries() {
+    public Collection<RE> getEntries() {
         return entriesView;
     }
 

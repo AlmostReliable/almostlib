@@ -17,6 +17,7 @@ public class AlmostManager {
     private final BlockRegistration blocks;
     private final BlockEntityRegistration blockEntities;
     private final MenuRegistration menus;
+    private final RecipeRegistration recipes;
 
     private AlmostManager(String namespace) {
         this.namespace = namespace;
@@ -25,6 +26,7 @@ public class AlmostManager {
         this.blocks = Registration.blocks(namespace).itemRegistration(items).dataGen(dataGen);
         this.blockEntities = Registration.blockEntities(namespace);
         this.menus = Registration.menus(namespace);
+        this.recipes = Registration.recipes(namespace);
     }
 
     /**
@@ -88,8 +90,22 @@ public class AlmostManager {
         return blockEntities;
     }
 
+    /**
+     * Gets the {@link MenuRegistration} for this manager.
+     *
+     * @return The {@link MenuRegistration}.
+     */
     public MenuRegistration menus() {
         return menus;
+    }
+
+    /**
+     * Gets the {@link RecipeRegistration} for this manager.
+     *
+     * @return The {@link RecipeRegistration}.
+     */
+    public RecipeRegistration recipes() {
+        return recipes;
     }
 
     /**
@@ -108,7 +124,7 @@ public class AlmostManager {
      * This has to be called after all objects have been registered to the manager.
      */
     public void initRegistriesToLoader() {
-        AlmostLib.PLATFORM.initRegistrations(items, blocks, blockEntities, menus);
+        AlmostLib.PLATFORM.initRegistrations(items, blocks, blockEntities, menus, recipes);
     }
 
     /**

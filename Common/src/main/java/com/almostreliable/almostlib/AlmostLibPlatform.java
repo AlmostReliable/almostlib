@@ -17,6 +17,8 @@ import net.minecraft.world.inventory.MenuType;
 import net.minecraft.world.item.CreativeModeTab;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.crafting.Recipe;
+import net.minecraft.world.item.crafting.RecipeSerializer;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.entity.BlockEntityType;
@@ -109,6 +111,8 @@ public interface AlmostLibPlatform {
      * @param registrations The registrations to init.
      */
     void initRegistrations(Registration<?, ?>... registrations);
+
+    void registerRecipeSerializers(ResourceLocation id, RecipeSerializer<? extends Recipe<?>> serializer);
 
     NetworkHandler createNetworkHandler(ResourceLocation id);
 }

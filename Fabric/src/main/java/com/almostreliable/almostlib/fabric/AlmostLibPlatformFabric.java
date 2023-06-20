@@ -28,6 +28,8 @@ import net.minecraft.world.inventory.AbstractContainerMenu;
 import net.minecraft.world.inventory.MenuType;
 import net.minecraft.world.item.CreativeModeTab;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.crafting.Recipe;
+import net.minecraft.world.item.crafting.RecipeSerializer;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.entity.BlockEntityType;
@@ -151,6 +153,11 @@ public class AlmostLibPlatformFabric implements AlmostLibPlatform {
             })).toList();
 
         sorted.forEach(this::initRegistration);
+    }
+
+    @Override
+    public void registerRecipeSerializers(ResourceLocation id, RecipeSerializer<? extends Recipe<?>> serializer) {
+        Registry.register(Registry.RECIPE_SERIALIZER, id, serializer);
     }
 
     @Override

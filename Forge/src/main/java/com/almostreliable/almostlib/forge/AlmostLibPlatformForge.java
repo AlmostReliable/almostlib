@@ -19,6 +19,8 @@ import net.minecraft.world.inventory.AbstractContainerMenu;
 import net.minecraft.world.inventory.MenuType;
 import net.minecraft.world.item.CreativeModeTab;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.crafting.Recipe;
+import net.minecraft.world.item.crafting.RecipeSerializer;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.entity.BlockEntityType;
@@ -31,6 +33,7 @@ import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
 import net.minecraftforge.fml.loading.FMLLoader;
 import net.minecraftforge.fml.loading.FMLPaths;
 import net.minecraftforge.network.NetworkHooks;
+import net.minecraftforge.registries.ForgeRegistries;
 import net.minecraftforge.registries.IForgeRegistry;
 import net.minecraftforge.registries.RegisterEvent;
 
@@ -148,6 +151,11 @@ public class AlmostLibPlatformForge implements AlmostLibPlatform {
         for (Registration<?, ?> registration : registrations) {
             initRegistration(registration);
         }
+    }
+
+    @Override
+    public void registerRecipeSerializers(ResourceLocation id, RecipeSerializer<? extends Recipe<?>> serializer) {
+        ForgeRegistries.RECIPE_SERIALIZERS.register(id, serializer);
     }
 
     @Override
