@@ -84,7 +84,12 @@ public class BlockRegistration extends Registration<Block, BlockEntry<? extends 
     /**
      * Setup render layers for blocks.
      * <p>
-     * Needs to be called in Fabric's {@link net.fabricmc.api.ClientModInitializer#onInitializeClient()}.<br>
+     * Needs to be called in Fabric's {@link net.fabricmc.api.ClientModInitializer#onInitializeClient()}.
+     * <p>
+     * Not required if the mod features a {@link com.almostreliable.almostlib.client.ClientInit} implementation.
+     * If there is no implementation, you can use the utility method {@code applyRenderTypes}
+     * in the {@code ClientInitRunner} from Fabric.
+     * <p>
      * <b>Don't</b> call this for Forge since render layers are handled by data gen.
      *
      * @param consumer The consumer to set the render layer.

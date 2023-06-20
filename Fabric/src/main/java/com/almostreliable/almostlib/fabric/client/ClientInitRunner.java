@@ -2,6 +2,7 @@ package com.almostreliable.almostlib.fabric.client;
 
 import com.almostreliable.almostlib.AlmostManager;
 import com.almostreliable.almostlib.client.ClientInit;
+import com.almostreliable.almostlib.client.RenderLayerType;
 import com.almostreliable.almostlib.client.ScreenFactory;
 import net.fabricmc.fabric.api.blockrenderlayer.v1.BlockRenderLayerMap;
 import net.fabricmc.fabric.api.client.rendering.v1.BlockEntityRendererRegistry;
@@ -12,7 +13,9 @@ import net.minecraft.client.gui.screens.inventory.MenuAccess;
 import net.minecraft.client.renderer.RenderType;
 import net.minecraft.world.inventory.AbstractContainerMenu;
 import net.minecraft.world.inventory.MenuType;
+import net.minecraft.world.level.block.Block;
 
+import java.util.function.BiConsumer;
 import java.util.function.Supplier;
 
 public class ClientInitRunner {
@@ -35,18 +38,22 @@ public class ClientInitRunner {
 
     public static void run(ClientInit clientInit, AlmostManager manager) {
         run(clientInit);
-        manager.blocks().setupRenderLayers((block, renderLayer) -> {
+        manager.blocks().setupRenderLayers(applyRenderTypes(BlockRenderLayerMap.INSTANCE::putBlock));
+    }
+
+    public static void run(Supplier<ClientInit> clientInitFactory, AlmostManager manager) {
+        run(clientInitFactory.get(), manager);
+    }
+
+    public static BiConsumer<Block, RenderLayerType> applyRenderTypes(BiConsumer<Block, RenderType> consumer) {
+        return (block, renderLayer) -> {
             RenderType renderType = switch (renderLayer) {
                 case SOLID -> RenderType.solid();
                 case CUTOUT -> RenderType.cutout();
                 case CUTOUT_MIPPED -> RenderType.cutoutMipped();
                 case TRANSLUCENT -> RenderType.translucent();
             };
-            BlockRenderLayerMap.INSTANCE.putBlock(block, renderType);
-        });
-    }
-
-    public static void run(Supplier<ClientInit> clientInitFactory, AlmostManager manager) {
-        run(clientInitFactory.get(), manager);
+            consumer.accept(block, renderType);
+        };
     }
 }
