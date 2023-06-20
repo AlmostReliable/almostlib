@@ -30,6 +30,7 @@ import java.util.function.Consumer;
 import java.util.function.Supplier;
 
 public interface AlmostLibPlatform {
+
     /**
      * Gets the current platform
      *
@@ -91,8 +92,25 @@ public interface AlmostLibPlatform {
      */
     <T> TagKey<T> createTag(ResourceKey<Registry<T>> resourceKey, String tag);
 
+    /**
+     * Creates a platform-specific tag.
+     * Forge: tags will be created in the "forge" namespace.
+     * Fabric: tags will be created in the "c" namespace.
+     *
+     * @param resourceKey The resource key of the tag.
+     * @param fabricTag   The fabric tag.
+     * @param forgeTag    The forge tag.
+     * @param <T>         The type of the tag.
+     * @return The created tag.
+     */
+    <T> TagKey<T> createTag(ResourceKey<Registry<T>> resourceKey, String fabricTag, String forgeTag);
+
     default TagKey<Item> createItemTag(String tag) {
         return this.createTag(Registry.ITEM_REGISTRY, tag);
+    }
+
+    default TagKey<Item> createItemTag(String fabricTag, String forgeTag) {
+        return this.createTag(Registry.ITEM_REGISTRY, fabricTag, forgeTag);
     }
 
     default TagKey<Block> createBlockTag(String tag) {

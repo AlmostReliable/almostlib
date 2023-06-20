@@ -125,6 +125,11 @@ public class AlmostLibPlatformFabric implements AlmostLibPlatform {
     }
 
     @Override
+    public <T> TagKey<T> createTag(ResourceKey<Registry<T>> resourceKey, String fabricTag, String $) {
+        return createTag(resourceKey, fabricTag);
+    }
+
+    @Override
     public <T> void initRegistration(Registration<T, ?> registration) {
         Registry<T> registry = registration.getRegistry();
         registration.applyRegister((id, entry) -> Registry.register(registry, id, entry));

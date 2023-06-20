@@ -117,6 +117,11 @@ public class AlmostLibPlatformForge implements AlmostLibPlatform {
     }
 
     @Override
+    public <T> TagKey<T> createTag(ResourceKey<Registry<T>> resourceKey, String $, String forgeTag) {
+        return createTag(resourceKey, forgeTag);
+    }
+
+    @Override
     public <T> void initRegistration(Registration<T, ?> registration) {
         FMLJavaModLoadingContext
                 .get()
