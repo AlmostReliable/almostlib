@@ -25,30 +25,30 @@ public class BlockStateTemplates {
 
     public static <T extends Block> void horizontalFacing(BlockEntry<T> entry, BlockStateProvider provider) {
         Block block = entry.get();
-        var mapping = new TextureMapping()
-            .put(TextureSlot.FRONT, TextureMapping.getBlockTexture(block, "_front"))
-            .put(TextureSlot.SIDE, TextureMapping.getBlockTexture(block))
-            .put(TextureSlot.TOP, TextureMapping.getBlockTexture(block));
-        ResourceLocation modelLocation = ModelTemplates.CUBE_ORIENTABLE.create(block, mapping, provider.getModelConsumer());
+        ResourceLocation modelLocation = getOrientableModel(provider, block);
 
-        provider.createVariantFor(block, (model) -> {
-            model.model(modelLocation)
-                .yRotation(Rotation.ofHorizontalFacing(model.getValue(BlockStateProperties.HORIZONTAL_FACING)));
-        }, BlockStateProperties.HORIZONTAL_FACING);
+        provider.createVariantFor(block,
+            model -> model.model(modelLocation)
+                .yRotation(Rotation.ofHorizontalFacing(model.getValue(BlockStateProperties.HORIZONTAL_FACING))),
+            BlockStateProperties.HORIZONTAL_FACING);
     }
 
     public static <T extends Block> void facing(BlockEntry<T> entry, BlockStateProvider provider) {
         Block block = entry.get();
+        ResourceLocation modelLocation = getOrientableModel(provider, block);
+
+        provider.createVariantFor(block,
+            model -> model.model(modelLocation)
+                .yRotation(Rotation.ofHorizontalFacing(model.getValue(BlockStateProperties.FACING)))
+                .xRotation(Rotation.ofVerticalFacing(model.getValue(BlockStateProperties.FACING))),
+            BlockStateProperties.FACING);
+    }
+
+    private static ResourceLocation getOrientableModel(BlockStateProvider provider, Block block) {
         var mapping = new TextureMapping()
             .put(TextureSlot.FRONT, TextureMapping.getBlockTexture(block, "_front"))
             .put(TextureSlot.SIDE, TextureMapping.getBlockTexture(block))
             .put(TextureSlot.TOP, TextureMapping.getBlockTexture(block));
-        ResourceLocation modelLocation = ModelTemplates.CUBE_ORIENTABLE.create(block, mapping, provider.getModelConsumer());
-
-        provider.createVariantFor(block, (model) -> {
-            model.model(modelLocation)
-                .yRotation(Rotation.ofHorizontalFacing(model.getValue(BlockStateProperties.FACING)))
-                .xRotation(Rotation.ofVerticalFacing(model.getValue(BlockStateProperties.FACING)));
-        }, BlockStateProperties.FACING);
+        return ModelTemplates.CUBE_ORIENTABLE.create(block, mapping, provider.getModelConsumer());
     }
 }
