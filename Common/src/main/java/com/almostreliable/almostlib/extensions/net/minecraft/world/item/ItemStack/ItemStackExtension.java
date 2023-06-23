@@ -3,6 +3,7 @@ package com.almostreliable.almostlib.extensions.net.minecraft.world.item.ItemSta
 import com.google.common.base.Preconditions;
 import manifold.ext.rt.api.Extension;
 import manifold.ext.rt.api.This;
+import net.minecraft.nbt.CompoundTag;
 import net.minecraft.world.item.ItemStack;
 
 @Extension
@@ -27,5 +28,9 @@ public final class ItemStackExtension {
         if (!thiz.hasTag()) return true;
         assert thiz.getTag() != null;
         return thiz.getTag().equals(other.getTag());
+    }
+
+    public static CompoundTag serialize(@This ItemStack thiz) {
+        return thiz.save(new CompoundTag());
     }
 }
