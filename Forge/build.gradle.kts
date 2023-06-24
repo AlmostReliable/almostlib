@@ -21,6 +21,13 @@ loom {
         println("Access widener enabled for project ${project.name}. Access widener path: ${loom.accessWidenerPath.get()}")
     }
 
+    mods {
+        create("testmod") {
+            sourceSet(sourceSets.test.get())
+            sourceSet(project(":Common").sourceSets.test.get())
+        }
+    }
+
     forge {
         mixinConfigs("$modId-common.mixins.json" /*, "$modId-forge.mixins.json"*/)
     }
@@ -35,4 +42,5 @@ dependencies {
     // common module
     common(project(":Common", "namedElements")) { isTransitive = false }
     shadowCommon(project(":Common", "transformProductionForge")) { isTransitive = false }
+    testImplementation(project(":Common", "namedElements"))
 }

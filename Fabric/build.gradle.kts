@@ -30,6 +30,7 @@ dependencies {
     // common module
     common(project(":Common", "namedElements")) { isTransitive = false }
     shadowCommon(project(":Common", "transformProductionFabric")) { isTransitive = false }
+    testImplementation(project(":Common", "namedElements"))
 }
 
 tasks {

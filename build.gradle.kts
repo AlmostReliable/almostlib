@@ -67,6 +67,13 @@ allprojects {
     }
 }
 
+/**
+ * Makes sure every dependency is also available inside test.
+ */
+configurations.named("testCompileOnly") {
+    extendsFrom(configurations["compileOnly"])
+}
+
 subprojects {
     apply(plugin = "java")
     apply(plugin = "dev.architectury.loom")
@@ -114,6 +121,7 @@ subprojects {
         annotationProcessor("com.google.auto.service:auto-service:$autoServiceVersion")
         compileOnly("systems.manifold:manifold-ext-rt:$manifoldVersion")
         annotationProcessor("systems.manifold:manifold-ext:$manifoldVersion")
+        testAnnotationProcessor("systems.manifold:manifold-ext:$manifoldVersion")
     }
 
     /**
@@ -207,14 +215,33 @@ subprojects {
 
     apply(plugin = "com.github.johnrengelman.shadow")
 
+    sourceSets.named("test") {
+        val cst = project(":Common").sourceSets.getByName("test");
+        this.compileClasspath += cst.output
+        this.runtimeClasspath += cst.output
+    }
+
     extensions.configure<LoomGradleExtensionAPI> {
         runs {
+            create("test_client") {
+                name("Test Minecraft Client")
+                client()
+                source(sourceSets.test.get())
+            }
+
+            create("test_server") {
+                name("Test Minecraft Server")
+                server()
+                source(sourceSets.test.get())
+            }
+
             forEach {
                 it.runDir(if (sharedRunDir.toBoolean()) "../run" else "run")
                 // Allows DCEVM hot-swapping when using the JetBrains Runtime (https://github.com/JetBrains/JetBrainsRuntime).
                 it.vmArgs("-XX:+IgnoreUnrecognizedVMOptions", "-XX:+AllowEnhancedClassRedefinition")
             }
         }
+
 
         /**
          * "main" matches the default mod's name. Since `compileOnly()` is being used in Architectury,
