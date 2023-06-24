@@ -6,6 +6,6 @@ import net.minecraftforge.fml.common.Mod;
 public class TestForgeInitializer {
 
     public TestForgeInitializer() {
-        TestModCommon.init();
+        TestMod.init();
     }
 }

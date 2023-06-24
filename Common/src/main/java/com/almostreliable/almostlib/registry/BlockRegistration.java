@@ -64,6 +64,10 @@ public class BlockRegistration extends Registration<Block, BlockEntry<? extends 
         return new Builder<>(id, BlockBehaviour.Properties.of(material), factory);
     }
 
+    public <B extends Block> Builder<B> builder(String id, Function<BlockBehaviour.Properties, ? extends B> factory) {
+        return new Builder<>(id, BlockBehaviour.Properties.of(Material.STONE), factory);
+    }
+
     public <B extends Block> Builder<B> builder(String id, BlockBehaviour parentBehaviour, Function<BlockBehaviour.Properties, ? extends B> factory) {
         return AlmostUtils.cast(builder(id, Material.STONE, factory).copyProperties(parentBehaviour));
     }

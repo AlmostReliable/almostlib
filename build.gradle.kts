@@ -119,12 +119,8 @@ subprojects {
          */
         testCompileOnly(compileOnly("com.google.auto.service:auto-service:$autoServiceVersion")!!)
         testAnnotationProcessor(annotationProcessor("com.google.auto.service:auto-service:$autoServiceVersion")!!)
-        compileOnly("systems.manifold:manifold-ext-rt:$manifoldVersion")
+        testCompileOnly(compileOnly("systems.manifold:manifold-ext-rt:$manifoldVersion")!!)
         testAnnotationProcessor(annotationProcessor("systems.manifold:manifold-ext:$manifoldVersion")!!)
-
-        testImplementation("org.junit.jupiter:junit-jupiter-api:5.9.0")
-        testImplementation("org.junit.jupiter:junit-jupiter-params:5.9.0")
-        testRuntimeOnly("org.junit.jupiter:junit-jupiter-engine:5.9.0")
     }
 
     /**
@@ -204,11 +200,6 @@ subprojects {
          */
         named<Task>("publishToMavenLocal") {
             version = "$version.${System.currentTimeMillis() / 1000}"
-        }
-
-        withType<Test> {
-            useJUnitPlatform()
-            defaultCharacterEncoding = "UTF-8"
         }
     }
 }
