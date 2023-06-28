@@ -1,9 +1,0 @@
-accessWidener v2 named
-
-accessible class net/minecraft/advancements/critereon/StatePropertiesPredicate$PropertyMatcher
-accessible field net/minecraft/advancements/critereon/StatePropertiesPredicate properties Ljava/util/List;
-accessible class net/minecraft/advancements/critereon/StatePropertiesPredicate$ExactPropertyMatcher
-accessible field net/minecraft/advancements/critereon/StatePropertiesPredicate$ExactPropertyMatcher value Ljava/lang/String;
-accessible class net/minecraft/advancements/critereon/StatePropertiesPredicate$RangedPropertyMatcher
-accessible field net/minecraft/advancements/critereon/StatePropertiesPredicate$RangedPropertyMatcher minValue Ljava/lang/String;
-accessible field net/minecraft/advancements/critereon/StatePropertiesPredicate$RangedPropertyMatcher maxValue Ljava/lang/String;
