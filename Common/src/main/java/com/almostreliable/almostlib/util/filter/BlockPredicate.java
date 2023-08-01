@@ -185,7 +185,7 @@ public class BlockPredicate implements Predicate<BlockState> {
         private Builder() {}
 
         public Builder block(Block block) {
-            this.blocks.add(block);
+            blocks.add(block);
             return this;
         }
 
@@ -195,7 +195,7 @@ public class BlockPredicate implements Predicate<BlockState> {
         }
 
         public Builder tag(TagKey<Block> tag) {
-            this.tags.add(tag);
+            tags.add(tag);
             return this;
         }
 
@@ -216,7 +216,7 @@ public class BlockPredicate implements Predicate<BlockState> {
         }
 
         public Builder hasProperty(Property<?> property, String value) {
-            this.properties.add(new ExactPropertyPredicate(property.getName(), value));
+            properties.add(new ExactPropertyPredicate(property.getName(), value));
             return this;
         }
 
@@ -229,11 +229,11 @@ public class BlockPredicate implements Predicate<BlockState> {
         }
 
         public <T extends Comparable<T> & StringRepresentable> Builder hasProperty(Property<T> property, T value) {
-            return this.hasProperty(property, value.getSerializedName());
+            return hasProperty(property, value.getSerializedName());
         }
 
         public Builder hasProperty(Property<?> property, @Nullable String min, @Nullable String max) {
-            this.properties.add(new RangedPropertyPredicate(property.getName(), min, max));
+            properties.add(new RangedPropertyPredicate(property.getName(), min, max));
             return this;
         }
 
@@ -246,11 +246,11 @@ public class BlockPredicate implements Predicate<BlockState> {
         public <T extends Comparable<T> & StringRepresentable> Builder hasProperty(Property<T> property, @Nullable T min, @Nullable T max) {
             String minStr = min == null ? null : min.getSerializedName();
             String maxStr = max == null ? null : max.getSerializedName();
-            return this.hasProperty(property, minStr, maxStr);
+            return hasProperty(property, minStr, maxStr);
         }
 
         public Builder hasProperty(PropertyPredicate predicate) {
-            this.properties.add(predicate);
+            properties.add(predicate);
             return this;
         }
 
@@ -268,7 +268,7 @@ public class BlockPredicate implements Predicate<BlockState> {
      *     "blocks": [
      *          "minecraft:furnace",
      *          "minecraft:blast_furnace",
-     *          "#forge:ores" // Referencing a tag with '#'
+     *          "#forge:ores" // referencing a tag with '#'
      *     ],
      *     "nbt": {
      *          ...
@@ -282,9 +282,22 @@ public class BlockPredicate implements Predicate<BlockState> {
      */
     public static class Serializer {
 
-        public void toNetwork(FriendlyByteBuf buffer, BlockPredicate blockPredicate) {
-            JsonObject json = toJson(blockPredicate);
-            buffer.writeUtf(json.toString());
+        public BlockPredicate fromJson(@Nullable JsonObject json) {
+            if (json == null) return ANY;
+            var builder = new Builder();
+
+            JsonArray blocks = readBlockArray(json.get("blocks"));
+            addBlocksAndTags(builder, blocks);
+
+            if (json.get("nbt") instanceof JsonObject nbt) {
+                builder.nbt(NbtPredicate.fromJson(nbt));
+            }
+
+            if (json.get("state") instanceof JsonObject properties) {
+                readStatePredicates(builder, properties);
+            }
+
+            return builder.build();
         }
 
         public BlockPredicate fromNetwork(FriendlyByteBuf buffer) {
@@ -313,11 +326,16 @@ public class BlockPredicate implements Predicate<BlockState> {
             return json;
         }
 
+        public void toNetwork(FriendlyByteBuf buffer, BlockPredicate blockPredicate) {
+            JsonObject json = toJson(blockPredicate);
+            buffer.writeUtf(json.toString());
+        }
+
         private JsonArray writeBlocks(BlockPredicate blockPredicate) {
             JsonArray blocks = new JsonArray();
 
             for (TagKey<Block> tag : blockPredicate.tags) {
-                blocks.add("#" + tag.location().toString());
+                blocks.add("#" + tag.location());
             }
 
             for (Block block : blockPredicate.blocks) {
@@ -325,36 +343,6 @@ public class BlockPredicate implements Predicate<BlockState> {
             }
 
             return blocks;
-        }
-
-        public BlockPredicate fromJson(@Nullable JsonObject json) {
-            if (json == null) return ANY;
-            var builder = new Builder();
-
-            JsonArray blocks = readBlockArray(json.get("blocks"));
-            addBlocksAndTags(builder, blocks);
-
-            if (json.get("nbt") instanceof JsonObject nbt) {
-                builder.nbt(NbtPredicate.fromJson(nbt));
-            }
-
-            if (json.get("state") instanceof JsonObject properties) {
-                readStatePredicates(builder, properties);
-            }
-
-            return builder.build();
-        }
-
-        private void addBlocksAndTags(Builder builder, JsonArray blocks) {
-            for (JsonElement block : blocks) {
-                String str = block.getAsString();
-                if (str.startsWith("#")) {
-                    ResourceLocation tagRl = new ResourceLocation(str.substring(1));
-                    builder.tag(TagKey.create(Registry.BLOCK_REGISTRY, tagRl));
-                } else {
-                    Registry.BLOCK.getOptional(new ResourceLocation(str)).ifPresent(builder::block);
-                }
-            }
         }
 
         private JsonArray readBlockArray(@Nullable JsonElement blocks) {
@@ -370,15 +358,27 @@ public class BlockPredicate implements Predicate<BlockState> {
             }
 
             if (blocks instanceof JsonArray arr) {
-                for (JsonElement element : arr) {
-                    if (!(element instanceof JsonPrimitive prim) || !prim.isString()) {
-                        throw new IllegalArgumentException("Expected string, got '" + element + "' inside " + blocks);
+                for (JsonElement elem : arr) {
+                    if (!(elem instanceof JsonPrimitive prim) || !prim.isString()) {
+                        throw new IllegalArgumentException("Expected string, got '" + elem + "' inside " + blocks);
                     }
                 }
                 return arr;
             }
 
             return new JsonArray();
+        }
+
+        private void addBlocksAndTags(Builder builder, JsonArray blocks) {
+            for (JsonElement block : blocks) {
+                String str = block.getAsString();
+                if (str.startsWith("#")) {
+                    ResourceLocation tag = new ResourceLocation(str.substring(1));
+                    builder.tag(TagKey.create(Registry.BLOCK_REGISTRY, tag));
+                } else {
+                    Registry.BLOCK.getOptional(new ResourceLocation(str)).ifPresent(builder::block);
+                }
+            }
         }
 
         private static void readStatePredicates(Builder builder, JsonObject properties) {
@@ -409,7 +409,7 @@ public class BlockPredicate implements Predicate<BlockState> {
 
         default <S extends StateHolder<?, S>> boolean match(StateDefinition<?, S> properties, BlockState state) {
             Property<?> property = properties.getProperty(getName());
-            return property != null && this.match(state, property);
+            return property != null && match(state, property);
         }
 
         <T extends Comparable<T>> boolean match(BlockState state, Property<T> property);
@@ -421,38 +421,39 @@ public class BlockPredicate implements Predicate<BlockState> {
         JsonElement toJson();
     }
 
-    public record ExactPropertyPredicate(String getName, String value) implements PropertyPredicate {
+    public record ExactPropertyPredicate(String getName, String getValue) implements PropertyPredicate {
 
         @Override
         public <T extends Comparable<T>> boolean match(BlockState state, Property<T> property) {
             T comparable = state.getValue(property);
-            return property.getValue(value).map(v -> comparable.compareTo(v) == 0).orElse(false);
+            return property.getValue(getValue).map(v -> comparable.compareTo(v) == 0).orElse(false);
         }
 
         @Override
         public Difference difference(boolean matches, Property<?> property) {
-            return new ExactDifference(getName(), matches, property, value);
+            return new ExactDifference(getName, matches, property, getValue);
         }
 
         @Override
         public JsonElement toJson() {
-            return new JsonPrimitive(value);
+            return new JsonPrimitive(getValue);
         }
     }
 
-    public record RangedPropertyPredicate(String getName, @Nullable String min, @Nullable String max) implements PropertyPredicate {
+    public record RangedPropertyPredicate(String getName, @Nullable String getMin, @Nullable String getMax) implements PropertyPredicate {
 
         @Override
         public <T extends Comparable<T>> boolean match(BlockState state, Property<T> property) {
             T comparable = state.getValue(property);
-            if (min != null) {
-                Optional<T> minOpt = property.getValue(min);
+
+            if (getMin != null) {
+                Optional<T> minOpt = property.getValue(getMin);
                 boolean matches = minOpt.map(v -> comparable.compareTo(v) < 0).orElse(false);
                 if (!matches) return false;
             }
 
-            if (max != null) {
-                Optional<T> maxOpt = property.getValue(max);
+            if (getMax != null) {
+                Optional<T> maxOpt = property.getValue(getMax);
                 boolean matches = maxOpt.map(v -> comparable.compareTo(v) > 0).orElse(false);
                 if (!matches) return false;
             }
@@ -462,18 +463,18 @@ public class BlockPredicate implements Predicate<BlockState> {
 
         @Override
         public Difference difference(boolean matches, Property<?> property) {
-            return new RangedDifference(getName(), matches, property, min, max);
+            return new RangedDifference(getName, matches, property, getMin, getMax);
         }
 
         @Override
         public JsonElement toJson() {
             JsonObject json = new JsonObject();
-            if (this.min != null) {
-                json.addProperty("min", this.min);
+            if (getMin != null) {
+                json.addProperty("min", getMin);
             }
 
-            if (this.max != null) {
-                json.addProperty("max", this.max);
+            if (getMax != null) {
+                json.addProperty("max", getMax);
             }
 
             return json;
@@ -517,7 +518,7 @@ public class BlockPredicate implements Predicate<BlockState> {
 
         @Override
         public String getValueRepresentation() {
-            return "not exist";
+            return "missing";
         }
     }
 
@@ -529,24 +530,25 @@ public class BlockPredicate implements Predicate<BlockState> {
         }
     }
 
-    record RangedDifference(String getName, boolean isMatch, @Nullable Property<?> getProperty, @Nullable String getMinValue,
-                            @Nullable String getMaxValue) implements Difference {
+    record RangedDifference(
+        String getName, boolean isMatch, @Nullable Property<?> getProperty, @Nullable String getMin, @Nullable String getMax
+    ) implements Difference {
 
         @Override
         public String getValueRepresentation() {
-            if (getMinValue == null && getMaxValue == null) {
+            if (getMin == null && getMax == null) {
                 return "any";
             }
 
-            if (getMinValue == null) {
-                return "≤" + getMaxValue;
+            if (getMin == null) {
+                return "≤" + getMax;
             }
 
-            if (getMaxValue == null) {
-                return "≥" + getMinValue;
+            if (getMax == null) {
+                return "≥" + getMin;
             }
 
-            return getMinValue + ".." + getMaxValue;
+            return getMin + ".." + getMax;
         }
     }
 }
