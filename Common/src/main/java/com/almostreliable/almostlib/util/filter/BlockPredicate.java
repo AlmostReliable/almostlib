@@ -8,6 +8,7 @@ import net.minecraft.advancements.critereon.NbtPredicate;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Holder;
 import net.minecraft.core.Registry;
+import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerLevel;
@@ -26,6 +27,8 @@ import java.util.function.BiConsumer;
 import java.util.function.Predicate;
 
 public class BlockPredicate implements Predicate<BlockState> {
+
+    // TODO: add wrapper for NbtPredicate and implement NBT submatching
 
     public static final BlockPredicate ANY = new BlockPredicate(List.of(), Set.of(), List.of(), NbtPredicate.ANY);
     public static final Serializer SERIALIZER = new Serializer();
@@ -204,6 +207,11 @@ public class BlockPredicate implements Predicate<BlockState> {
 
         public Builder nbt(NbtPredicate nbt) {
             this.nbt = nbt;
+            return this;
+        }
+
+        public Builder nbt(CompoundTag nbt) {
+            this.nbt = new NbtPredicate(nbt);
             return this;
         }
 
