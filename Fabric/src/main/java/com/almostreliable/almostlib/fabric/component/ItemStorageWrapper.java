@@ -17,16 +17,52 @@ import java.util.Iterator;
 @SuppressWarnings("UnstableApiUsage")
 public class ItemStorageWrapper implements ItemContainer {
 
-    private final Storage<ItemVariant> storage;
+    protected final Storage<ItemVariant> delegate;
 
-    public ItemStorageWrapper(Storage<ItemVariant> storage) {
-        this.storage = storage;
+    public ItemStorageWrapper(Storage<ItemVariant> delegate) {
+        this.delegate = delegate;
     }
 
     @Override
-    public boolean contains(ItemStack stack) {
-        for (StorageView<ItemVariant> view : storage) {
-            if (view.getResource().matches(stack)) {
+    public boolean allowsInsertion() {
+        return delegate.supportsInsertion();
+    }
+
+    @Override
+    public boolean allowsExtraction() {
+        return delegate.supportsExtraction();
+    }
+
+    @Override
+    public long insert(ItemStack filter, long amount, boolean simulate) {
+        return handleInsert(delegate, filter, amount, simulate);
+    }
+
+    @Override
+    public long extract(ItemStack filter, long amount, boolean simulate) {
+        if (filter.isEmpty()) return 0;
+
+        ItemVariant variant = ItemVariant.of(filter);
+        if (variant.isBlank()) return 0;
+
+        try (Transaction tn = Transaction.openOuter()) {
+            long extracted = delegate.extract(variant, amount, tn);
+            if (simulate) {
+                tn.abort();
+            } else {
+                tn.commit();
+            }
+
+            return extracted;
+        }
+    }
+
+    @Override
+    public boolean contains(ItemStack filter) {
+        if (filter.isEmpty()) return false;
+
+        for (StorageView<ItemVariant> view : delegate) {
+            if (view.getResource().matches(filter)) {
                 return true;
             }
         }
@@ -35,42 +71,30 @@ public class ItemStorageWrapper implements ItemContainer {
     }
 
     @Override
-    public boolean allowInsert() {
-        return storage.supportsInsertion();
-    }
-
-    @Override
-    public ItemStack insert(ItemStack stack, int amount, boolean simulate) {
-        amount = Math.min(amount, stack.getMaxStackSize());
-        ItemVariant iv = ItemVariant.of(stack);
-        long inserted = handleInsert(storage, iv, amount, simulate);
-        return iv.toStack(amount - (int) inserted);
-    }
-
-    @Override
-    public ItemStack extract(ItemStack filter, int amount, boolean simulate) {
-        amount = Math.min(amount, filter.getMaxStackSize());
-
-        try (Transaction tn = Transaction.openOuter()) {
-            ItemVariant iv = ItemVariant.of(filter);
-            long extract = storage.extract(iv, amount, tn);
-            if (simulate) {
-                tn.abort();
-            } else {
-                tn.commit();
+    public void clear() {
+        try (var tn = Transaction.openOuter()) {
+            for (StorageView<ItemVariant> view : delegate) {
+                if (view.isResourceBlank()) continue;
+                view.extract(view.getResource(), view.getAmount(), tn);
             }
 
-            return iv.toStack((int) extract);
+            tn.commit();
         }
     }
 
     @Override
-    public void clear() {
+    public void clear(ItemStack filter) {
+        if (filter.isEmpty()) return;
+
+        ItemVariant variant = ItemVariant.of(filter);
+        if (variant.isBlank()) return;
+
         try (var tn = Transaction.openOuter()) {
-            for (StorageView<ItemVariant> view : storage) {
-                if (!view.isResourceBlank()) {
-                    view.extract(view.getResource(), view.getAmount(), tn);
+            for (StorageView<ItemVariant> view : delegate) {
+                if (view.isResourceBlank() || !view.getResource().matches(filter)) {
+                    continue;
                 }
+                view.extract(view.getResource(), view.getAmount(), tn);
             }
 
             tn.commit();
@@ -80,7 +104,7 @@ public class ItemStorageWrapper implements ItemContainer {
     @Override
     public Iterator<ItemView> iterator() {
         return new Iterator<>() {
-            final Iterator<StorageView<ItemVariant>> iterator = storage.iterator();
+            private final Iterator<StorageView<ItemVariant>> iterator = delegate.iterator();
 
             @Override
             public boolean hasNext() {
@@ -89,53 +113,83 @@ public class ItemStorageWrapper implements ItemContainer {
 
             @Override
             public ItemView next() {
-                return new StorageItemView(iterator.next());
+                return new FabricItemView(iterator.next());
             }
         };
     }
 
-    private record StorageItemView(StorageView<ItemVariant> view) implements ItemView {
+    private static long handleInsert(Storage<ItemVariant> delegate, ItemStack filter, long amount, boolean simulate) {
+        if (filter.isEmpty()) return 0;
+        ItemVariant variant = ItemVariant.of(filter);
+        return handleInsert(delegate, variant, amount, simulate);
+    }
+
+    private static long handleInsert(Storage<ItemVariant> delegate, ItemVariant variant, long amount, boolean simulate) {
+        if (variant.isBlank()) return 0;
+
+        try (var tn = Transaction.openOuter()) {
+            long inserted = delegate.insert(variant, amount, tn);
+            if (simulate) {
+                tn.abort();
+            } else {
+                tn.commit();
+            }
+
+            return inserted;
+        }
+    }
+
+    private record FabricItemView(StorageView<ItemVariant> delegate) implements ItemView {
 
         @Override
         public Item getItem() {
-            return view.getResource().getItem();
+            return delegate.getResource().getItem();
         }
 
         @Override
         public long getAmount() {
-            return view.getAmount();
+            return delegate.getAmount();
         }
 
         @Nullable
         @Override
         public CompoundTag getNbt() {
-            return view.getResource().getNbt();
+            return delegate.getResource().getNbt();
         }
 
         @Override
-        public void clear() {
-            if (!view.isResourceBlank()) {
-                try (var tn = Transaction.openOuter()) {
-                    view.extract(view.getResource(), view.getAmount(), tn);
-                    tn.commit();
-                }
+        public boolean allowsInsertion() {
+            return delegate instanceof SingleSlotStorage<ItemVariant> storage && storage.supportsInsertion();
+        }
+
+        @Override
+        public boolean allowsExtraction() {
+            return delegate instanceof SingleSlotStorage<ItemVariant> storage && storage.supportsExtraction();
+        }
+
+        @Override
+        public long insert(ItemStack filter, long amount, boolean simulate) {
+            if (delegate instanceof SingleSlotStorage<ItemVariant> storage) {
+                return handleInsert(storage, filter, amount, simulate);
             }
+            return 0;
         }
 
         @Override
-        public boolean canInsert() {
-            return view instanceof SingleSlotStorage<ItemVariant> storage && storage.supportsInsertion();
-        }
+        public long insert(long amount, boolean simulate) {
+            if (delegate instanceof SingleSlotStorage<ItemVariant> storage) {
+                return handleInsert(storage, storage.getResource(), amount, simulate);
+            }
 
-        @Override
-        public boolean canExtract() {
-            return true;
+            return 0;
         }
 
         @Override
         public long extract(long amount, boolean simulate) {
+            if (delegate.isResourceBlank()) return 0;
+
             try (var tn = Transaction.openOuter()) {
-                long extract = view.extract(view.getResource(), amount, tn);
+                long extract = delegate.extract(delegate.getResource(), amount, tn);
                 if (simulate) {
                     tn.abort();
                 } else {
@@ -147,39 +201,13 @@ public class ItemStorageWrapper implements ItemContainer {
         }
 
         @Override
-        public long insert(ItemStack item, long amount, boolean simulate) {
-            if (view instanceof SingleSlotStorage<ItemVariant> storage) {
-                ItemVariant variant = ItemVariant.of(item);
-                return handleInsert(storage, variant, amount, simulate);
-            }
+        public void clear() {
+            if (delegate.isResourceBlank()) return;
 
-            return amount;
-        }
-
-        @Override
-        public long insert(long amount, boolean simulate) {
-            if (view instanceof SingleSlotStorage<ItemVariant> storage) {
-                return handleInsert(storage, storage.getResource(), amount, simulate);
-            }
-
-            return amount;
-        }
-    }
-
-    public static long handleInsert(Storage<ItemVariant> storage, ItemVariant variant, long amount, boolean simulate) {
-        if (variant.isBlank()) {
-            return amount;
-        }
-
-        try (var tn = Transaction.openOuter()) {
-            long inserted = storage.insert(variant, amount, tn);
-            if (simulate) {
-                tn.abort();
-            } else {
+            try (var tn = Transaction.openOuter()) {
+                delegate.extract(delegate.getResource(), delegate.getAmount(), tn);
                 tn.commit();
             }
-
-            return amount - inserted;
         }
     }
 }

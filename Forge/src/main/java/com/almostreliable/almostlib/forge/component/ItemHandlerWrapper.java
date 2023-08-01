@@ -7,7 +7,6 @@ import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraftforge.items.IItemHandler;
 import net.minecraftforge.items.IItemHandlerModifiable;
-import net.minecraftforge.items.ItemHandlerHelper;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.Iterator;
@@ -15,20 +14,69 @@ import java.util.NoSuchElementException;
 
 public class ItemHandlerWrapper implements ItemContainer {
 
-    protected final IItemHandler itemHandler;
+    protected final IItemHandler delegate;
 
-    public ItemHandlerWrapper(IItemHandler itemHandler) {
-        this.itemHandler = itemHandler;
-    }
-
-    public int size() {
-        return itemHandler.getSlots();
+    public ItemHandlerWrapper(IItemHandler delegate) {
+        this.delegate = delegate;
     }
 
     @Override
-    public boolean contains(ItemStack stack) {
+    public boolean allowsInsertion() {
+        return true;
+    }
+
+    @Override
+    public boolean allowsExtraction() {
+        return true;
+    }
+
+    @Override
+    public long insert(ItemStack filter, long amount, boolean simulate) {
+        if (filter.isEmpty()) return 0;
+
+        int toInsert = (int) Math.min(amount, Integer.MAX_VALUE);
+        ItemStack remainder = filter.withCount(toInsert);
+
+        for (int slot = 0; slot < size(); slot++) {
+            remainder = delegate.insertItem(slot, remainder, simulate);
+
+            if (remainder.isEmpty()) {
+                return toInsert;
+            }
+        }
+
+        return toInsert - remainder.getCount();
+    }
+
+    @Override
+    public long extract(ItemStack filter, long amount, boolean simulate) {
+        if (filter.isEmpty()) return 0;
+
+        int toExtract = (int) Math.min(amount, Integer.MAX_VALUE);
+        int extracted = 0;
+
+        for (int slot = 0; slot < size(); slot++) {
+            if (!delegate.getStackInSlot(slot).canStack(filter)) {
+                continue;
+            }
+
+            ItemStack itemStack = delegate.extractItem(slot, toExtract - extracted, simulate);
+            extracted += itemStack.getCount();
+
+            if (extracted >= toExtract) {
+                return extracted;
+            }
+        }
+
+        return extracted;
+    }
+
+    @Override
+    public boolean contains(ItemStack filter) {
+        if (filter.isEmpty()) return false;
+
         for (int i = 0; i < size(); i++) {
-            if (ItemHandlerHelper.canItemStacksStack(stack, itemHandler.getStackInSlot(i))) {
+            if (delegate.getStackInSlot(i).canStack(filter)) {
                 return true;
             }
         }
@@ -37,77 +85,42 @@ public class ItemHandlerWrapper implements ItemContainer {
     }
 
     @Override
-    public boolean allowInsert() {
-        return size() > 0;
-    }
-
-    @Override
-    public ItemStack insert(ItemStack filter, int amount, boolean simulate) {
-        int toInsert = Math.min(amount, filter.getMaxStackSize());
-
-        ItemStack remainder = filter.copy();
-        remainder.setCount(toInsert);
-
-        for (int slot = 0; slot < size(); slot++) {
-            remainder = itemHandler.insertItem(slot, remainder, simulate);
-
-            if (remainder.isEmpty()) {
-                return ItemStack.EMPTY;
-            }
-        }
-
-        return remainder;
-    }
-
-    @Override
-    public ItemStack extract(ItemStack filter, int amount, boolean simulate) {
-        amount = Math.min(amount, filter.getMaxStackSize());
-        int extractedAmount = 0;
-        ItemStack result = ItemStack.EMPTY;
-
-        for (int slot = 0; slot < size(); slot++) {
-            if (extractedAmount >= amount) {
-                break;
-            }
-
-            ItemStack stackInSlot = itemHandler.getStackInSlot(slot);
-            if (!ItemHandlerHelper.canItemStacksStack(filter, stackInSlot)) {
-                continue;
-            }
-
-            ItemStack itemStack = itemHandler.extractItem(slot, amount - extractedAmount, simulate);
-            if (!itemStack.isEmpty()) {
-                extractedAmount += itemStack.getCount();
-                result = itemStack;
-            }
-        }
-
-        if (!result.isEmpty()) {
-            result.setCount(extractedAmount);
-        }
-
-        return result;
-    }
-
-    @Override
     public void clear() {
-        if (itemHandler instanceof IItemHandlerModifiable m) {
+        if (delegate instanceof IItemHandlerModifiable m) {
             for (int i = 0; i < size(); i++) {
                 m.setStackInSlot(i, ItemStack.EMPTY);
             }
-
             return;
         }
 
         for (int i = 0; i < size(); i++) {
-            itemHandler.extractItem(i, Integer.MAX_VALUE, false);
+            delegate.extractItem(i, Integer.MAX_VALUE, false);
+        }
+    }
+
+    @Override
+    public void clear(ItemStack filter) {
+        if (filter.isEmpty()) return;
+
+        if (delegate instanceof IItemHandlerModifiable m) {
+            for (int i = 0; i < size(); i++) {
+                if (!delegate.getStackInSlot(i).canStack(filter)) continue;
+                m.setStackInSlot(i, ItemStack.EMPTY);
+            }
+            return;
+        }
+
+        for (int i = 0; i < size(); i++) {
+            if (!delegate.getStackInSlot(i).canStack(filter)) continue;
+            delegate.extractItem(i, Integer.MAX_VALUE, false);
         }
     }
 
     @Override
     public Iterator<ItemView> iterator() {
         return new Iterator<>() {
-            int index = 0;
+
+            private int index;
 
             @Override
             public boolean hasNext() {
@@ -120,73 +133,87 @@ public class ItemHandlerWrapper implements ItemContainer {
                     throw new NoSuchElementException();
                 }
 
-                ItemView view = new ForgeItemView(itemHandler, index);
+                ItemView view = new ForgeItemView(delegate, index);
                 index++;
                 return view;
             }
         };
     }
 
-    private record ForgeItemView(IItemHandler handler, int slot) implements ItemView {
+    public int size() {
+        return delegate.getSlots();
+    }
+
+    private record ForgeItemView(IItemHandler delegate, int slot) implements ItemView {
 
         @Override
         public Item getItem() {
-            return handler.getStackInSlot(slot).getItem();
+            return delegate.getStackInSlot(slot).getItem();
         }
 
         @Override
         public long getAmount() {
-            return handler.getStackInSlot(slot).getCount();
+            return delegate.getStackInSlot(slot).getCount();
         }
 
         @Nullable
         @Override
         public CompoundTag getNbt() {
-            return handler.getStackInSlot(slot).getTag();
+            return delegate.getStackInSlot(slot).getTag();
         }
 
         @Override
-        public void clear() {
-            if (handler instanceof IItemHandlerModifiable m) {
-                m.setStackInSlot(slot, ItemStack.EMPTY);
-            } else {
-                handler.extractItem(slot, Integer.MAX_VALUE, false);
-            }
-        }
-
-        @Override
-        public boolean canInsert() {
+        public boolean allowsInsertion() {
             return true;
         }
 
         @Override
-        public boolean canExtract() {
+        public boolean allowsExtraction() {
             return true;
         }
 
         @Override
-        public long extract(long amount, boolean simulate) {
-            ItemStack extractItem = handler.extractItem(slot, (int) amount, simulate);
-            if (extractItem.isEmpty()) {
+        public long insert(ItemStack filter, long amount, boolean simulate) {
+            if (filter.isEmpty() || delegate.getStackInSlot(slot).isEmpty()) {
                 return 0;
             }
 
-            return extractItem.getCount();
-        }
+            int toInsert = (int) Math.min(amount, filter.getMaxStackSize());
+            ItemStack remainder = filter.withCount(toInsert);
 
-        @Override
-        public long insert(ItemStack item, long amount, boolean simulate) {
-            ItemStack itemStack = handler.insertItem(slot, item, simulate);
-            if (itemStack.isEmpty()) {
-                return 0;
+            remainder = delegate.insertItem(slot, remainder, simulate);
+            if (remainder.isEmpty()) {
+                return toInsert;
             }
 
-            return itemStack.getCount();
+            return toInsert - remainder.getCount();
         }
 
         @Override
         public long insert(long amount, boolean simulate) {
-            return insert(handler.getStackInSlot(slot), amount, simulate);
+            return insert(delegate.getStackInSlot(slot), amount, simulate);
+        }
+
+        @Override
+        public long extract(long amount, boolean simulate) {
+            if (delegate.getStackInSlot(slot).isEmpty()) {
+                return 0;
+            }
+
+            int toExtract = (int) Math.min(amount, delegate.getStackInSlot(slot).getCount());
+            ItemStack extracted = delegate.extractItem(slot, toExtract, simulate);
+
+            return extracted.getCount();
+        }
+
+        @Override
+        public void clear() {
+            if (delegate instanceof IItemHandlerModifiable m) {
+                m.setStackInSlot(slot, ItemStack.EMPTY);
+                return;
+            }
+
+            delegate.extractItem(slot, Integer.MAX_VALUE, false);
         }
     }
 }
