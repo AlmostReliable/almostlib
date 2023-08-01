@@ -28,19 +28,21 @@ public class BlockPredicate implements Predicate<BlockState> {
 
     public static final BlockPredicate ANY = new BlockPredicate(List.of(), Set.of(), List.of(), NbtPredicate.ANY);
     public static final Serializer SERIALIZER = new Serializer();
+
     private final List<TagKey<Block>> tags;
     private final Set<Block> blocks;
     private final List<PropertyPredicate> properties;
     private final NbtPredicate nbt;
-    @Nullable Set<Block> decomposedBlocks;
-    @Nullable Multimap<Block, BlockState> decomposedBlockStates;
 
-    public static BlockPredicate.Builder blocks(Block... blocks) {
+    @Nullable private Set<Block> decomposedBlocks;
+    @Nullable private Multimap<Block, BlockState> decomposedBlockStates;
+
+    public static Builder blocks(Block... blocks) {
         return new Builder().blocks(blocks);
     }
 
     @SafeVarargs
-    public static BlockPredicate.Builder tags(TagKey<Block>... tags) {
+    public static Builder tags(TagKey<Block>... tags) {
         return new Builder().tags(tags);
     }
 
@@ -162,11 +164,10 @@ public class BlockPredicate implements Predicate<BlockState> {
         private final List<TagKey<Block>> tags = new ArrayList<>();
         private final Set<Block> blocks = new HashSet<>();
         private final List<PropertyPredicate> properties = new ArrayList<>();
+
         private NbtPredicate nbt = NbtPredicate.ANY;
 
-        private Builder() {
-
-        }
+        private Builder() {}
 
         public Builder block(Block block) {
             this.blocks.add(block);
