@@ -14,6 +14,7 @@ import net.minecraft.server.level.ServerLevel;
 import net.minecraft.tags.TagKey;
 import net.minecraft.util.StringRepresentable;
 import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.StateDefinition;
 import net.minecraft.world.level.block.state.StateHolder;
@@ -67,6 +68,11 @@ public class BlockPredicate implements Predicate<BlockState> {
     public boolean testNbt(ServerLevel level, BlockPos pos) {
         if (nbt == NbtPredicate.ANY) return true;
         var blockEntity = level.getBlockEntity(pos);
+        return testNbt(blockEntity);
+    }
+
+    public boolean testNbt(@Nullable BlockEntity blockEntity) {
+        if (nbt == NbtPredicate.ANY) return true;
         return blockEntity != null && nbt.matches(blockEntity.saveWithFullMetadata());
     }
 
@@ -92,6 +98,12 @@ public class BlockPredicate implements Predicate<BlockState> {
         if (!level.isLoaded(pos)) return false;
         BlockState state = level.getBlockState(pos);
         return test(state) && testNbt(level, pos);
+    }
+
+    public boolean test(BlockEntity blockEntity) {
+        if (equals(ANY)) return true;
+        BlockState state = blockEntity.getBlockState();
+        return test(state) && testNbt(blockEntity);
     }
 
     /**
