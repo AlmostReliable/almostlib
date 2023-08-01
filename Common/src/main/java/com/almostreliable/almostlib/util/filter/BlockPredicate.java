@@ -283,7 +283,7 @@ public class BlockPredicate implements Predicate<BlockState> {
     public static class Serializer {
 
         public BlockPredicate fromJson(@Nullable JsonObject json) {
-            if (json == null) return ANY;
+            if (json == null || json.keySet().isEmpty()) return ANY;
             var builder = new Builder();
 
             JsonArray blocks = readBlockArray(json.get("blocks"));
@@ -308,6 +308,8 @@ public class BlockPredicate implements Predicate<BlockState> {
 
         public JsonObject toJson(BlockPredicate blockPredicate) {
             JsonObject json = new JsonObject();
+            if (blockPredicate == ANY) return json;
+
             json.add("blocks", writeBlocks(blockPredicate));
 
             if (blockPredicate.nbt != NbtPredicate.ANY) {
