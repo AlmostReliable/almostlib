@@ -93,7 +93,7 @@ public class BlockPredicate implements Predicate<BlockState> {
     @Override
     public boolean test(BlockState state) {
         if (equals(ANY)) return true;
-        return (testTags(state) || testBlocks(state)) && testProperties(state);
+        return (testBlocks(state) || testTags(state)) && testProperties(state);
     }
 
     public boolean test(ServerLevel level, BlockPos pos) {
