@@ -22,7 +22,7 @@ public class FabricInitializer implements ModInitializer {
     }
 
     @SuppressWarnings("UnstableApiUsage")
-    public void applyBlockEntityLookups() {
+    private void applyBlockEntityLookups() {
         ItemStorage.SIDED.registerFallback(
             (world, pos, state, blockEntity, direction) -> {
                 if (blockEntity instanceof ComponentHolder componentHolder) {
