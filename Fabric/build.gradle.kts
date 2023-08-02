@@ -19,6 +19,8 @@ loom {
         accessWidenerPath.set(project(":Common").loom.accessWidenerPath)
         println("Access widener enabled for project ${project.name}. Access widener path: ${loom.accessWidenerPath.get()}")
     }
+
+    createRemapConfigurations(sourceSets.getByName("test"))
 }
 
 val common by configurations
@@ -33,16 +35,21 @@ dependencies {
     shadowCommon(project(":Common", "transformProductionFabric")) { isTransitive = false }
     testImplementation(project(":Common", "namedElements"))
 
-
-    // Team Reborn Energy API. (modApi does not work hahaYes)
-    modImplementation("teamreborn:energy:$teamRebornEnergyApiVersion") {
-        exclude(group = "net.fabricmc", module = "fabric-api")
-    }
+    // Team Reborn Energy API
+    modCompileOnly("teamreborn:energy:$teamRebornEnergyApiVersion")
+    "modTestRuntimeOnly"("teamreborn:energy:$teamRebornEnergyApiVersion")
 }
 
 tasks {
     // allow discovery of AWs from dependencies
     named<RemapJarTask>("remapJar") {
         injectAccessWidener.set(true)
+    }
+}
+
+configurations.all {
+    resolutionStrategy {
+        force("net.fabricmc:fabric-loader:$fabricLoaderVersion")
+        force("net.fabricmc.fabric-api:fabric-api:$fabricApiVersion+$minecraftVersion")
     }
 }
