@@ -10,6 +10,8 @@ public abstract class AlmostCreativeTab extends CreativeModeTab {
     private final String translationKey;
     private final String defaultTranslation;
 
+    // TODO: add constructor without defaultTranslation and fetch it from first param
+
     public AlmostCreativeTab(ResourceLocation location, String defaultTranslation) {
         this(String.format("%s.%s", location.getNamespace(), location.getPath()), defaultTranslation);
     }
