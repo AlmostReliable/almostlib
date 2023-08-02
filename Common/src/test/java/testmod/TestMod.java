@@ -10,8 +10,10 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import testmod.block.EnergyBatteryBlock;
 import testmod.block.EnergyGeneratorBlock;
+import testmod.block.StorageBlock;
 import testmod.gametest.BlockPredicateTests;
-import testmod.gametest.EnergyComponentTests;
+import testmod.gametest.EnergyContainerTests;
+import testmod.gametest.ItemContainerTests;
 
 public final class TestMod {
 
@@ -22,6 +24,15 @@ public final class TestMod {
                 return Items.ACACIA_LOG.getDefaultInstance();
             }
         });
+
+    public static final BlockEntry<StorageBlock> STORAGE_BLOCK = MANAGER.blocks()
+        .builder("storage_block", StorageBlock::new)
+        .register();
+
+    public static final BlockEntityEntry<StorageBlock.Entity> STORAGE_ENTITY = MANAGER.blockEntities()
+        .builder("storage_block", StorageBlock.Entity::new)
+        .block(STORAGE_BLOCK)
+        .register();
 
     public static final BlockEntry<EnergyGeneratorBlock> ENERGY_GENERATOR = MANAGER.blocks()
         .builder("energy_generator", EnergyGeneratorBlock::new)
@@ -46,7 +57,11 @@ public final class TestMod {
     public static void init() {
         MANAGER.initRegistriesToLoader();
         if (AlmostLib.PLATFORM.isGameTestEnabled()) {
-            GameTestLoader.registerProviders(BlockPredicateTests.class, EnergyComponentTests.class);
+            GameTestLoader.registerProviders(
+                BlockPredicateTests.class,
+                EnergyContainerTests.class,
+                ItemContainerTests.class
+            );
         }
     }
 }

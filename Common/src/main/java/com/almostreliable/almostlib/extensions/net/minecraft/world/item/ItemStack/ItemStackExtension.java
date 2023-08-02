@@ -22,6 +22,10 @@ public final class ItemStackExtension {
         return thiz.copy().updateCount(count);
     }
 
+    public static boolean test(@This ItemStack thiz, ItemStack other) {
+        return ItemStack.matches(thiz, other);
+    }
+
     public static boolean canStack(@This ItemStack thiz, ItemStack other) {
         if (!thiz.isStackable() || !other.isStackable()) return false;
         if (thiz.isEmpty() || !thiz.sameItem(other) || thiz.hasTag() != other.hasTag()) return false;
