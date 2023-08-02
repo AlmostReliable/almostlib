@@ -16,7 +16,7 @@ public class RebornEnergyCompatImpl implements RebornEnergyCompat {
     @Override
     public void registerEnergyStorage() {
         EnergyStorage.SIDED.registerFallback(
-            (world, pos, state, blockEntity, direction) -> {
+            (level, pos, state, blockEntity, direction) -> {
                 if (!(blockEntity instanceof ComponentHolder componentHolder)) {
                     return null;
                 }
@@ -43,8 +43,8 @@ public class RebornEnergyCompatImpl implements RebornEnergyCompat {
 
     @Nullable
     @Override
-    public EnergyContainer find(Level world, BlockPos pos, @Nullable Direction direction) {
-        var storage = EnergyStorage.SIDED.find(world, pos, world.getBlockState(pos), null, direction);
+    public EnergyContainer find(Level level, BlockPos pos, @Nullable Direction direction) {
+        var storage = EnergyStorage.SIDED.find(level, pos, level.getBlockState(pos), null, direction);
         if (storage == null) return null;
 
         return new EnergyStorageWrapper(storage);

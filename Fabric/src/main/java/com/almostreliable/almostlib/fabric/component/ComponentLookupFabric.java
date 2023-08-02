@@ -36,8 +36,8 @@ public class ComponentLookupFabric implements ComponentLookup {
 
     @Nullable
     @Override
-    public ItemContainer findItemContainer(Level world, BlockPos pos, @Nullable Direction direction) {
-        Storage<ItemVariant> storage = ItemStorage.SIDED.find(world, pos, direction);
+    public ItemContainer findItemContainer(Level level, BlockPos pos, @Nullable Direction direction) {
+        Storage<ItemVariant> storage = ItemStorage.SIDED.find(level, pos, direction);
         if (storage != null) {
             return new ItemStorageWrapper(storage);
         }
@@ -53,7 +53,7 @@ public class ComponentLookupFabric implements ComponentLookup {
 
     @Nullable
     @Override
-    public EnergyContainer findEnergyContainer(Level world, BlockPos pos, @Nullable Direction direction) {
-        return RebornEnergyCompat.INSTANCE.find(world, pos, direction);
+    public EnergyContainer findEnergyContainer(Level level, BlockPos pos, @Nullable Direction direction) {
+        return RebornEnergyCompat.INSTANCE.find(level, pos, direction);
     }
 }

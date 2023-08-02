@@ -18,12 +18,12 @@ public interface ComponentLookup {
     ItemContainer findItemContainer(BlockEntity blockEntity, @Nullable Direction direction);
 
     @Nullable
-    default ItemContainer findItemContainer(Level world, BlockPos pos) {
-        return findItemContainer(world, pos, null);
+    default ItemContainer findItemContainer(Level level, BlockPos pos) {
+        return findItemContainer(level, pos, null);
     }
 
     @Nullable
-    ItemContainer findItemContainer(Level world, BlockPos pos, @Nullable Direction direction);
+    ItemContainer findItemContainer(Level level, BlockPos pos, @Nullable Direction direction);
 
     @Nullable
     default EnergyContainer findEnergyContainer(BlockEntity blockEntity) {
@@ -34,10 +34,10 @@ public interface ComponentLookup {
     EnergyContainer findEnergyContainer(BlockEntity blockEntity, @Nullable Direction direction);
 
     @Nullable
-    default EnergyContainer findEnergyContainer(Level world, BlockPos pos) {
-        return findEnergyContainer(world, pos, null);
+    default EnergyContainer findEnergyContainer(Level level, BlockPos pos) {
+        return findEnergyContainer(level, pos, null);
     }
 
     @Nullable
-    EnergyContainer findEnergyContainer(Level world, BlockPos pos, @Nullable Direction direction);
+    EnergyContainer findEnergyContainer(Level level, BlockPos pos, @Nullable Direction direction);
 }
