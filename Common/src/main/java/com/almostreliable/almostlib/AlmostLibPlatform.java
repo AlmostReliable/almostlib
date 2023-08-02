@@ -55,6 +55,8 @@ public interface AlmostLibPlatform {
 
     boolean isClient();
 
+    boolean isGameTestEnabled();
+
     CreativeModeTab createCreativeTab(ResourceLocation location, Supplier<ItemStack> supplier);
 
     <T extends BlockEntity> BlockEntityType<T> createBlockEntityType(BiFunction<BlockPos, BlockState, T> factory, Block... blocks);

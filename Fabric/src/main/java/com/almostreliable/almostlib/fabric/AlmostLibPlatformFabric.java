@@ -69,6 +69,13 @@ public class AlmostLibPlatformFabric implements AlmostLibPlatform {
     }
 
     @Override
+    public boolean isGameTestEnabled() {
+        var gametests = System.getProperty("fabric-api.gametest");
+        return "1".equals(gametests) || "true".equals(gametests);
+    }
+
+
+    @Override
     public CreativeModeTab createCreativeTab(ResourceLocation location, Supplier<ItemStack> supplier) {
         return FabricItemGroupBuilder.build(location, supplier);
     }

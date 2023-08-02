@@ -10,9 +10,12 @@ import net.minecraft.gametest.framework.TestFunction;
 import net.minecraft.world.level.block.Rotation;
 
 import javax.annotation.Nullable;
+import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
-import java.util.*;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
 import java.util.function.Consumer;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -21,22 +24,28 @@ public class GameTestLoader {
 
     public static final String ALMOSTLIB_GAMETEST_TEST_PACKAGES = "almostlib.gametest.testPackages";
     @Nullable
-    private static List<Pattern> enabledMods;
-
-    public static void load() {
-        ServiceLoader.load(GameTestProvider.class)
-            .stream()
-            .map(GameTestLoader::tryUnpackProvider)
-            .filter(Objects::nonNull)
-            .filter(GameTestLoader::isAllowedModIdToRun)
-            .forEach(GameTestLoader::registerProvider);
-    }
+    private static List<Pattern> ENABLED_MODS;
 
     public static void registerProvider(GameTestProvider provider) {
         for (Method method : provider.getClass().getDeclaredMethods()) {
             GameTest gametest = method.getAnnotation(GameTest.class);
             if (gametest != null) {
                 register(provider, method, gametest);
+            }
+        }
+    }
+
+    @SafeVarargs
+    public static void registerProviders(Class<? extends GameTestProvider>... providerClasses) {
+        for (Class<? extends GameTestProvider> providerClass : providerClasses) {
+            try {
+                var ctor = providerClass.getConstructor();
+                var instance = ctor.newInstance();
+                if (isAllowedModIdToRun(instance)) {
+                    registerProvider(instance);
+                }
+            } catch (InvocationTargetException | NoSuchMethodException | InstantiationException | IllegalAccessException e) {
+                throw new RuntimeException(e);
             }
         }
     }
@@ -85,32 +94,21 @@ public class GameTestLoader {
     }
 
     private static boolean isAllowedModIdToRun(GameTestProvider provider) {
-        if (enabledMods == null) {
+        if (ENABLED_MODS == null) {
             String enabledNamespacesStr = System.getProperty(ALMOSTLIB_GAMETEST_TEST_PACKAGES);
             if (enabledNamespacesStr == null) {
-                enabledMods = Collections.emptyList();
+                ENABLED_MODS = Collections.emptyList();
             } else {
-                enabledMods = Arrays.stream(enabledNamespacesStr.split(","))
+                ENABLED_MODS = Arrays.stream(enabledNamespacesStr.split(","))
                     .map(String::trim)
                     .filter(s -> !s.isEmpty())
                     .map(Pattern::compile)
                     .toList();
-                AlmostLib.LOGGER.info("Enabled gametests for mods: " + enabledMods);
+                AlmostLib.LOGGER.info("Enabled gametests for mods: " + ENABLED_MODS);
             }
         }
 
         String name = provider.getClass().getName();
-        return enabledMods.stream().map(p -> p.matcher(name)).anyMatch(Matcher::matches);
+        return ENABLED_MODS.stream().map(p -> p.matcher(name)).anyMatch(Matcher::matches);
     }
-
-    @Nullable
-    private static GameTestProvider tryUnpackProvider(ServiceLoader.Provider<GameTestProvider> provider) {
-        try {
-            return provider.get();
-        } catch (Exception e) {
-            AlmostLib.LOGGER.error(e);
-            return null;
-        }
-    }
-
 }

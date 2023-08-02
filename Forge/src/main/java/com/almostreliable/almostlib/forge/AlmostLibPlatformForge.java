@@ -32,6 +32,7 @@ import net.minecraftforge.fml.ModList;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
 import net.minecraftforge.fml.loading.FMLLoader;
 import net.minecraftforge.fml.loading.FMLPaths;
+import net.minecraftforge.gametest.ForgeGameTestHooks;
 import net.minecraftforge.network.NetworkHooks;
 import net.minecraftforge.registries.ForgeRegistries;
 import net.minecraftforge.registries.IForgeRegistry;
@@ -66,6 +67,11 @@ public class AlmostLibPlatformForge implements AlmostLibPlatform {
     @Override
     public boolean isClient() {
         return FMLLoader.getDist() == Dist.CLIENT;
+    }
+
+    @Override
+    public boolean isGameTestEnabled() {
+        return ForgeGameTestHooks.isGametestEnabled();
     }
 
     @Override
