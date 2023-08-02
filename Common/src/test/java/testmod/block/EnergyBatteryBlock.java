@@ -1,12 +1,13 @@
 package testmod.block;
 
-import com.almostreliable.almostlib.block.TickableEntityBlock;
 import com.almostreliable.almostlib.component.ComponentHolder;
 import com.almostreliable.almostlib.component.EnergyContainer;
 import com.almostreliable.almostlib.component.SimpleEnergyContainer;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
+import net.minecraft.nbt.CompoundTag;
 import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.EntityBlock;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
 import testmod.TestMod;
@@ -14,7 +15,7 @@ import testmod.TestMod;
 import javax.annotation.Nullable;
 import java.util.function.Consumer;
 
-public class EnergyBatteryBlock extends Block implements TickableEntityBlock {
+public class EnergyBatteryBlock extends Block implements EntityBlock {
 
     public EnergyBatteryBlock(Properties properties) {
         super(properties);
@@ -28,7 +29,7 @@ public class EnergyBatteryBlock extends Block implements TickableEntityBlock {
 
     public static class Entity extends BlockEntity implements ComponentHolder {
 
-        private final EnergyContainer energyContainer = new SimpleEnergyContainer(100_000);
+        private final SimpleEnergyContainer energyStorage = new SimpleEnergyContainer(100_000);
         @Nullable private Consumer<Object> invalidationListener;
 
         public Entity(BlockPos blockPos, BlockState blockState) {
@@ -38,7 +39,7 @@ public class EnergyBatteryBlock extends Block implements TickableEntityBlock {
         @Nullable
         @Override
         public EnergyContainer getEnergyContainer(@Nullable Direction side) {
-            return energyContainer;
+            return energyStorage;
         }
 
         @Override
@@ -56,6 +57,22 @@ public class EnergyBatteryBlock extends Block implements TickableEntityBlock {
         public void setRemoved() {
             super.setRemoved();
             invalidateEnergyContainers();
+        }
+
+        @Override
+        protected void saveAdditional(CompoundTag tag) {
+            super.saveAdditional(tag);
+            tag.put("energyStorage", energyStorage.serialize());
+        }
+
+        @Override
+        public void load(CompoundTag tag) {
+            super.load(tag);
+            energyStorage.deserialize(tag.getCompound("energyStorage"));
+        }
+
+        public SimpleEnergyContainer getEnergyStorage() {
+            return energyStorage;
         }
     }
 }
