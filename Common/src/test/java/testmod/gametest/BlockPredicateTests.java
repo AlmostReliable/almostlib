@@ -1,24 +1,22 @@
 package testmod.gametest;
 
+import com.almostreliable.almostlib.gametest.AlmostGameTestHelper;
 import com.almostreliable.almostlib.gametest.GameTestProvider;
 import com.almostreliable.almostlib.util.filter.BlockPredicate;
-import com.google.auto.service.AutoService;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.gametest.framework.GameTest;
-import net.minecraft.gametest.framework.GameTestHelper;
 import net.minecraft.tags.BlockTags;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.level.block.*;
-import net.minecraft.world.level.block.entity.AbstractFurnaceBlockEntity;
+import net.minecraft.world.level.block.entity.FurnaceBlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.properties.RedstoneSide;
 
 import java.util.HashMap;
 import java.util.Map;
 
-@AutoService(GameTestProvider.class)
 public class BlockPredicateTests implements GameTestProvider {
 
     private static final BlockPos POS_1 = new BlockPos(1, 2, 1);
@@ -26,13 +24,10 @@ public class BlockPredicateTests implements GameTestProvider {
     private static final BlockPos POS_3 = POS_2.above();
 
     @GameTest
-    public void anyMatch(GameTestHelper helper) {
+    public void anyMatch(AlmostGameTestHelper helper) {
         furnacePropertySetup(helper);
 
-        if (!(helper.getBlockEntity(POS_1) instanceof AbstractFurnaceBlockEntity furnace)) {
-            helper.fail("BlockEntity at POS_1 is not a furnace!");
-            return;
-        }
+        FurnaceBlockEntity furnace = helper.getBlockEntity(POS_1, FurnaceBlockEntity.class);
         furnace.setItem(0, new ItemStack(Items.COAL, 1));
 
         var redstoneWireState = Blocks.REDSTONE_WIRE.defaultBlockState()
@@ -54,7 +49,7 @@ public class BlockPredicateTests implements GameTestProvider {
     }
 
     @GameTest
-    public void simpleBlock(GameTestHelper helper) {
+    public void simpleBlock(AlmostGameTestHelper helper) {
         helper.setBlock(POS_1, Blocks.GLASS);
 
         BlockPredicate succeedPredicate = BlockPredicate.blocks(Blocks.GLASS).build();
@@ -71,7 +66,7 @@ public class BlockPredicateTests implements GameTestProvider {
     }
 
     @GameTest
-    public void multipleBlocks(GameTestHelper helper) {
+    public void multipleBlocks(AlmostGameTestHelper helper) {
         helper.setBlock(POS_1, Blocks.GLASS);
         helper.setBlock(POS_2, Blocks.DIRT);
         helper.setBlock(POS_3, Blocks.IRON_BLOCK);
@@ -92,7 +87,7 @@ public class BlockPredicateTests implements GameTestProvider {
     }
 
     @GameTest
-    public void blockTag(GameTestHelper helper) {
+    public void blockTag(AlmostGameTestHelper helper) {
         helper.setBlock(POS_1, Blocks.OAK_LOG);
         helper.setBlock(POS_2, Blocks.BIRCH_LOG);
 
@@ -109,7 +104,7 @@ public class BlockPredicateTests implements GameTestProvider {
     }
 
     @GameTest
-    public void subProperties(GameTestHelper helper) {
+    public void subProperties(AlmostGameTestHelper helper) {
         furnacePropertySetup(helper);
 
         BlockPredicate predicate = BlockPredicate.blocks(Blocks.FURNACE)
@@ -124,7 +119,7 @@ public class BlockPredicateTests implements GameTestProvider {
     }
 
     @GameTest
-    public void fullProperties(GameTestHelper helper) {
+    public void fullProperties(AlmostGameTestHelper helper) {
         furnacePropertySetup(helper);
 
         BlockPredicate predicate = BlockPredicate.blocks(Blocks.FURNACE)
@@ -140,7 +135,7 @@ public class BlockPredicateTests implements GameTestProvider {
     }
 
     @GameTest
-    public void tagAndBlockProperties(GameTestHelper helper) {
+    public void tagAndBlockProperties(AlmostGameTestHelper helper) {
         BlockState chestState = Blocks.CHEST.defaultBlockState()
             .setValue(ChestBlock.WATERLOGGED, true)
             .setValue(AbstractFurnaceBlock.FACING, Direction.EAST);
@@ -166,7 +161,7 @@ public class BlockPredicateTests implements GameTestProvider {
     }
 
     @GameTest
-    public void propertyDifferences(GameTestHelper helper) {
+    public void propertyDifferences(AlmostGameTestHelper helper) {
         BlockState furnaceState = furnacePropertySetup(helper);
 
         BlockPredicate predicate = BlockPredicate.blocks(Blocks.FURNACE)
@@ -186,7 +181,7 @@ public class BlockPredicateTests implements GameTestProvider {
         });
     }
 
-    private BlockState furnacePropertySetup(GameTestHelper helper) {
+    private BlockState furnacePropertySetup(AlmostGameTestHelper helper) {
         BlockState furnaceState = Blocks.FURNACE.defaultBlockState()
             .setValue(AbstractFurnaceBlock.LIT, true)
             .setValue(AbstractFurnaceBlock.FACING, Direction.EAST);

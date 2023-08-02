@@ -2,6 +2,7 @@ package com.almostreliable.almostlib.gametest;
 
 import com.almostreliable.almostlib.AlmostLib;
 import com.almostreliable.almostlib.BuildConfig;
+import com.almostreliable.almostlib.mixin.GameTestHelperAccessor;
 import com.almostreliable.almostlib.mixin.GameTestRegistryAccessor;
 import net.minecraft.gametest.framework.GameTest;
 import net.minecraft.gametest.framework.GameTestHelper;
@@ -86,7 +87,14 @@ public class GameTestLoader {
 
         return testHelper -> {
             try {
-                method.invoke(provider, testHelper);
+                Class<?>[] parameterTypes = method.getParameterTypes();
+                if (parameterTypes.length != 1) {
+                    throw new IllegalStateException("Method must have exactly one parameter");
+                }
+
+                //noinspection CastToIncompatibleInterface
+                AlmostGameTestHelper helper = new AlmostGameTestHelper(((GameTestHelperAccessor) testHelper).getTestInfo());
+                method.invoke(provider, helper);
             } catch (Exception e) {
                 throw new RuntimeException(e);
             }
