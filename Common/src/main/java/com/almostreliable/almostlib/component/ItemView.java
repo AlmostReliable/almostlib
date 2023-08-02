@@ -56,7 +56,7 @@ public interface ItemView {
      * @param filter   The filter to match against.
      * @param amount   The amount of items to insert.
      * @param simulate Whether to simulate the insertion.
-     * @return The amount of items that were actually inserted.
+     * @return The amount of items that were actually or would have been inserted if simulated.
      */
     long insert(ItemStack filter, long amount, boolean simulate);
 
@@ -68,7 +68,7 @@ public interface ItemView {
      *
      * @param amount   The amount of items to insert.
      * @param simulate Whether to simulate the insertion.
-     * @return The amount of items that were actually inserted.
+     * @return The amount of items that were actually or would have been inserted if simulated.
      */
     long insert(long amount, boolean simulate);
 
@@ -80,7 +80,7 @@ public interface ItemView {
      *
      * @param filter   The filter to match against.
      * @param simulate Whether to simulate the insertion.
-     * @return The amount of items that were actually inserted.
+     * @return The amount of items that were actually or would have been inserted if simulated.
      */
     default long insert(ItemStack filter, boolean simulate) {
         return insert(filter, filter.getCount(), simulate);
@@ -93,7 +93,7 @@ public interface ItemView {
      *
      * @param amount   The amount of items to extract.
      * @param simulate Whether to simulate the extraction.
-     * @return The amount of items that were actually extracted.
+     * @return The amount of items that were actually or would have been extracted if simulated.
      */
     long extract(long amount, boolean simulate);
 
