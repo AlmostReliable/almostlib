@@ -1,6 +1,7 @@
 package com.almostreliable.almostlib.block;
 
 import com.almostreliable.almostlib.menu.network.synchronizer.DataHandler;
+import com.almostreliable.almostlib.util.Serializable;
 import net.minecraft.core.Direction;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.FriendlyByteBuf;
@@ -9,7 +10,7 @@ import javax.annotation.Nullable;
 import java.util.EnumMap;
 import java.util.function.Consumer;
 
-public class SideConfiguration implements DataHandler {
+public class SideConfiguration implements DataHandler, Serializable<CompoundTag> {
 
     private final SideConfigurable host;
     @Nullable private final Runnable changeListener;
@@ -47,6 +48,7 @@ public class SideConfiguration implements DataHandler {
         return changed;
     }
 
+    @Override
     public CompoundTag serialize() {
         var tag = new CompoundTag();
         for (var direction : Direction.values()) {
@@ -55,6 +57,7 @@ public class SideConfiguration implements DataHandler {
         return tag;
     }
 
+    @Override
     public void deserialize(CompoundTag tag) {
         for (var direction : Direction.values()) {
             set(direction, Setting.values()[tag.getInt(direction.toString())]);
