@@ -1,4 +1,4 @@
-package com.almostreliable.almostlib.fabric.compat.energy;
+package com.almostreliable.almostlib.fabric.component.compat;
 
 import com.almostreliable.almostlib.AlmostLib;
 import com.almostreliable.almostlib.component.EnergyContainer;
@@ -14,10 +14,9 @@ import java.util.function.Supplier;
 public interface RebornEnergyCompat {
 
     RebornEnergyCompat EMPTY = new RebornEnergyCompat() {
-        @Override
-        public void registerEnergyStorage() {
 
-        }
+        @Override
+        public void registerEnergyStorage() {}
 
         @Override
         public EnergyContainer find(BlockEntity blockEntity, @Nullable Direction direction) {

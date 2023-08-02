@@ -1,24 +1,25 @@
 package com.almostreliable.almostlib.forge.component;
 
 import com.almostreliable.almostlib.component.EnergyContainer;
+import com.google.common.base.Preconditions;
 import net.minecraftforge.energy.IEnergyStorage;
 
 public class EnergyContainerWrapper implements IEnergyStorage {
 
-    private final EnergyContainer component;
+    protected final EnergyContainer component;
 
     public EnergyContainerWrapper(EnergyContainer component) {
         this.component = component;
     }
 
     @Override
-    public int receiveEnergy(int amount, boolean simulate) {
-        return (int) component.insert(amount, simulate);
+    public boolean canReceive() {
+        return component.allowsInsertion();
     }
 
     @Override
-    public int extractEnergy(int amount, boolean simulate) {
-        return (int) component.extract(amount, simulate);
+    public boolean canExtract() {
+        return component.allowsExtraction();
     }
 
     @Override
@@ -32,12 +33,16 @@ public class EnergyContainerWrapper implements IEnergyStorage {
     }
 
     @Override
-    public boolean canExtract() {
-        return component.canExtract();
+    public int receiveEnergy(int amount, boolean simulate) {
+        Preconditions.checkArgument(amount > 0, "amount must be positive");
+
+        return (int) component.insert(amount, simulate);
     }
 
     @Override
-    public boolean canReceive() {
-        return component.canInsert();
+    public int extractEnergy(int amount, boolean simulate) {
+        Preconditions.checkArgument(amount > 0, "amount must be positive");
+
+        return (int) component.extract(amount, simulate);
     }
 }

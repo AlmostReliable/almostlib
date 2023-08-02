@@ -1,4 +1,4 @@
-package com.almostreliable.almostlib.fabric.compat.energy;
+package com.almostreliable.almostlib.fabric.component.compat;
 
 import com.almostreliable.almostlib.component.EnergyContainer;
 import com.google.common.base.Preconditions;
@@ -9,7 +9,7 @@ import team.reborn.energy.api.EnergyStorage;
 @SuppressWarnings("UnstableApiUsage")
 public class EnergyContainerWrapper extends SnapshotParticipant<Long> implements EnergyStorage {
 
-    private final EnergyContainer component;
+    protected final EnergyContainer component;
 
     public EnergyContainerWrapper(EnergyContainer component) {
         this.component = component;
@@ -17,7 +17,22 @@ public class EnergyContainerWrapper extends SnapshotParticipant<Long> implements
 
     @Override
     public boolean supportsInsertion() {
-        return component.canInsert();
+        return component.allowsInsertion();
+    }
+
+    @Override
+    public boolean supportsExtraction() {
+        return component.allowsExtraction();
+    }
+
+    @Override
+    public long getAmount() {
+        return component.getAmount();
+    }
+
+    @Override
+    public long getCapacity() {
+        return component.getCapacity();
     }
 
     @Override
@@ -33,11 +48,6 @@ public class EnergyContainerWrapper extends SnapshotParticipant<Long> implements
     }
 
     @Override
-    public boolean supportsExtraction() {
-        return component.canExtract();
-    }
-
-    @Override
     public long extract(long amount, TransactionContext transaction) {
         Preconditions.checkArgument(amount > 0, "amount must be positive");
 
@@ -47,16 +57,6 @@ public class EnergyContainerWrapper extends SnapshotParticipant<Long> implements
         }
 
         return 0;
-    }
-
-    @Override
-    public long getAmount() {
-        return component.getAmount();
-    }
-
-    @Override
-    public long getCapacity() {
-        return component.getCapacity();
     }
 
     @Override

@@ -3,7 +3,7 @@ package com.almostreliable.almostlib.fabric.component;
 import com.almostreliable.almostlib.component.ComponentLookup;
 import com.almostreliable.almostlib.component.EnergyContainer;
 import com.almostreliable.almostlib.component.ItemContainer;
-import com.almostreliable.almostlib.fabric.compat.energy.RebornEnergyCompat;
+import com.almostreliable.almostlib.fabric.component.compat.RebornEnergyCompat;
 import com.google.auto.service.AutoService;
 import net.fabricmc.fabric.api.transfer.v1.item.ItemStorage;
 import net.fabricmc.fabric.api.transfer.v1.item.ItemVariant;

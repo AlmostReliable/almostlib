@@ -20,6 +20,7 @@ import java.util.function.Supplier;
 
 public class ClientInitRunner {
 
+    // TODO: replace deprecated method
     public static void run(ClientInit clientInit) {
         clientInit.onEntityRendererInit(EntityRendererRegistry::register);
         clientInit.onBlockEntityRendererInit(BlockEntityRendererRegistry::register);

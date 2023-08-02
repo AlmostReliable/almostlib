@@ -2,10 +2,10 @@ package com.almostreliable.almostlib.component;
 
 public class SimpleEnergyContainer implements EnergyContainer {
 
-    private final long capacity;
-    private final long maxInsert;
-    private final long maxExtract;
-    private long energy;
+    protected long capacity;
+    protected long maxInsert;
+    protected long maxExtract;
+    protected long energy;
 
     public SimpleEnergyContainer(long capacity) {
         this(capacity, capacity);
@@ -26,25 +26,29 @@ public class SimpleEnergyContainer implements EnergyContainer {
         this.energy = energy;
     }
 
-
     @Override
-    public boolean canInsert() {
+    public boolean allowsInsertion() {
         return maxInsert > 0;
     }
 
     @Override
-    public boolean canExtract() {
+    public boolean allowsExtraction() {
         return maxExtract > 0;
     }
 
     @Override
-    public void set(long amount) {
-        energy = amount;
+    public long getAmount() {
+        return energy;
+    }
+
+    @Override
+    public long getCapacity() {
+        return capacity;
     }
 
     @Override
     public long insert(long amount, boolean simulate) {
-        if (!canInsert()) {
+        if (!allowsInsertion()) {
             return 0;
         }
 
@@ -58,7 +62,7 @@ public class SimpleEnergyContainer implements EnergyContainer {
 
     @Override
     public long extract(long amount, boolean simulate) {
-        if (!canExtract()) {
+        if (!allowsExtraction()) {
             return 0;
         }
 
@@ -71,12 +75,7 @@ public class SimpleEnergyContainer implements EnergyContainer {
     }
 
     @Override
-    public long getAmount() {
-        return energy;
-    }
-
-    @Override
-    public long getCapacity() {
-        return capacity;
+    public void set(long amount) {
+        energy = amount;
     }
 }

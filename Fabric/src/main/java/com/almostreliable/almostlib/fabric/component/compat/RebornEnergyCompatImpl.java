@@ -1,4 +1,4 @@
-package com.almostreliable.almostlib.fabric.compat.energy;
+package com.almostreliable.almostlib.fabric.component.compat;
 
 import com.almostreliable.almostlib.component.ComponentHolder;
 import com.almostreliable.almostlib.component.EnergyContainer;
@@ -17,14 +17,14 @@ public class RebornEnergyCompatImpl implements RebornEnergyCompat {
     public void registerEnergyStorage() {
         EnergyStorage.SIDED.registerFallback(
             (world, pos, state, blockEntity, direction) -> {
-                if (blockEntity instanceof ComponentHolder componentHolder) {
-                    var container = componentHolder.getEnergyContainer(direction);
-                    if (container != null) {
-                        return new EnergyContainerWrapper(container);
-                    }
+                if (!(blockEntity instanceof ComponentHolder componentHolder)) {
+                    return null;
                 }
 
-                return null;
+                var container = componentHolder.getEnergyContainer(direction);
+                if (container == null) return null;
+
+                return new EnergyContainerWrapper(container);
             });
     }
 
@@ -36,21 +36,17 @@ public class RebornEnergyCompatImpl implements RebornEnergyCompat {
         }
 
         var storage = EnergyStorage.SIDED.find(blockEntity.getLevel(), blockEntity.getBlockPos(), blockEntity.getBlockState(), blockEntity, direction);
-        if (storage != null) {
-            return new EnergyStorageWrapper(storage);
-        }
+        if (storage == null) return null;
 
-        return null;
+        return new EnergyStorageWrapper(storage);
     }
 
     @Nullable
     @Override
     public EnergyContainer find(Level world, BlockPos pos, @Nullable Direction direction) {
         var storage = EnergyStorage.SIDED.find(world, pos, world.getBlockState(pos), null, direction);
-        if (storage != null) {
-            return new EnergyStorageWrapper(storage);
-        }
+        if (storage == null) return null;
 
-        return null;
+        return new EnergyStorageWrapper(storage);
     }
 }

@@ -1,5 +1,5 @@
 @ParametersAreNonnullByDefault @MethodsReturnNonnullByDefault
-package com.almostreliable.almostlib.fabric.compat.energy;
+package com.almostreliable.almostlib.fabric.component.compat;
 
 import net.minecraft.MethodsReturnNonnullByDefault;
 
