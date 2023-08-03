@@ -12,6 +12,11 @@ import org.jetbrains.annotations.Nullable;
 import java.util.Iterator;
 import java.util.NoSuchElementException;
 
+/**
+ * A wrapper for an {@link IItemHandler} to expose it as an {@link ItemContainer}.
+ * <p>
+ * This is used to convert {@link IItemHandler}s for use with the component api.
+ */
 public class ItemHandlerWrapper implements ItemContainer {
 
     protected final IItemHandler itemHandler;

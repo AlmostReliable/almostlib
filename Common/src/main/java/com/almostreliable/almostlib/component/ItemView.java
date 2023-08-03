@@ -6,6 +6,11 @@ import net.minecraft.world.item.ItemStack;
 
 import javax.annotation.Nullable;
 
+/**
+ * Represents a view of an item within an item container.
+ * <p>
+ * ItemViews are returned when iterating over an {@link ItemContainer}.
+ */
 public interface ItemView {
 
     /**

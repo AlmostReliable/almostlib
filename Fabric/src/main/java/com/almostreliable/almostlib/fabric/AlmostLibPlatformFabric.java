@@ -76,8 +76,8 @@ public class AlmostLibPlatformFabric implements AlmostLibPlatform {
 
 
     @Override
-    public CreativeModeTab createCreativeTab(ResourceLocation location, Supplier<ItemStack> supplier) {
-        return FabricItemGroupBuilder.build(location, supplier);
+    public CreativeModeTab createCreativeTab(ResourceLocation id, Supplier<ItemStack> icon) {
+        return FabricItemGroupBuilder.build(id, icon);
     }
 
     @Override

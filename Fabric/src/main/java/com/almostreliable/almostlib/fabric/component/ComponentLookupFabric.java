@@ -22,27 +22,26 @@ public class ComponentLookupFabric implements ComponentLookup {
     @Nullable
     @Override
     public ItemContainer findItemContainer(BlockEntity blockEntity, @Nullable Direction direction) {
-        if (blockEntity.getLevel() == null) {
-            return null;
-        }
+        if (blockEntity.getLevel() == null) return null;
 
-        Storage<ItemVariant> storage = ItemStorage.SIDED.find(blockEntity.getLevel(), blockEntity.getBlockPos(), blockEntity.getBlockState(), blockEntity, direction);
-        if (storage != null) {
-            return new ItemStorageWrapper(storage);
-        }
+        Storage<ItemVariant> storage = ItemStorage.SIDED.find(
+            blockEntity.getLevel(),
+            blockEntity.getBlockPos(),
+            blockEntity.getBlockState(),
+            blockEntity,
+            direction
+        );
+        if (storage == null) return null;
 
-        return null;
+        return new ItemStorageWrapper(storage);
     }
 
     @Nullable
     @Override
     public ItemContainer findItemContainer(Level level, BlockPos pos, @Nullable Direction direction) {
         Storage<ItemVariant> storage = ItemStorage.SIDED.find(level, pos, direction);
-        if (storage != null) {
-            return new ItemStorageWrapper(storage);
-        }
-
-        return null;
+        if (storage == null) return null;
+        return new ItemStorageWrapper(storage);
     }
 
     @Nullable

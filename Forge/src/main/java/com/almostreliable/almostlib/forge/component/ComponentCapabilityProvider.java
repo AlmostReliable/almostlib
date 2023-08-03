@@ -13,21 +13,21 @@ import org.jetbrains.annotations.Nullable;
 import java.util.HashMap;
 import java.util.Map;
 
-public class AlmostCapabilityProvider implements ICapabilityProvider {
+/**
+ * The capability for the component api.<br>
+ * This exposes the containers to the capability system.
+ * <p>
+ * Automatically attaches an invalidation listener that is
+ * called through the {@link ComponentHolder}.
+ */
+public class ComponentCapabilityProvider implements ICapabilityProvider {
 
     private final ComponentHolder componentHolder;
     private final Map<Object, LazyOptional<?>> capabilityCache = new HashMap<>();
 
-    public AlmostCapabilityProvider(ComponentHolder componentHolder) {
+    public ComponentCapabilityProvider(ComponentHolder componentHolder) {
         this.componentHolder = componentHolder;
         this.componentHolder.addInvalidateListener(this::onInvalidate);
-    }
-
-    private void onInvalidate(Object o) {
-        LazyOptional<?> lazyOptional = capabilityCache.get(o);
-        if (lazyOptional != null) {
-            lazyOptional.invalidate();
-        }
     }
 
     @Override
@@ -48,5 +48,12 @@ public class AlmostCapabilityProvider implements ICapabilityProvider {
         }
 
         return LazyOptional.empty();
+    }
+
+    private void onInvalidate(Object o) {
+        LazyOptional<?> lazyOptional = capabilityCache.get(o);
+        if (lazyOptional != null) {
+            lazyOptional.invalidate();
+        }
     }
 }

@@ -14,6 +14,13 @@ import net.minecraft.world.item.ItemStack;
 import javax.annotation.Nullable;
 import java.util.Iterator;
 
+/**
+ * A wrapper for an {@link ItemVariant} {@link Storage} to expose it
+ * as an {@link ItemContainer}.
+ * <p>
+ * This is used to convert {@link ItemVariant} {@link Storage}s for use
+ * with the component api.
+ */
 @SuppressWarnings("UnstableApiUsage")
 public class ItemStorageWrapper implements ItemContainer {
 

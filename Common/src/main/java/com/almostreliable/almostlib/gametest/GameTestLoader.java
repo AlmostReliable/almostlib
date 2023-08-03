@@ -21,11 +21,14 @@ import java.util.function.Consumer;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-public class GameTestLoader {
+public final class GameTestLoader {
 
-    public static final String ALMOSTLIB_GAMETEST_TEST_PACKAGES = "almostlib.gametest.testPackages";
+    public static final String ENABLED_NAMESPACES = "almostlib.gametest.testPackages";
+
     @Nullable
     private static List<Pattern> ENABLED_MODS;
+
+    private GameTestLoader() {}
 
     public static void registerProvider(GameTestProvider provider) {
         for (Method method : provider.getClass().getDeclaredMethods()) {
@@ -40,11 +43,10 @@ public class GameTestLoader {
     public static void registerProviders(Class<? extends GameTestProvider>... providerClasses) {
         for (Class<? extends GameTestProvider> providerClass : providerClasses) {
             try {
-                var ctor = providerClass.getConstructor();
-                var instance = ctor.newInstance();
-                if (isAllowedModIdToRun(instance)) {
-                    registerProvider(instance);
-                }
+                var constructor = providerClass.getConstructor();
+                var instance = constructor.newInstance();
+                if (!isAllowedModIdToRun(instance)) continue;
+                registerProvider(instance);
             } catch (InvocationTargetException | NoSuchMethodException | InstantiationException | IllegalAccessException e) {
                 throw new RuntimeException(e);
             }
@@ -52,10 +54,6 @@ public class GameTestLoader {
     }
 
     private static void register(GameTestProvider provider, Method method, GameTest gametest) {
-        String simpleClassName = method.getDeclaringClass().getSimpleName();
-        String simpleClassNameLowered = simpleClassName.toLowerCase();
-        String methodName = method.getName().toLowerCase();
-
         String template = gametest.template();
         if (template.isEmpty()) {
             template = BuildConfig.MOD_ID + ":empty_test_structure";
@@ -63,9 +61,13 @@ public class GameTestLoader {
 
         Rotation rotation = StructureUtils.getRotationForRotationSteps(gametest.rotationSteps());
 
+        String className = method.getDeclaringClass().getSimpleName();
+        String methodName = method.getName().toLowerCase();
+        String classNameLower = className.toLowerCase();
+
         var test = new TestFunction(
             gametest.batch(),
-            simpleClassNameLowered + "." + methodName,
+            classNameLower + "." + methodName,
             template,
             rotation,
             gametest.timeoutTicks(),
@@ -73,14 +75,14 @@ public class GameTestLoader {
             gametest.required(),
             gametest.requiredSuccesses(),
             gametest.attempts(),
-            turnMethodIntoConsumer(provider, method)
+            convertMethodToConsumer(provider, method)
         );
 
         GameTestRegistryAccessor.TEST_FUNCTIONS().add(test);
-        GameTestRegistryAccessor.TEST_CLASS_NAMES().add(simpleClassName);
+        GameTestRegistryAccessor.TEST_CLASS_NAMES().add(className);
     }
 
-    private static Consumer<GameTestHelper> turnMethodIntoConsumer(GameTestProvider provider, Method method) {
+    private static Consumer<GameTestHelper> convertMethodToConsumer(GameTestProvider provider, Method method) {
         if (Modifier.isStatic(method.getModifiers())) {
             throw new RuntimeException("Static methods are not supported");
         }
@@ -93,8 +95,8 @@ public class GameTestLoader {
                 }
 
                 //noinspection CastToIncompatibleInterface
-                AlmostGameTestHelper helper = new AlmostGameTestHelper(((GameTestHelperAccessor) testHelper).getTestInfo());
-                method.invoke(provider, helper);
+                AlmostGameTestHelper almostHelper = new AlmostGameTestHelper(((GameTestHelperAccessor) testHelper).getTestInfo());
+                method.invoke(provider, almostHelper);
             } catch (Exception e) {
                 throw new RuntimeException(e);
             }
@@ -103,11 +105,11 @@ public class GameTestLoader {
 
     private static boolean isAllowedModIdToRun(GameTestProvider provider) {
         if (ENABLED_MODS == null) {
-            String enabledNamespacesStr = System.getProperty(ALMOSTLIB_GAMETEST_TEST_PACKAGES);
-            if (enabledNamespacesStr == null) {
+            String enabledNamespaces = System.getProperty(ENABLED_NAMESPACES);
+            if (enabledNamespaces == null) {
                 ENABLED_MODS = Collections.emptyList();
             } else {
-                ENABLED_MODS = Arrays.stream(enabledNamespacesStr.split(","))
+                ENABLED_MODS = Arrays.stream(enabledNamespaces.split(","))
                     .map(String::trim)
                     .filter(s -> !s.isEmpty())
                     .map(Pattern::compile)

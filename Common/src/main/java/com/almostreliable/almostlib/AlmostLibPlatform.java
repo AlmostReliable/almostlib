@@ -32,32 +32,49 @@ import java.util.function.Supplier;
 public interface AlmostLibPlatform {
 
     /**
-     * Gets the current platform
+     * Returns the current platform
      *
      * @return The current platform.
      */
     Platform getPlatform();
 
     /**
-     * Checks if a mod with the given id is loaded.
+     * Returns if a mod with the given id is loaded.
      *
-     * @param modId The mod to check if it is loaded.
+     * @param modId The mod id to check.
      * @return True if the mod is loaded, false otherwise.
      */
     boolean isModLoaded(String modId);
 
     /**
-     * Check if the game is currently in a development environment.
+     * Returns if the game is currently in a development environment.
      *
      * @return True if in a development environment, false otherwise.
      */
     boolean isDevelopmentEnvironment();
 
+    /**
+     * Returns if the game is currently in a client environment.
+     *
+     * @return True if in a client environment, false otherwise.
+     */
     boolean isClient();
 
+    /**
+     * Returns whether the game test framework is enabled.
+     *
+     * @return True if the game test framework is enabled, false otherwise.
+     */
     boolean isGameTestEnabled();
 
-    CreativeModeTab createCreativeTab(ResourceLocation location, Supplier<ItemStack> supplier);
+    /**
+     * Creates a new creative tab with the given id and icon supplier.
+     *
+     * @param id   The id of the creative tab.
+     * @param icon The icon supplier of the creative tab.
+     * @return The created creative tab.
+     */
+    CreativeModeTab createCreativeTab(ResourceLocation id, Supplier<ItemStack> icon);
 
     <T extends BlockEntity> BlockEntityType<T> createBlockEntityType(BiFunction<BlockPos, BlockState, T> factory, Block... blocks);
 
@@ -66,11 +83,11 @@ public interface AlmostLibPlatform {
     void openMenu(ServerPlayer player, MenuProvider menu, Consumer<FriendlyByteBuf> buf);
 
     default void openMenu(ServerPlayer player, MenuProvider menu, BlockPos blockPos) {
-        this.openMenu(player, menu, buf -> buf.writeBlockPos(blockPos));
+        openMenu(player, menu, buf -> buf.writeBlockPos(blockPos));
     }
 
     default void openMenu(ServerPlayer player, MenuProvider menu, BlockPos blockPos, Consumer<FriendlyByteBuf> buf) {
-        this.openMenu(player, menu, firstBuf -> {
+        openMenu(player, menu, firstBuf -> {
             firstBuf.writeBlockPos(blockPos);
             buf.accept(firstBuf);
         });

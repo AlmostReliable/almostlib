@@ -3,7 +3,7 @@ package com.almostreliable.almostlib.forge;
 import com.almostreliable.almostlib.AlmostLib;
 import com.almostreliable.almostlib.BuildConfig;
 import com.almostreliable.almostlib.component.ComponentHolder;
-import com.almostreliable.almostlib.forge.component.AlmostCapabilityProvider;
+import com.almostreliable.almostlib.forge.component.ComponentCapabilityProvider;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.AttachCapabilitiesEvent;
@@ -14,13 +14,13 @@ public class ForgeInitializer {
 
     public ForgeInitializer() {
         AlmostLib.initNetworkHandler();
-        MinecraftForge.EVENT_BUS.addGenericListener(BlockEntity.class, ForgeInitializer::attachBlockCapabilities);
+        MinecraftForge.EVENT_BUS.addGenericListener(BlockEntity.class, ForgeInitializer::attachComponentApi);
     }
 
-    private static void attachBlockCapabilities(AttachCapabilitiesEvent<BlockEntity> event) {
+    private static void attachComponentApi(AttachCapabilitiesEvent<BlockEntity> event) {
         Object object = event.getObject();
         if (object instanceof ComponentHolder componentHolder) {
-            event.addCapability(AlmostLib.getRL("components"), new AlmostCapabilityProvider(componentHolder));
+            event.addCapability(AlmostLib.getRL("components"), new ComponentCapabilityProvider(componentHolder));
         }
     }
 }

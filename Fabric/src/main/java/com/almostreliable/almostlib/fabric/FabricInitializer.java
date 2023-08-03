@@ -12,11 +12,11 @@ public class FabricInitializer implements ModInitializer {
     @Override
     public void onInitialize() {
         AlmostLib.initNetworkHandler();
-        applyBlockEntityLookups();
+        attachComponentApi();
     }
 
     @SuppressWarnings("UnstableApiUsage")
-    private void applyBlockEntityLookups() {
+    private void attachComponentApi() {
         ItemStorage.SIDED.registerFallback(
             (level, pos, state, blockEntity, direction) -> {
                 if (blockEntity instanceof ComponentHolder componentHolder) {

@@ -4,6 +4,11 @@ import com.almostreliable.almostlib.component.EnergyContainer;
 import com.google.common.base.Preconditions;
 import net.minecraftforge.energy.IEnergyStorage;
 
+/**
+ * A wrapper for {@link IEnergyStorage} to expose it as an {@link EnergyContainer}.
+ * <p>
+ * This is used to convert {@link IEnergyStorage}s for use with the component api.
+ */
 public class EnergyStorageWrapper implements EnergyContainer {
 
     protected final IEnergyStorage storage;

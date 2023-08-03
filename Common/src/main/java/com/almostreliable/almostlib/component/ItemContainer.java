@@ -1,7 +1,22 @@
 package com.almostreliable.almostlib.component;
 
+import net.minecraft.world.Container;
 import net.minecraft.world.item.ItemStack;
 
+/**
+ * Implemented by containers that can store items.
+ * <p>
+ * This is an abstraction of Minecraft's {@link Container} interface.<br>
+ * Custom item containers should always implement the {@link Container} interface
+ * instead of this one as it's only used within the component api.
+ * <p>
+ * Implementations of this interface are returned when using the
+ * {@link ComponentLookup} system, to get item storages from the environment.<br>
+ * For convenience, this interface is iterable and returns {@link ItemView}s.
+ * <p>
+ * The respective loader interfaces for item storage can be wrapped by using the
+ * {@code ItemHandlerWrapper} on Forge and the {@code ItemStorageWrapper} on Fabric.
+ */
 public interface ItemContainer extends Iterable<ItemView> {
 
     /**

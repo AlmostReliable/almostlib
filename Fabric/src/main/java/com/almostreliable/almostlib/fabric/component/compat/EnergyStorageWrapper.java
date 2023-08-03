@@ -5,6 +5,11 @@ import com.google.common.base.Preconditions;
 import net.fabricmc.fabric.api.transfer.v1.transaction.Transaction;
 import team.reborn.energy.api.EnergyStorage;
 
+/**
+ * A wrapper for {@link EnergyStorage} to expose it as an {@link EnergyContainer}.
+ * <p>
+ * This is used to convert {@link EnergyStorage}s for use with the component api.
+ */
 @SuppressWarnings("UnstableApiUsage")
 public class EnergyStorageWrapper implements EnergyContainer {
 

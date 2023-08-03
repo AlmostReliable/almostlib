@@ -1,10 +1,16 @@
-package com.almostreliable.almostlib.component;
+package com.almostreliable.almostlib.component.impl;
 
+import com.almostreliable.almostlib.component.EnergyContainer;
 import com.almostreliable.almostlib.util.Serializable;
 import net.minecraft.nbt.CompoundTag;
 
 import javax.annotation.Nullable;
 
+/**
+ * A simple implementation of {@link EnergyContainer}.
+ * <p>
+ * This implementation is serializable.
+ */
 public class SimpleEnergyContainer implements EnergyContainer, Serializable<CompoundTag> {
 
     @Nullable private final Runnable changeListener;

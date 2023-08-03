@@ -1,5 +1,18 @@
 package com.almostreliable.almostlib.component;
 
+/**
+ * Implemented by containers that can store energy.
+ * <p>
+ * Since not all loaders hold default implementations of an energy container,
+ * this interface can be used for any kind of energy storage and is not only
+ * limited to the component api.
+ * <p>
+ * Implementations of this interface are returned when using the
+ * {@link ComponentLookup} system, to get energy storages from the environment.
+ * <p>
+ * The respective loader interfaces for energy storage can be wrapped by
+ * using the {@code EnergyStorageWrapper}.
+ */
 public interface EnergyContainer {
 
     /**

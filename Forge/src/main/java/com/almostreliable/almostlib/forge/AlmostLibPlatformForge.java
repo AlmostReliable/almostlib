@@ -75,13 +75,13 @@ public class AlmostLibPlatformForge implements AlmostLibPlatform {
     }
 
     @Override
-    public CreativeModeTab createCreativeTab(ResourceLocation location, Supplier<ItemStack> supplier) {
-        String string = String.format("%s.%s", location.getNamespace(), location.getPath());
-        return new CreativeModeTab(string) {
+    public CreativeModeTab createCreativeTab(ResourceLocation location, Supplier<ItemStack> icon) {
+        String id = String.format("%s.%s", location.getNamespace(), location.getPath());
+        return new CreativeModeTab(id) {
             @Override
             @Nonnull
             public ItemStack makeIcon() {
-                return supplier.get();
+                return icon.get();
             }
         };
     }

@@ -26,11 +26,8 @@ public class ComponentLookupForge implements ComponentLookup {
     @Override
     public ItemContainer findItemContainer(Level level, BlockPos pos, @Nullable Direction direction) {
         BlockEntity blockEntity = level.getBlockEntity(pos);
-        if (blockEntity != null) {
-            return findItemContainer(blockEntity, direction);
-        }
-
-        return null;
+        if (blockEntity == null) return null;
+        return findItemContainer(blockEntity, direction);
     }
 
     @Nullable
@@ -43,10 +40,7 @@ public class ComponentLookupForge implements ComponentLookup {
     @Override
     public EnergyContainer findEnergyContainer(Level level, BlockPos pos, @Nullable Direction direction) {
         BlockEntity blockEntity = level.getBlockEntity(pos);
-        if (blockEntity != null) {
-            return findEnergyContainer(blockEntity, direction);
-        }
-
-        return null;
+        if (blockEntity == null) return null;
+        return findEnergyContainer(blockEntity, direction);
     }
 }
