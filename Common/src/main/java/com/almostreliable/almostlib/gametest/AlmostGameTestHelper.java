@@ -23,4 +23,11 @@ public class AlmostGameTestHelper extends GameTestHelper {
 
         return clazz.cast(be);
     }
+
+    public void succeedAtTickTime(long tickTime, Runnable task) {
+        runAtTickTime(tickTime, () -> {
+            task.run();
+            succeed();
+        });
+    }
 }
