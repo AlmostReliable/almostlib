@@ -2,6 +2,7 @@ package com.almostreliable.almostlib.gametest;
 
 import com.almostreliable.almostlib.AlmostLib;
 import com.almostreliable.almostlib.BuildConfig;
+import com.almostreliable.almostlib.mixin.GameTestHelperAccessor;
 import com.almostreliable.almostlib.mixin.GameTestRegistryAccessor;
 import net.minecraft.gametest.framework.GameTest;
 import net.minecraft.gametest.framework.GameTestHelper;
@@ -10,27 +11,24 @@ import net.minecraft.gametest.framework.TestFunction;
 import net.minecraft.world.level.block.Rotation;
 
 import javax.annotation.Nullable;
+import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
-import java.util.*;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
 import java.util.function.Consumer;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-public class GameTestLoader {
+public final class GameTestLoader {
 
-    public static final String ALMOSTLIB_GAMETEST_TEST_PACKAGES = "almostlib.gametest.testPackages";
+    public static final String ENABLED_NAMESPACES = "almostlib.gametest.testPackages";
+
     @Nullable
-    private static List<Pattern> enabledMods;
+    private static List<Pattern> ENABLED_MODS;
 
-    public static void load() {
-        ServiceLoader.load(GameTestProvider.class)
-            .stream()
-            .map(GameTestLoader::tryUnpackProvider)
-            .filter(Objects::nonNull)
-            .filter(GameTestLoader::isAllowedModIdToRun)
-            .forEach(GameTestLoader::registerProvider);
-    }
+    private GameTestLoader() {}
 
     public static void registerProvider(GameTestProvider provider) {
         for (Method method : provider.getClass().getDeclaredMethods()) {
@@ -41,11 +39,21 @@ public class GameTestLoader {
         }
     }
 
-    private static void register(GameTestProvider provider, Method method, GameTest gametest) {
-        String simpleClassName = method.getDeclaringClass().getSimpleName();
-        String simpleClassNameLowered = simpleClassName.toLowerCase();
-        String methodName = method.getName().toLowerCase();
+    @SafeVarargs
+    public static void registerProviders(Class<? extends GameTestProvider>... providerClasses) {
+        for (Class<? extends GameTestProvider> providerClass : providerClasses) {
+            try {
+                var constructor = providerClass.getConstructor();
+                var instance = constructor.newInstance();
+                if (!isAllowedModIdToRun(instance)) continue;
+                registerProvider(instance);
+            } catch (InvocationTargetException | NoSuchMethodException | InstantiationException | IllegalAccessException e) {
+                throw new RuntimeException(e);
+            }
+        }
+    }
 
+    private static void register(GameTestProvider provider, Method method, GameTest gametest) {
         String template = gametest.template();
         if (template.isEmpty()) {
             template = BuildConfig.MOD_ID + ":empty_test_structure";
@@ -53,9 +61,13 @@ public class GameTestLoader {
 
         Rotation rotation = StructureUtils.getRotationForRotationSteps(gametest.rotationSteps());
 
+        String className = method.getDeclaringClass().getSimpleName();
+        String methodName = method.getName().toLowerCase();
+        String classNameLower = className.toLowerCase();
+
         var test = new TestFunction(
             gametest.batch(),
-            simpleClassNameLowered + "." + methodName,
+            classNameLower + "." + methodName,
             template,
             rotation,
             gametest.timeoutTicks(),
@@ -63,21 +75,28 @@ public class GameTestLoader {
             gametest.required(),
             gametest.requiredSuccesses(),
             gametest.attempts(),
-            turnMethodIntoConsumer(provider, method)
+            convertMethodToConsumer(provider, method)
         );
 
         GameTestRegistryAccessor.TEST_FUNCTIONS().add(test);
-        GameTestRegistryAccessor.TEST_CLASS_NAMES().add(simpleClassName);
+        GameTestRegistryAccessor.TEST_CLASS_NAMES().add(className);
     }
 
-    private static Consumer<GameTestHelper> turnMethodIntoConsumer(GameTestProvider provider, Method method) {
+    private static Consumer<GameTestHelper> convertMethodToConsumer(GameTestProvider provider, Method method) {
         if (Modifier.isStatic(method.getModifiers())) {
             throw new RuntimeException("Static methods are not supported");
         }
 
         return testHelper -> {
             try {
-                method.invoke(provider, testHelper);
+                Class<?>[] parameterTypes = method.getParameterTypes();
+                if (parameterTypes.length != 1) {
+                    throw new IllegalStateException("Method must have exactly one parameter");
+                }
+
+                //noinspection CastToIncompatibleInterface
+                AlmostGameTestHelper almostHelper = new AlmostGameTestHelper(((GameTestHelperAccessor) testHelper).getTestInfo());
+                method.invoke(provider, almostHelper);
             } catch (Exception e) {
                 throw new RuntimeException(e);
             }
@@ -85,32 +104,21 @@ public class GameTestLoader {
     }
 
     private static boolean isAllowedModIdToRun(GameTestProvider provider) {
-        if (enabledMods == null) {
-            String enabledNamespacesStr = System.getProperty(ALMOSTLIB_GAMETEST_TEST_PACKAGES);
-            if (enabledNamespacesStr == null) {
-                enabledMods = Collections.emptyList();
+        if (ENABLED_MODS == null) {
+            String enabledNamespaces = System.getProperty(ENABLED_NAMESPACES);
+            if (enabledNamespaces == null) {
+                ENABLED_MODS = Collections.emptyList();
             } else {
-                enabledMods = Arrays.stream(enabledNamespacesStr.split(","))
+                ENABLED_MODS = Arrays.stream(enabledNamespaces.split(","))
                     .map(String::trim)
                     .filter(s -> !s.isEmpty())
                     .map(Pattern::compile)
                     .toList();
-                AlmostLib.LOGGER.info("Enabled gametests for mods: " + enabledMods);
+                AlmostLib.LOGGER.info("Enabled gametests for mods: " + ENABLED_MODS);
             }
         }
 
         String name = provider.getClass().getName();
-        return enabledMods.stream().map(p -> p.matcher(name)).anyMatch(Matcher::matches);
+        return ENABLED_MODS.stream().map(p -> p.matcher(name)).anyMatch(Matcher::matches);
     }
-
-    @Nullable
-    private static GameTestProvider tryUnpackProvider(ServiceLoader.Provider<GameTestProvider> provider) {
-        try {
-            return provider.get();
-        } catch (Exception e) {
-            AlmostLib.LOGGER.error(e);
-            return null;
-        }
-    }
-
 }

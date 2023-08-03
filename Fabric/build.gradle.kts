@@ -3,6 +3,7 @@ import net.fabricmc.loom.task.RemapJarTask
 val minecraftVersion: String by project
 val fabricLoaderVersion: String by project
 val fabricApiVersion: String by project
+val teamRebornEnergyApiVersion: String by project
 
 plugins {
     id("com.github.johnrengelman.shadow") version ("8.1.1")
@@ -18,6 +19,8 @@ loom {
         accessWidenerPath.set(project(":Common").loom.accessWidenerPath)
         println("Access widener enabled for project ${project.name}. Access widener path: ${loom.accessWidenerPath.get()}")
     }
+
+    createRemapConfigurations(sourceSets.getByName("test"))
 }
 
 val common by configurations
@@ -31,11 +34,22 @@ dependencies {
     common(project(":Common", "namedElements")) { isTransitive = false }
     shadowCommon(project(":Common", "transformProductionFabric")) { isTransitive = false }
     testImplementation(project(":Common", "namedElements"))
+
+    // Team Reborn Energy API
+    modCompileOnly("teamreborn:energy:$teamRebornEnergyApiVersion")
+    "modTestRuntimeOnly"("teamreborn:energy:$teamRebornEnergyApiVersion")
 }
 
 tasks {
     // allow discovery of AWs from dependencies
     named<RemapJarTask>("remapJar") {
         injectAccessWidener.set(true)
+    }
+}
+
+configurations.all {
+    resolutionStrategy {
+        force("net.fabricmc:fabric-loader:$fabricLoaderVersion")
+        force("net.fabricmc.fabric-api:fabric-api:$fabricApiVersion+$minecraftVersion")
     }
 }

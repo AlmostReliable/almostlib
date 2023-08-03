@@ -2,20 +2,25 @@ package com.almostreliable.almostlib.forge;
 
 import com.almostreliable.almostlib.AlmostLib;
 import com.almostreliable.almostlib.BuildConfig;
-import com.almostreliable.almostlib.gametest.GameTestLoader;
-import net.minecraftforge.event.RegisterGameTestsEvent;
+import com.almostreliable.almostlib.component.ComponentHolder;
+import com.almostreliable.almostlib.forge.component.ComponentCapabilityProvider;
+import net.minecraft.world.level.block.entity.BlockEntity;
+import net.minecraftforge.common.MinecraftForge;
+import net.minecraftforge.event.AttachCapabilitiesEvent;
 import net.minecraftforge.fml.common.Mod;
-import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
 
 @Mod(BuildConfig.MOD_ID)
 public class ForgeInitializer {
 
     public ForgeInitializer() {
         AlmostLib.initNetworkHandler();
-        FMLJavaModLoadingContext.get().getModEventBus().addListener(ForgeInitializer::onGameTestRun);
+        MinecraftForge.EVENT_BUS.addGenericListener(BlockEntity.class, ForgeInitializer::attachComponentApi);
     }
 
-    private static void onGameTestRun(RegisterGameTestsEvent event) {
-        GameTestLoader.load();
+    private static void attachComponentApi(AttachCapabilitiesEvent<BlockEntity> event) {
+        Object object = event.getObject();
+        if (object instanceof ComponentHolder componentHolder) {
+            event.addCapability(AlmostLib.getRL("components"), new ComponentCapabilityProvider(componentHolder));
+        }
     }
 }

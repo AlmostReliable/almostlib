@@ -32,6 +32,7 @@ import net.minecraftforge.fml.ModList;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
 import net.minecraftforge.fml.loading.FMLLoader;
 import net.minecraftforge.fml.loading.FMLPaths;
+import net.minecraftforge.gametest.ForgeGameTestHooks;
 import net.minecraftforge.network.NetworkHooks;
 import net.minecraftforge.registries.ForgeRegistries;
 import net.minecraftforge.registries.IForgeRegistry;
@@ -69,13 +70,18 @@ public class AlmostLibPlatformForge implements AlmostLibPlatform {
     }
 
     @Override
-    public CreativeModeTab createCreativeTab(ResourceLocation location, Supplier<ItemStack> supplier) {
-        String string = String.format("%s.%s", location.getNamespace(), location.getPath());
-        return new CreativeModeTab(string) {
+    public boolean isGameTestEnabled() {
+        return ForgeGameTestHooks.isGametestEnabled();
+    }
+
+    @Override
+    public CreativeModeTab createCreativeTab(ResourceLocation location, Supplier<ItemStack> icon) {
+        String id = String.format("%s.%s", location.getNamespace(), location.getPath());
+        return new CreativeModeTab(id) {
             @Override
             @Nonnull
             public ItemStack makeIcon() {
-                return supplier.get();
+                return icon.get();
             }
         };
     }
@@ -124,20 +130,20 @@ public class AlmostLibPlatformForge implements AlmostLibPlatform {
     @Override
     public <T> void initRegistration(Registration<T, ?> registration) {
         FMLJavaModLoadingContext
-                .get()
-                .getModEventBus()
-                .addListener((RegisterEvent event) -> {
-                    if (!registration.getRegistry().key().equals(event.getRegistryKey())) {
-                        return;
-                    }
+            .get()
+            .getModEventBus()
+            .addListener((RegisterEvent event) -> {
+                if (!registration.getRegistry().key().equals(event.getRegistryKey())) {
+                    return;
+                }
 
-                    BiConsumer<ResourceLocation, Object> registerConsumer = createRegisterConsumer(event.getForgeRegistry(),
-                        event.getVanillaRegistry());
-                    if (registerConsumer == null) {
-                        throw new IllegalArgumentException("Neither forge registry nor vanilla registry is present");
-                    }
-                    registration.applyRegister(registerConsumer::accept);
-                });
+                BiConsumer<ResourceLocation, Object> registerConsumer = createRegisterConsumer(event.getForgeRegistry(),
+                    event.getVanillaRegistry());
+                if (registerConsumer == null) {
+                    throw new IllegalArgumentException("Neither forge registry nor vanilla registry is present");
+                }
+                registration.applyRegister(registerConsumer::accept);
+            });
     }
 
     @Nullable

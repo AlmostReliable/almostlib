@@ -47,9 +47,12 @@ public class AlmostManager {
      * @param tab The creative tab to use.
      * @return The instance of this manager.
      */
-    public AlmostManager defaultCreativeTab(AlmostCreativeTab tab) {
+    public AlmostManager defaultCreativeTab(CreativeModeTab tab) {
         items.defaultCreativeTab(tab);
-        tab.bindLang(dataGen);
+        if (tab instanceof AlmostCreativeTab a) {
+            a.bindLang(dataGen);
+        }
+
         return this;
     }
 

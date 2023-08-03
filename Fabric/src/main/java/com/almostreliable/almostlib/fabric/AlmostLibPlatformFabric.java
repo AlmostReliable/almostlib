@@ -69,8 +69,15 @@ public class AlmostLibPlatformFabric implements AlmostLibPlatform {
     }
 
     @Override
-    public CreativeModeTab createCreativeTab(ResourceLocation location, Supplier<ItemStack> supplier) {
-        return FabricItemGroupBuilder.build(location, supplier);
+    public boolean isGameTestEnabled() {
+        var gametests = System.getProperty("fabric-api.gametest");
+        return "1".equals(gametests) || "true".equals(gametests);
+    }
+
+
+    @Override
+    public CreativeModeTab createCreativeTab(ResourceLocation id, Supplier<ItemStack> icon) {
+        return FabricItemGroupBuilder.build(id, icon);
     }
 
     @Override
@@ -138,20 +145,20 @@ public class AlmostLibPlatformFabric implements AlmostLibPlatform {
     @Override
     public void initRegistrations(Registration<?, ?>... registrations) {
         List<Registry<?>> priority = List.of(
-                Registry.BLOCK,
-                Registry.FLUID,
-                Registry.ITEM,
-                Registry.BLOCK_ENTITY_TYPE
+            Registry.BLOCK,
+            Registry.FLUID,
+            Registry.ITEM,
+            Registry.BLOCK_ENTITY_TYPE
         );
 
         List<Registration<?, ?>> sorted = Arrays
-                .stream(registrations)
-                .sorted((o1, o2) -> o1
-                        .getRegistry()
-                        .key()
-                    .location()
-                    .toString()
-                    .compareToIgnoreCase(o2.getRegistry().key().location().toString()))
+            .stream(registrations)
+            .sorted((o1, o2) -> o1
+                .getRegistry()
+                .key()
+                .location()
+                .toString()
+                .compareToIgnoreCase(o2.getRegistry().key().location().toString()))
             .sorted(Comparator.comparingInt(r -> {
                 int i = priority.indexOf(r.getRegistry());
                 return i >= 0 ? i : priority.size();
