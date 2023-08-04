@@ -7,9 +7,9 @@ import net.minecraftforge.common.capabilities.ForgeCapabilities;
 import net.minecraftforge.common.capabilities.ICapabilityProvider;
 import net.minecraftforge.common.util.LazyOptional;
 import net.minecraftforge.items.wrapper.InvWrapper;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -30,8 +30,8 @@ public class ComponentCapabilityProvider implements ICapabilityProvider {
         this.componentHolder.addInvalidateListener(this::onInvalidate);
     }
 
+    @Nonnull
     @Override
-    @NotNull
     public <T> LazyOptional<T> getCapability(Capability<T> capability, @Nullable Direction direction) {
         if (capability == ForgeCapabilities.ITEM_HANDLER) {
             var container = componentHolder.getItemContainer(direction);
