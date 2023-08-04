@@ -7,8 +7,8 @@ import com.electronwill.nightconfig.core.io.IndentStyle;
 import com.electronwill.nightconfig.core.io.NewlineStyle;
 import com.electronwill.nightconfig.core.io.ParsingMode;
 import com.electronwill.nightconfig.core.io.WritingMode;
-import com.electronwill.nightconfig.toml.TomlParser;
-import com.electronwill.nightconfig.toml.TomlWriter;
+import com.electronwill.nightconfig.hocon.HoconParser;
+import com.electronwill.nightconfig.hocon.HoconWriter;
 import com.google.common.base.Preconditions;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.FilenameUtils;
@@ -26,7 +26,7 @@ public class Config<T> implements Supplier<T> {
     private final Function<ConfigBuilder, T> factory;
 
     Config(File file, Class<T> type, Function<ConfigBuilder, T> factory) {
-        Preconditions.checkArgument(FilenameUtils.getExtension(file.getName()).equals("toml"), "Config file must be a TOML file");
+        Preconditions.checkArgument(FilenameUtils.getExtension(file.getName()).equals("hocon"), "Config file must be a HOCON file");
         this.file = file;
         this.type = type;
         this.factory = factory;
@@ -51,7 +51,7 @@ public class Config<T> implements Supplier<T> {
         }
 
         try {
-            TomlParser parser = new TomlParser();
+            HoconParser parser = new HoconParser();
             CommentedConfig config = ConfigBuilder.defaultConfig();
             parser.parse(file, config, ParsingMode.REPLACE, FileNotFoundAction.READ_NOTHING);
             return new ConfigBuilder(config);
@@ -72,7 +72,7 @@ public class Config<T> implements Supplier<T> {
 
     private void save(ConfigBuilder builder) {
         try {
-            TomlWriter writer = new TomlWriter();
+            HoconWriter writer = new HoconWriter();
             writer.setIndent(IndentStyle.SPACES_2);
             writer.setNewline(NewlineStyle.UNIX);
             FileUtils.createParentDirectories(file);

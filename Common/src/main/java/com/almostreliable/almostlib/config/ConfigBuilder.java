@@ -2,7 +2,7 @@ package com.almostreliable.almostlib.config;
 
 import com.electronwill.nightconfig.core.CommentedConfig;
 import com.electronwill.nightconfig.core.UnmodifiableConfig;
-import com.electronwill.nightconfig.toml.TomlFormat;
+import com.electronwill.nightconfig.hocon.HoconFormat;
 
 import javax.annotation.Nullable;
 import java.util.*;
@@ -17,7 +17,7 @@ public class ConfigBuilder {
     private final AtomicBoolean requiresSave;
 
     static CommentedConfig defaultConfig() {
-        return CommentedConfig.of(() -> Collections.synchronizedMap(new LinkedHashMap<>()), TomlFormat.instance());
+        return CommentedConfig.of(() -> Collections.synchronizedMap(new LinkedHashMap<>()), HoconFormat.instance());
     }
 
     ConfigBuilder() {

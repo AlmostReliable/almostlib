@@ -2,6 +2,7 @@ val enabledPlatforms: String by project
 val modPackage: String by project
 val modId: String by project
 val modName: String by project
+val nightConfigVersion: String by project
 val fabricLoaderVersion: String by project
 
 plugins {
@@ -27,8 +28,10 @@ dependencies {
      */
     modImplementation("net.fabricmc:fabric-loader:$fabricLoaderVersion")
 
-    implementation("com.electronwill.night-config:toml:3.6.0")
-    include("com.electronwill.night-config:toml:3.6.0")
+    /**
+     * non-Minecraft dependencies
+     */
+    implementation(include("com.electronwill.night-config:hocon:$nightConfigVersion")!!)
 }
 
 buildConfig {
