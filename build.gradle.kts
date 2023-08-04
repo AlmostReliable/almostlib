@@ -210,13 +210,15 @@ subprojects {
 
     extensions.configure<LoomGradleExtensionAPI> {
         runs {
-            named("client") {
+            create("test_client") {
                 name("Testmod Client")
+                client()
                 source(sourceSets.test.get())
             }
 
-            named("server") {
+            create("test_server") {
                 name("Testmod Server")
+                server()
                 source(sourceSets.test.get())
             }
 
