@@ -1,12 +1,10 @@
-import net.fabricmc.loom.task.RemapJarTask
-
 val minecraftVersion: String by project
 val fabricLoaderVersion: String by project
 val fabricApiVersion: String by project
-val teamRebornEnergyApiVersion: String by project
+val rebornEnergyVersion: String by project
 
 plugins {
-    id("com.github.johnrengelman.shadow") version ("8.1.1")
+    id("com.github.johnrengelman.shadow") version "8.1.1"
 }
 
 architectury {
@@ -15,16 +13,18 @@ architectury {
 }
 
 loom {
-    if (project.findProperty("enableAccessWidener") == "true") { // Optional property for `gradle.properties` to enable access wideners.
+    if (project.findProperty("enableAccessWidener") == "true") { // optional property for `gradle.properties`
         accessWidenerPath.set(project(":Common").loom.accessWidenerPath)
         println("Access widener enabled for project ${project.name}. Access widener path: ${loom.accessWidenerPath.get()}")
     }
 
+    // create test implementations that allow remapping
     createRemapConfigurations(sourceSets.getByName("test"))
 }
 
 val common by configurations
 val shadowCommon by configurations
+
 dependencies {
     // loader
     modImplementation("net.fabricmc:fabric-loader:$fabricLoaderVersion")
@@ -35,18 +35,15 @@ dependencies {
     shadowCommon(project(":Common", "transformProductionFabric")) { isTransitive = false }
     testImplementation(project(":Common", "namedElements"))
 
-    // Team Reborn Energy API
-    modCompileOnly("teamreborn:energy:$teamRebornEnergyApiVersion")
-    "modTestRuntimeOnly"("teamreborn:energy:$teamRebornEnergyApiVersion")
+    // Reborn Energy
+    modCompileOnly("teamreborn:energy:$rebornEnergyVersion")
+    "modTestRuntimeOnly"("teamreborn:energy:$rebornEnergyVersion")
 }
 
-tasks {
-    // allow discovery of AWs from dependencies
-    named<RemapJarTask>("remapJar") {
-        injectAccessWidener.set(true)
-    }
-}
-
+/**
+ * force the fabric loader and api versions that are defined in the project
+ * some mods ship another version which crashes the runtime
+ */
 configurations.all {
     resolutionStrategy {
         force("net.fabricmc:fabric-loader:$fabricLoaderVersion")

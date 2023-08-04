@@ -1,9 +1,8 @@
 {
   "schemaVersion": 1,
   "id": "testmod",
-  "version": "1",
-  "name": "testmod",
-  "description": "testmod",
+  "version": "dev",
+  "name": "Test Mod",
   "environment": "*",
   "entrypoints": {
     "main": [

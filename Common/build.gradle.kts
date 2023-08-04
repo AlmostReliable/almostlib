@@ -1,13 +1,11 @@
-import org.cadixdev.mercury.shadow.org.eclipse.jdt.internal.core.util.Util.packageName
-
 val enabledPlatforms: String by project
-val fabricLoaderVersion: String by project
+val modPackage: String by project
 val modId: String by project
 val modName: String by project
-val modPackage: String by project
+val fabricLoaderVersion: String by project
 
 plugins {
-    id("com.github.gmazzo.buildconfig") version ("4.0.4")
+    id("com.github.gmazzo.buildconfig") version "4.0.4"
 }
 
 architectury {
@@ -15,16 +13,18 @@ architectury {
 }
 
 loom {
-    if (project.findProperty("enableAccessWidener") == "true") { // Optional property for `gradle.properties` to enable access wideners.
+    if (project.findProperty("enableAccessWidener") == "true") { // optional property for `gradle.properties`
         accessWidenerPath.set(file("src/main/resources/$modId.accesswidener"))
         println("Access widener enabled for project ${project.name}. Access widener path: ${loom.accessWidenerPath.get()}")
     }
 }
 
 dependencies {
-    // loader
-    // required here for the @Environment annotations and the mixin dependencies
-    // Do NOT use other classes from the Fabric loader!
+    /**
+     * loader
+     * required here for the @Environment annotations and the mixin dependencies
+     * do NOT use other classes from the Fabric loader
+     */
     modImplementation("net.fabricmc:fabric-loader:$fabricLoaderVersion")
 }
 

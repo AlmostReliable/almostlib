@@ -1,12 +1,11 @@
 modLoader = "javafml"
 loaderVersion = "[43,)"
-license = "ARR - Testmod"
+license = "ARR"
 
 [[mods]]
 modId = "testmod"
-version = "1.0.0"
-displayName = "testmod"
-description = '''Testmod'''
+version = "dev"
+displayName = "Test Mod"
 
 [[dependencies.testmod]]
 modId = "forge"

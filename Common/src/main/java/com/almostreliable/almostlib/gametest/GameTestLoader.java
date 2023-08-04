@@ -21,6 +21,8 @@ import java.util.function.Consumer;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+// TODO: keep game test world alive in order to allow the client to join directly
+// alternatively, copy the game test world to the client after the test is done so you don't have to start the server
 public final class GameTestLoader {
 
     public static final String ENABLED_NAMESPACES = "almostlib.gametest.testPackages";
