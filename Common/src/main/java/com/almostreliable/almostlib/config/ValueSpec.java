@@ -42,6 +42,7 @@ public class ValueSpec<T> {
      *
      * @return the raw value from the config
      */
+    @Nullable
     protected T convertValue(Object rawValue) {
         return rawValueConverter.apply(rawValue);
     }
