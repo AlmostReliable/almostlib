@@ -14,6 +14,7 @@ import net.minecraft.world.level.block.entity.FurnaceBlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.properties.RedstoneSide;
 
+import java.util.EnumSet;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -136,6 +137,11 @@ public class BlockPredicateTests implements GameTestProvider {
 
     @GameTest
     public void tagAndBlockProperties(AlmostGameTestHelper helper) {
+        for (Direction direction : EnumSet.range(Direction.NORTH, Direction.EAST)) {
+            helper.setBlock(POS_1.relative(direction), Blocks.GLASS);
+            helper.setBlock(POS_1.relative(direction).above(), Blocks.GLASS);
+        }
+
         BlockState chestState = Blocks.CHEST.defaultBlockState()
             .setValue(ChestBlock.WATERLOGGED, true)
             .setValue(AbstractFurnaceBlock.FACING, Direction.EAST);
