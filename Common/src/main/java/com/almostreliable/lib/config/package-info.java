@@ -1,5 +1,5 @@
 @ParametersAreNonnullByDefault @MethodsReturnNonnullByDefault
-package com.almostreliable.almostlib.config;
+package com.almostreliable.lib.config;
 
 import net.minecraft.MethodsReturnNonnullByDefault;
 

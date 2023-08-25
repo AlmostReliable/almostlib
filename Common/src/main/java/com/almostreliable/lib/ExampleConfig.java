@@ -1,6 +1,6 @@
-package com.almostreliable.almostlib;
+package com.almostreliable.lib;
 
-import com.almostreliable.almostlib.config.ConfigBuilder;
+import com.almostreliable.lib.config.ConfigBuilder;
 
 import java.util.List;
 

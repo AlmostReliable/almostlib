@@ -1,6 +1,6 @@
-package com.almostreliable.almostlib.config;
+package com.almostreliable.lib.config;
 
-import com.almostreliable.almostlib.util.AlmostUtils;
+import com.almostreliable.lib.util.AlmostUtils;
 
 import java.nio.file.Path;
 import java.util.ArrayList;

@@ -1,4 +1,4 @@
-package com.almostreliable.almostlib.config;
+package com.almostreliable.lib.config;
 
 import com.electronwill.nightconfig.core.CommentedConfig;
 import com.electronwill.nightconfig.core.UnmodifiableConfig;

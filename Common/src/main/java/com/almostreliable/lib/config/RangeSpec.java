@@ -1,4 +1,4 @@
-package com.almostreliable.almostlib.config;
+package com.almostreliable.lib.config;
 
 import javax.annotation.Nullable;
 import java.util.List;

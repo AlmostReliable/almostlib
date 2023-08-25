@@ -1,6 +1,6 @@
-package com.almostreliable.almostlib.config;
+package com.almostreliable.lib.config;
 
-import com.almostreliable.almostlib.AlmostLib;
+import com.almostreliable.lib.AlmostLib;
 import com.electronwill.nightconfig.core.CommentedConfig;
 import com.electronwill.nightconfig.core.file.FileNotFoundAction;
 import com.electronwill.nightconfig.core.io.IndentStyle;

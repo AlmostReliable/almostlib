@@ -1,6 +1,6 @@
-package com.almostreliable.almostlib.config;
+package com.almostreliable.lib.config;
 
-import com.almostreliable.almostlib.AlmostLib;
+import com.almostreliable.lib.AlmostLib;
 
 import java.util.ArrayList;
 import java.util.List;
