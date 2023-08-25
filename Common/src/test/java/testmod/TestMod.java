@@ -1,11 +1,11 @@
 package testmod;
 
-import com.almostreliable.almostlib.AlmostLib;
-import com.almostreliable.almostlib.AlmostManager;
-import com.almostreliable.almostlib.gametest.GameTestLoader;
-import com.almostreliable.almostlib.item.AlmostCreativeTab;
-import com.almostreliable.almostlib.registry.BlockEntityEntry;
-import com.almostreliable.almostlib.registry.BlockEntry;
+import com.almostreliable.lib.AlmostLib;
+import com.almostreliable.lib.AlmostManager;
+import com.almostreliable.lib.gametest.GameTestLoader;
+import com.almostreliable.lib.item.AlmostCreativeTab;
+import com.almostreliable.lib.registry.BlockEntityEntry;
+import com.almostreliable.lib.registry.BlockEntry;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import testmod.block.EnergyBatteryBlock;

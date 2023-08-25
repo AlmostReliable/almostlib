@@ -1,6 +1,6 @@
 package testmod.block;
 
-import com.almostreliable.almostlib.component.ComponentHolder;
+import com.almostreliable.lib.component.ComponentHolder;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.nbt.CompoundTag;

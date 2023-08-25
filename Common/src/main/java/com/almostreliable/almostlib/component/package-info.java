@@ -1,6 +1,0 @@
-@ParametersAreNonnullByDefault @MethodsReturnNonnullByDefault
-package com.almostreliable.almostlib.component;
-
-import net.minecraft.MethodsReturnNonnullByDefault;
-
-import javax.annotation.ParametersAreNonnullByDefault;

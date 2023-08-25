@@ -1,8 +1,8 @@
 package testmod.gametest;
 
-import com.almostreliable.almostlib.gametest.AlmostGameTestHelper;
-import com.almostreliable.almostlib.gametest.GameTestProvider;
-import com.almostreliable.almostlib.util.filter.BlockPredicate;
+import com.almostreliable.lib.gametest.AlmostGameTestHelper;
+import com.almostreliable.lib.gametest.GameTestProvider;
+import com.almostreliable.lib.util.filter.BlockPredicate;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.gametest.framework.GameTest;

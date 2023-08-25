@@ -1,8 +1,8 @@
 package testmod.block;
 
-import com.almostreliable.almostlib.component.ComponentHolder;
-import com.almostreliable.almostlib.component.EnergyContainer;
-import com.almostreliable.almostlib.component.impl.SimpleEnergyContainer;
+import com.almostreliable.lib.component.ComponentHolder;
+import com.almostreliable.lib.component.EnergyContainer;
+import com.almostreliable.lib.component.impl.SimpleEnergyContainer;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.nbt.CompoundTag;

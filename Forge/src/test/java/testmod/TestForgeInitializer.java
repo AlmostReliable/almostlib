@@ -1,7 +1,7 @@
 package testmod;
 
-import com.almostreliable.almostlib.AlmostLib;
-import com.almostreliable.almostlib.gametest.GameTestLoader;
+import com.almostreliable.lib.AlmostLib;
+import com.almostreliable.lib.gametest.GameTestLoader;
 import net.minecraftforge.fml.common.Mod;
 import testmod.gametest.CapInvalidationTest;
 

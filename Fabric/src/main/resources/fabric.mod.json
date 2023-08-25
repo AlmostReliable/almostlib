@@ -15,7 +15,7 @@
   "environment": "*",
   "entrypoints": {
     "main": [
-      "com.almostreliable.almostlib.fabric.FabricInitializer"
+      "com.almostreliable.lib.fabric.FabricInitializer"
     ]
   },
   "mixins": [

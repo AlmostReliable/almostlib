@@ -1,8 +1,8 @@
 package testmod.block;
 
-import com.almostreliable.almostlib.Services;
-import com.almostreliable.almostlib.block.TickableEntityBlock;
-import com.almostreliable.almostlib.util.Tickable;
+import com.almostreliable.lib.Services;
+import com.almostreliable.lib.block.TickableEntityBlock;
+import com.almostreliable.lib.util.Tickable;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.world.level.block.Block;
