@@ -7,13 +7,15 @@
     "CreativeModeTabAccessor",
     "GameTestHelperAccessor",
     "GameTestRegistryAccessor",
-    "ItemPropertiesAccessor"
+    "ItemPropertiesAccessor",
+    "config.MinecraftServerMixin"
   ],
   "client": [
     "AbstractWidgetAccessor",
     "ChatScreenMixin",
     "RenderBuffersAccessor",
-    "RenderTypeAccessor"
+    "RenderTypeAccessor",
+    "config.MinecraftMixin"
   ],
   "injectors": {
     "defaultRequire": 1
