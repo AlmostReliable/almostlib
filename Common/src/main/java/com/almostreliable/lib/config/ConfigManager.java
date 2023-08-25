@@ -21,6 +21,7 @@ public class ConfigManager {
             throw new IllegalArgumentException("No config registered for type " + type);
         }
 
+        config.get(); // initialize the config so it's written
         return AlmostUtils.cast(config);
     }
 
