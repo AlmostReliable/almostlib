@@ -17,9 +17,6 @@ loom {
         accessWidenerPath.set(project(":Common").loom.accessWidenerPath)
         println("Access widener enabled for project ${project.name}. Access widener path: ${loom.accessWidenerPath.get()}")
     }
-
-    // create test implementations that allow remapping
-    createRemapConfigurations(sourceSets.getByName("test"))
 }
 
 val common by configurations
