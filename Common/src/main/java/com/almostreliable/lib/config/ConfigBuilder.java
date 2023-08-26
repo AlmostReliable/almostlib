@@ -86,7 +86,8 @@ public class ConfigBuilder {
      * @param comment The comment to set.
      */
     void setComment(List<String> path, String comment) {
-        String[] commentLines = comment.trim().split("\n");
+        String trimmed = comment.trim();
+        String[] commentLines = trimmed.isEmpty() ? new String[0] : trimmed.split("\n");
         String transformedComment = Arrays.stream(commentLines).map(s -> " " + s).collect(Collectors.joining("\n"));
         String oldComment = Optional.ofNullable(config.getComment(path)).orElse("");
         if (!transformedComment.equals(oldComment)) {
