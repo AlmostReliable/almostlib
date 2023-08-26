@@ -214,8 +214,8 @@ subprojects {
         /**
          * non-Minecraft dependencies
          */
-        "include"("com.electronwill.night-config:hocon:$nightConfigVersion")
-        testRuntimeOnly("com.electronwill.night-config:hocon:$nightConfigVersion")
+        "include"("com.electronwill.night-config:toml:$nightConfigVersion")
+        testRuntimeOnly("com.electronwill.night-config:toml:$nightConfigVersion")
     }
 
     extensions.configure<LoomGradleExtensionAPI> {

@@ -17,12 +17,10 @@ import testmod.gametest.BlockPredicateTests;
 import testmod.gametest.EnergyContainerTests;
 import testmod.gametest.ItemContainerTests;
 
-import java.nio.file.Path;
-
 public final class TestMod {
 
     static {
-        ConfigManager.registerServerReloadable(Path.of("testmod.hocon"), ExampleConfig.class, ExampleConfig::new);
+        ConfigManager.registerServerReloadable("testmod.toml", ExampleConfig.class, ExampleConfig::new);
     }
 
     public static final Config<ExampleConfig> CONFIG = ConfigManager.get(ExampleConfig.class);

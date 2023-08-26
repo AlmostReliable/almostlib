@@ -31,7 +31,7 @@ dependencies {
     /**
      * non-Minecraft dependencies
      */
-    compileOnly("com.electronwill.night-config:hocon:$nightConfigVersion")
+    compileOnly("com.electronwill.night-config:toml:$nightConfigVersion")
 }
 
 buildConfig {
