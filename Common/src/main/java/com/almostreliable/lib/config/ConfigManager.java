@@ -1,9 +1,10 @@
 package com.almostreliable.lib.config;
 
+import com.almostreliable.lib.AlmostLib;
 import com.almostreliable.lib.util.AlmostUtils;
 import org.jetbrains.annotations.ApiStatus;
 
-import java.nio.file.Path;
+import java.io.File;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -63,7 +64,7 @@ public final class ConfigManager {
      * @param factory The factory that creates the config.
      * @param <T>     The type of the config.
      */
-    public static <T> void registerServerReloadable(Path path, Class<T> clazz, Function<ConfigBuilder, T> factory) {
+    public static <T> void registerServerReloadable(String path, Class<T> clazz, Function<ConfigBuilder, T> factory) {
         register(path, clazz, factory);
         SERVER_RELOADABLES.add(CONFIGS.get(clazz));
     }
@@ -81,7 +82,7 @@ public final class ConfigManager {
      * @param factory The factory that creates the config.
      * @param <T>     The type of the config.
      */
-    public static <T> void registerClientReloadable(Path path, Class<T> clazz, Function<ConfigBuilder, T> factory) {
+    public static <T> void registerClientReloadable(String path, Class<T> clazz, Function<ConfigBuilder, T> factory) {
         register(path, clazz, factory);
         CLIENT_RELOADABLES.add(CONFIGS.get(clazz));
     }
@@ -98,12 +99,13 @@ public final class ConfigManager {
      * @param factory The factory that creates the config.
      * @param <T>     The type of the config.
      */
-    public static <T> void register(Path path, Class<T> clazz, Function<ConfigBuilder, T> factory) {
+    public static <T> void register(String path, Class<T> clazz, Function<ConfigBuilder, T> factory) {
         if (CONFIGS.containsKey(clazz)) {
             throw new IllegalArgumentException("Config already registered for class " + clazz);
         }
 
-        Config<T> e = new Config<>(path.toFile(), clazz, factory);
+        File filePath = AlmostLib.PLATFORM.getConfigPath().resolve(path).toFile();
+        Config<T> e = new Config<>(filePath, clazz, factory);
         CONFIGS.put(clazz, e);
     }
 
