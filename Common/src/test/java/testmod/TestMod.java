@@ -2,6 +2,8 @@ package testmod;
 
 import com.almostreliable.lib.AlmostLib;
 import com.almostreliable.lib.AlmostManager;
+import com.almostreliable.lib.config.Config;
+import com.almostreliable.lib.config.ConfigManager;
 import com.almostreliable.lib.gametest.GameTestLoader;
 import com.almostreliable.lib.item.AlmostCreativeTab;
 import com.almostreliable.lib.registry.BlockEntityEntry;
@@ -15,7 +17,15 @@ import testmod.gametest.BlockPredicateTests;
 import testmod.gametest.EnergyContainerTests;
 import testmod.gametest.ItemContainerTests;
 
+import java.nio.file.Path;
+
 public final class TestMod {
+
+    static {
+        ConfigManager.registerServerReloadable(Path.of("testmod.hocon"), ExampleConfig.class, ExampleConfig::new);
+    }
+
+    public static final Config<ExampleConfig> CONFIG = ConfigManager.get(ExampleConfig.class);
 
     public static final AlmostManager MANAGER = AlmostManager.create("testmod")
         .defaultCreativeTab(new AlmostCreativeTab("testmod", "Testmod") {

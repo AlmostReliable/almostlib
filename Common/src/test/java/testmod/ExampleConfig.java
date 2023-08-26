@@ -1,5 +1,6 @@
-package com.almostreliable.lib;
+package testmod;
 
+import com.almostreliable.lib.Platform;
 import com.almostreliable.lib.config.ConfigBuilder;
 
 import java.util.List;
