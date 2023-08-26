@@ -13,7 +13,7 @@ public class ExampleConfig {
     public final List<Double> machineHealths;
 
     public ExampleConfig(ConfigBuilder builder) {
-        name = builder.value("name", "default").comment("The name of the character.").read();
+        name = builder.stringValue("name", "default").comment("The name of the character.").read();
         age = builder.intValue("age", 0).comment("Age of the character.").read();
         platform = builder.enumValue("platform", Platform.class, Platform.FORGE).comment("Which platform currently is used").read();
         machineHealths = builder.doubleListValue("machineHealths", List.of(0.0, 1.0, 2.0)).comment("The health of the machines.").read();
@@ -36,7 +36,7 @@ public class ExampleConfig {
 
         public SubConfig(ConfigBuilder builder) {
             level = builder.intValue("level", 0).comment("Level of the character. NEW").read();
-            name = builder.value("name", "default").comment("The name of the character.").read();
+            name = builder.stringValue("name", "default").comment("The name of the character.").read();
             health = builder.floatValue("health", 0.0f).comment("The health of the character.").read();
         }
     }

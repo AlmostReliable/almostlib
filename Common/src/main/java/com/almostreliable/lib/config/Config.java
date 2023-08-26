@@ -20,15 +20,16 @@ import java.util.function.Supplier;
 
 public class Config<T> implements Supplier<T> {
 
-    @Nullable private T value;
     private final File file;
-    private final Class<T> type;
+    private final Class<T> clazz;
     private final Function<ConfigBuilder, T> factory;
 
-    Config(File file, Class<T> type, Function<ConfigBuilder, T> factory) {
-        Preconditions.checkArgument(FilenameUtils.getExtension(file.getName()).equals("hocon"), "Config file must be a HOCON file");
+    @Nullable private T value;
+
+    Config(File file, Class<T> clazz, Function<ConfigBuilder, T> factory) {
+        Preconditions.checkArgument(FilenameUtils.getExtension(file.getName()).equals("hocon"), "Config must be a HOCON file");
         this.file = file;
-        this.type = type;
+        this.clazz = clazz;
         this.factory = factory;
     }
 
@@ -41,7 +42,7 @@ public class Config<T> implements Supplier<T> {
     }
 
     void reload() {
-        AlmostLib.LOGGER.info("Reloading config '" + type.getSimpleName() + "':" + file);
+        AlmostLib.LOGGER.info("Reloading config '" + clazz.getSimpleName() + "': " + file);
         value = read();
     }
 
@@ -63,11 +64,11 @@ public class Config<T> implements Supplier<T> {
 
     private T read() {
         ConfigBuilder builder = createBuilder(file);
-        T value = factory.apply(builder);
+        T newValue = factory.apply(builder);
         if (builder.requiresSave()) {
             save(builder);
         }
-        return value;
+        return newValue;
     }
 
     private void save(ConfigBuilder builder) {
@@ -77,7 +78,7 @@ public class Config<T> implements Supplier<T> {
             writer.setNewline(NewlineStyle.UNIX);
             FileUtils.createParentDirectories(file);
             writer.write(builder.getConfig(), file, WritingMode.REPLACE);
-            AlmostLib.LOGGER.info("Saved config '" + type.getSimpleName() + "': " + file);
+            AlmostLib.LOGGER.info("Saved config '" + clazz.getSimpleName() + "': " + file);
         } catch (Exception e) {
             AlmostLib.LOGGER.error("Failed to save config file", e);
         }
