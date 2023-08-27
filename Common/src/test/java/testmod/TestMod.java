@@ -2,8 +2,6 @@ package testmod;
 
 import com.almostreliable.lib.AlmostLib;
 import com.almostreliable.lib.AlmostManager;
-import com.almostreliable.lib.config.Config;
-import com.almostreliable.lib.config.ConfigManager;
 import com.almostreliable.lib.gametest.GameTestLoader;
 import com.almostreliable.lib.item.AlmostCreativeTab;
 import com.almostreliable.lib.registry.BlockEntityEntry;
@@ -14,16 +12,11 @@ import testmod.block.EnergyBatteryBlock;
 import testmod.block.EnergyGeneratorBlock;
 import testmod.block.StorageBlock;
 import testmod.gametest.BlockPredicateTests;
+import testmod.gametest.ConfigTests;
 import testmod.gametest.EnergyContainerTests;
 import testmod.gametest.ItemContainerTests;
 
 public final class TestMod {
-
-    static {
-        ConfigManager.registerServerReloadable("testmod.toml", ExampleConfig.class, ExampleConfig::new);
-    }
-
-    public static final Config<ExampleConfig> CONFIG = ConfigManager.get(ExampleConfig.class);
 
     public static final AlmostManager MANAGER = AlmostManager.create("testmod")
         .defaultCreativeTab(new AlmostCreativeTab("testmod", "Testmod") {
@@ -67,6 +60,7 @@ public final class TestMod {
         if (AlmostLib.PLATFORM.isGameTestEnabled()) {
             GameTestLoader.registerProviders(
                 BlockPredicateTests.class,
+                ConfigTests.class,
                 EnergyContainerTests.class,
                 ItemContainerTests.class
             );

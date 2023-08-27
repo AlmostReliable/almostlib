@@ -4,7 +4,7 @@ import com.almostreliable.lib.AlmostLib;
 import com.almostreliable.lib.util.AlmostUtils;
 import org.jetbrains.annotations.ApiStatus;
 
-import java.io.File;
+import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -25,6 +25,12 @@ import java.util.function.Function;
  * upon first access.<br>
  * Use {@link Config#get()} to get the config and store it statically in the
  * initializer of your mod for an early initialization.
+ * <p>
+ * Example:
+ * <pre>{@code
+ * ConfigManager.registerServerReloadable("example.toml", ExampleConfig.class, ExampleConfig::new);
+ * public static final Config<ExampleConfig> CONFIG = ConfigManager.get(ExampleConfig.class);
+ * }</pre>
  */
 public final class ConfigManager {
 
@@ -104,7 +110,7 @@ public final class ConfigManager {
             throw new IllegalArgumentException("Config already registered for class " + clazz);
         }
 
-        File filePath = AlmostLib.PLATFORM.getConfigPath().resolve(path).toFile();
+        Path filePath = AlmostLib.PLATFORM.getConfigPath().resolve(path);
         Config<T> e = new Config<>(filePath, clazz, factory);
         CONFIGS.put(clazz, e);
     }
