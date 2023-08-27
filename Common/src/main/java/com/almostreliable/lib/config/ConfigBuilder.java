@@ -135,7 +135,7 @@ public class ConfigBuilder {
     }
 
     public RangeSpec<Long> longValue(String name) {
-        return longValue(name, 0);
+        return longValue(name, 0L);
     }
 
     public RangeSpec<Float> floatValue(String name, float defaultValue) {
@@ -143,7 +143,7 @@ public class ConfigBuilder {
     }
 
     public RangeSpec<Float> floatValue(String name) {
-        return floatValue(name, 0);
+        return floatValue(name, 0f);
     }
 
     public RangeSpec<Double> doubleValue(String name, double defaultValue) {
@@ -151,12 +151,12 @@ public class ConfigBuilder {
     }
 
     public RangeSpec<Double> doubleValue(String name) {
-        return doubleValue(name, 0);
+        return doubleValue(name, 0D);
     }
 
     public <T extends Enum<T>> ValueSpec<T> enumValue(String name, Class<T> clazz, T defaultValue) {
         var spec = new ValueSpec<>(this, createPath(name), defaultValue, o -> Converters.toEnum(o, clazz));
-        spec.valueComment((Object[]) clazz.getEnumConstants());
+        spec.valueComment(clazz.getEnumConstants());
         return spec;
     }
 

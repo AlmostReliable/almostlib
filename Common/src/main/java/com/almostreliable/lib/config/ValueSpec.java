@@ -56,8 +56,9 @@ public class ValueSpec<T> {
      * @param values The possible values for this entry.
      * @return The instance of the entry spec.
      */
-    public ValueSpec<T> valueComment(Object... values) {
-        String strValues = Arrays.stream(values).map(o -> "\"" + o + "\"").collect(Collectors.joining(", "));
+    @SuppressWarnings("unchecked")
+    public ValueSpec<T> valueComment(T... values) {
+        String strValues = Arrays.stream(values).map(Object::toString).collect(Collectors.joining(", "));
         valueComment = "Possible Values: " + strValues;
         return this;
     }

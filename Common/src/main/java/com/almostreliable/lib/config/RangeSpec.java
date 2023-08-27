@@ -72,8 +72,9 @@ public class RangeSpec<T extends Comparable<T>> extends ValueSpec<T> {
         return this;
     }
 
+    @SafeVarargs
     @Override
-    public RangeSpec<T> valueComment(Object... values) {
+    public final ValueSpec<T> valueComment(T... values) {
         throw new UnsupportedOperationException("Value comments are not supported in RangeSpecs");
     }
 
