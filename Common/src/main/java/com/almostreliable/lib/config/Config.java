@@ -2,9 +2,7 @@ package com.almostreliable.lib.config;
 
 import com.almostreliable.lib.AlmostLib;
 import com.electronwill.nightconfig.core.CommentedConfig;
-import com.electronwill.nightconfig.core.io.IndentStyle;
-import com.electronwill.nightconfig.core.io.NewlineStyle;
-import com.electronwill.nightconfig.core.io.ParsingMode;
+import com.electronwill.nightconfig.core.io.*;
 import com.electronwill.nightconfig.toml.TomlParser;
 import com.electronwill.nightconfig.toml.TomlWriter;
 import com.google.common.base.Preconditions;
@@ -64,8 +62,8 @@ public class Config<T> implements Supplier<T> {
             writer.setNewline(NewlineStyle.UNIX);
             writer.write(builder.getConfig(), stream);
             AlmostLib.LOGGER.info("Saved config '" + clazz.getSimpleName() + "': " + path);
-        } catch (Exception e) {
-            AlmostLib.LOGGER.error("Failed to write config file", e);
+        } catch (IOException | WritingException e) {
+            AlmostLib.LOGGER.error("Failed to write config '" + clazz.getSimpleName() + "': " + path, e);
         }
     }
 
@@ -75,8 +73,8 @@ public class Config<T> implements Supplier<T> {
             CommentedConfig config = ConfigBuilder.defaultConfig();
             parser.parse(stream, config, ParsingMode.REPLACE);
             return new ConfigBuilder(config);
-        } catch (Exception e) {
-            AlmostLib.LOGGER.error("Failed to read config file", e);
+        } catch (IOException | ParsingException e) {
+            AlmostLib.LOGGER.error("Failed to read config '" + clazz.getSimpleName() + "': " + path, e);
             return new ConfigBuilder();
         }
     }

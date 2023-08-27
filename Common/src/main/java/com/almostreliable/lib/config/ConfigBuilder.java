@@ -78,24 +78,23 @@ public class ConfigBuilder {
     /**
      * Sets the comment at the given path.
      * <p>
-     * The comment will be split at newlines, trimmed and prefixed with a space.<br>
+     * The comment will be trimmed, split at newlines and prefixed with a space.<br>
      * Setting the comment will be skipped if it matches the current comment or if
      * it's empty after transformation.
      *
-     * @param path    The path to the value.
+     * @param paths   The path to the value.
      * @param comment The comment to set.
      */
-    void setComment(List<String> path, String comment) {
+    void setComment(List<String> paths, String comment) {
         String trimmed = comment.trim();
-        String[] commentLines = trimmed.isEmpty() ? new String[0] : trimmed.split("\n");
-        String transformedComment = Arrays.stream(commentLines).map(s -> " " + s).collect(Collectors.joining("\n"));
-        String oldComment = Optional.ofNullable(config.getComment(path)).orElse("");
-        if (!transformedComment.equals(oldComment)) {
-            markDirty();
-        }
+        String[] lines = trimmed.isEmpty() ? new String[0] : trimmed.split("\n");
+        String transformed = Arrays.stream(lines).map(s -> " " + s).collect(Collectors.joining("\n"));
 
-        if (!transformedComment.isEmpty()) {
-            config.setComment(path, transformedComment);
+        String previous = Optional.ofNullable(config.getComment(paths)).orElse("");
+
+        if (!transformed.isEmpty() && !transformed.equals(previous)) {
+            markDirty();
+            config.setComment(paths, transformed);
         }
     }
 
@@ -226,14 +225,14 @@ public class ConfigBuilder {
     }
 
     public ConfigBuilder category(String name, String comment) {
-        List<String> subPath = createPath(name);
-        setComment(subPath, comment);
-        return new ConfigBuilder(this, subPath);
+        List<String> path = createPath(name);
+        setComment(path, comment);
+        return new ConfigBuilder(this, path);
     }
 
-    private List<String> createPath(String subPath) {
-        List<String> path = new ArrayList<>(paths);
-        path.add(subPath);
-        return path;
+    private List<String> createPath(String path) {
+        List<String> newPath = new ArrayList<>(paths);
+        newPath.add(path);
+        return newPath;
     }
 }
