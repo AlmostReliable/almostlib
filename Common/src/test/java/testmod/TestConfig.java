@@ -21,7 +21,7 @@ import java.util.function.Function;
  * It's using an {@link Object} as the type of the config for simplicity, it's
  * not actually being used.
  * <p>
- * To create an instance of the TestConfig, use {@link #of(Consumer)}.<br>
+ * To create an instance of the TestConfig, use {@link #of(String, Consumer)}.<br>
  * The consumer will give you an instance of a {@link ConfigBuilder} and is
  * used to define the config specs. Make sure to store the values of the specs in an
  * external map, so you can keep track of them later in the tests.<br>
@@ -45,19 +45,23 @@ public final class TestConfig extends Config<Object> {
      * used to define the config specs. Make sure to store the values of the specs in an
      * external map, so you can keep track of them later in the tests.<br>
      * To obtain a value of a spec, use {@link ValueSpec#read()}.
+     * <p>
+     * The name of the config is not important and is only used for the log message
+     * in the tests when the config is loaded.
      *
+     * @param name     The name of the config file.
      * @param consumer The consumer to define the config specs.
      * @return The instance of the TestConfig.
      */
-    public static TestConfig of(Consumer<ConfigBuilder> consumer) {
-        return new TestConfig(builder -> {
+    public static TestConfig of(String name, Consumer<ConfigBuilder> consumer) {
+        return new TestConfig(name, builder -> {
             consumer.accept(builder);
             return new Object();
         });
     }
 
-    private TestConfig(Function<ConfigBuilder, Object> factory) {
-        super(Path.of("test.toml"), Object.class, factory);
+    private TestConfig(String name, Function<ConfigBuilder, Object> factory) {
+        super(Path.of(name + ".toml"), Object.class, factory);
     }
 
     /**
