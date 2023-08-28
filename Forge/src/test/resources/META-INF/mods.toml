@@ -4,7 +4,7 @@ license = "ARR"
 
 [[mods]]
 modId = "testmod"
-version = "dev"
+version = "0.0.0"
 displayName = "Test Mod"
 
 [[dependencies.testmod]]
