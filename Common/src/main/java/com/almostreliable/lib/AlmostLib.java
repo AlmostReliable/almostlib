@@ -13,16 +13,16 @@ import java.util.ServiceLoader;
 
 public class AlmostLib {
 
-    public static final Logger LOGGER = LogManager.getLogger(BuildConfig.MOD_NAME);
+    public static final Logger LOGGER = LogManager.getLogger(AlmostLibConstants.MOD_NAME);
     public static final AlmostLibPlatform PLATFORM = loadService(AlmostLibPlatform.class);
 
-    private static final NetworkHandler NETWORK_HANDLER = NetworkHandler.create(BuildConfig.MOD_ID, "simple");
+    private static final NetworkHandler NETWORK_HANDLER = NetworkHandler.create(AlmostLibConstants.MOD_ID, "simple");
     public static final PacketBus.S2C<MenuSyncHandler.Packet> SYNC_PACKET = NETWORK_HANDLER.S2C(new MenuSyncHandler());
     public static final PacketBus.C2S<ClientActionHandler.Packet> CLIENT_ACTION_HANDLER = NETWORK_HANDLER.C2S(new ClientActionHandler());
 
     @ApiStatus.Internal
     public static ResourceLocation getRL(String path) {
-        return new ResourceLocation(BuildConfig.MOD_ID, path);
+        return new ResourceLocation(AlmostLibConstants.MOD_ID, path);
     }
 
     public static <T> T loadService(Class<T> clazz) {

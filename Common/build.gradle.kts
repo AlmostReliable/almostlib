@@ -33,5 +33,6 @@ buildConfig {
     buildConfigField("String", "MOD_NAME", "\"$modName\"")
     buildConfigField("String", "MOD_VERSION", "\"$version\"")
     packageName(modPackage)
+    className("AlmostLibConstants")
     useJavaOutput()
 }

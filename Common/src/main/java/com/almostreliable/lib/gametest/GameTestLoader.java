@@ -1,7 +1,7 @@
 package com.almostreliable.lib.gametest;
 
 import com.almostreliable.lib.AlmostLib;
-import com.almostreliable.lib.BuildConfig;
+import com.almostreliable.lib.AlmostLibConstants;
 import com.almostreliable.lib.mixin.GameTestHelperAccessor;
 import com.almostreliable.lib.mixin.GameTestRegistryAccessor;
 import net.minecraft.gametest.framework.GameTest;
@@ -58,7 +58,7 @@ public final class GameTestLoader {
     private static void register(GameTestProvider provider, Method method, GameTest gametest) {
         String template = gametest.template();
         if (template.isEmpty()) {
-            template = BuildConfig.MOD_ID + ":empty_test_structure";
+            template = AlmostLibConstants.MOD_ID + ":empty_test_structure";
         }
 
         Rotation rotation = StructureUtils.getRotationForRotationSteps(gametest.rotationSteps());

@@ -1,7 +1,7 @@
 package com.almostreliable.lib.forge;
 
 import com.almostreliable.lib.AlmostLib;
-import com.almostreliable.lib.BuildConfig;
+import com.almostreliable.lib.AlmostLibConstants;
 import com.almostreliable.lib.component.ComponentHolder;
 import com.almostreliable.lib.forge.component.ComponentCapabilityProvider;
 import net.minecraft.world.level.block.entity.BlockEntity;
@@ -9,7 +9,7 @@ import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.AttachCapabilitiesEvent;
 import net.minecraftforge.fml.common.Mod;
 
-@Mod(BuildConfig.MOD_ID)
+@Mod(AlmostLibConstants.MOD_ID)
 public class ForgeInitializer {
 
     public ForgeInitializer() {

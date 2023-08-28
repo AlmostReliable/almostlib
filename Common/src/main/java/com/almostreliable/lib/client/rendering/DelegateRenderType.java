@@ -1,6 +1,6 @@
 package com.almostreliable.lib.client.rendering;
 
-import com.almostreliable.lib.BuildConfig;
+import com.almostreliable.lib.AlmostLibConstants;
 import com.almostreliable.lib.mixin.RenderTypeAccessor;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
@@ -17,7 +17,7 @@ final class DelegateRenderType extends RenderType {
 
     DelegateRenderType(RenderType delegate, Runnable setup, Runnable clear) {
         super(
-            String.format("%s_delegate", BuildConfig.MOD_ID),
+            String.format("%s_delegate", AlmostLibConstants.MOD_ID),
             delegate.format(),
             delegate.mode(),
             delegate.bufferSize(),
