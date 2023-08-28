@@ -13,7 +13,6 @@ val modDescription: String by project
 val modAuthor: String by project
 val autoServiceVersion: String by project
 val manifoldVersion: String by project
-val nightConfigVersion: String by project
 val parchmentVersion: String by project
 val fabricApiVersion: String by project
 val forgeVersion: String by project
@@ -208,14 +207,6 @@ subprojects {
         val cst = project(":Common").sourceSets.getByName("test")
         this.compileClasspath += cst.output
         this.runtimeClasspath += cst.output
-    }
-
-    dependencies {
-        /**
-         * non-Minecraft dependencies
-         */
-        "include"("com.electronwill.night-config:toml:$nightConfigVersion")
-        testRuntimeOnly("com.electronwill.night-config:toml:$nightConfigVersion")
     }
 
     extensions.configure<LoomGradleExtensionAPI> {
