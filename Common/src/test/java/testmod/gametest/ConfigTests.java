@@ -3,7 +3,7 @@ package testmod.gametest;
 import com.almostreliable.lib.gametest.AlmostGameTestHelper;
 import com.almostreliable.lib.gametest.GameTestProvider;
 import net.minecraft.gametest.framework.GameTest;
-import testmod.TestConfig;
+import testmod.TestConfigHolder;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -14,7 +14,7 @@ public class ConfigTests implements GameTestProvider {
     public void stringValueSpecs(AlmostGameTestHelper helper) {
         Map<String, String> values = new HashMap<>();
 
-        var config = TestConfig.of("StringValueSpecs", b -> {
+        var config = TestConfigHolder.of("StringValueSpecs", b -> {
             // without default value
             values.put("StringValue1", b.stringValue("StringValue1").read());
             // with default value
@@ -61,7 +61,7 @@ public class ConfigTests implements GameTestProvider {
     public void booleanValueSpecs(AlmostGameTestHelper helper) {
         Map<String, Boolean> values = new HashMap<>();
 
-        var config = TestConfig.of("BooleanValueSpecs", b -> {
+        var config = TestConfigHolder.of("BooleanValueSpecs", b -> {
             // without default value
             values.put("BooleanValue1", b.booleanValue("BooleanValue1").read());
             // with default value
@@ -108,7 +108,7 @@ public class ConfigTests implements GameTestProvider {
     public void integerRangeSpecs(AlmostGameTestHelper helper) {
         Map<String, Integer> values = new HashMap<>();
 
-        var config = TestConfig.of("IntegerRangeSpecs", b -> {
+        var config = TestConfigHolder.of("IntegerRangeSpecs", b -> {
             // without default value
             values.put("IntegerValue1", b.intValue("IntegerValue1").read());
             // with default value
@@ -159,7 +159,7 @@ public class ConfigTests implements GameTestProvider {
     public void longRangeSpecs(AlmostGameTestHelper helper) {
         Map<String, Long> values = new HashMap<>();
 
-        var config = TestConfig.of("LongRangeSpecs", b -> {
+        var config = TestConfigHolder.of("LongRangeSpecs", b -> {
             // without default value
             values.put("LongValue1", b.longValue("LongValue1").read());
             // with default value
@@ -210,7 +210,7 @@ public class ConfigTests implements GameTestProvider {
     public void floatRangeSpecs(AlmostGameTestHelper helper) {
         Map<String, Float> values = new HashMap<>();
 
-        var config = TestConfig.of("FloatRangeSpecs", b -> {
+        var config = TestConfigHolder.of("FloatRangeSpecs", b -> {
             // without default value
             values.put("FloatValue1", b.floatValue("FloatValue1").read());
             // with default value
@@ -261,7 +261,7 @@ public class ConfigTests implements GameTestProvider {
     public void doubleRangeSpecs(AlmostGameTestHelper helper) {
         Map<String, Double> values = new HashMap<>();
 
-        var config = TestConfig.of("DoubleRangeSpecs", b -> {
+        var config = TestConfigHolder.of("DoubleRangeSpecs", b -> {
             // without default value
             values.put("DoubleValue1", b.doubleValue("DoubleValue1").read());
             // with default value
@@ -312,7 +312,7 @@ public class ConfigTests implements GameTestProvider {
     public void enumValueSpecs(AlmostGameTestHelper helper) {
         Map<String, Enum<?>> values = new HashMap<>();
 
-        var config = TestConfig.of("EnumValueSpecs", b -> {
+        var config = TestConfigHolder.of("EnumValueSpecs", b -> {
             // without default value
             values.put("EnumValue1", b.enumValue("EnumValue1", TestEnum.class).read());
             // with default value
@@ -348,7 +348,7 @@ public class ConfigTests implements GameTestProvider {
     private void example(AlmostGameTestHelper helper) {
         Map<String, Object> values = new HashMap<>();
 
-        var tc = TestConfig.of("example", b -> {
+        var tc = TestConfigHolder.of("example", b -> {
             values.put("TestBoolean", b.booleanValue("TestBoolean", true).comment("TestBoolean comment").read());
             values.put("TestInt", b.intValue("TestInt").range(0, 10).read());
         });

@@ -18,7 +18,7 @@ import java.nio.file.StandardOpenOption;
 import java.util.function.Function;
 import java.util.function.Supplier;
 
-public class Config<T> implements Supplier<T> {
+public class ConfigHolder<T> implements Supplier<T> {
 
     private final Path path;
     private final Class<T> clazz;
@@ -26,8 +26,12 @@ public class Config<T> implements Supplier<T> {
 
     @Nullable private T value;
 
-    public Config(Path path, Class<T> clazz, Function<ConfigBuilder, T> factory) {
+    public ConfigHolder(Path path, Class<T> clazz, Function<ConfigBuilder, T> factory) {
+        if (FilenameUtils.getExtension(path.toFile().getName()).isEmpty()) {
+            path = path.resolveSibling(path.getFileName() + ".toml");
+        }
         Preconditions.checkArgument(FilenameUtils.getExtension(path.toFile().getName()).equals("toml"), "Config must be a TOML file");
+
         this.path = path;
         this.clazz = clazz;
         this.factory = factory;

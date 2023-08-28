@@ -23,7 +23,7 @@ import java.util.function.Function;
  * <p>
  * After registering a config, it's lazily initialized and written to disk
  * upon first access.<br>
- * Use {@link Config#get()} to get the config and store it statically in the
+ * Use {@link ConfigHolder#get()} to get the config and store it statically in the
  * initializer of your mod for an early initialization.
  * <p>
  * Example:
@@ -34,9 +34,9 @@ import java.util.function.Function;
  */
 public final class ConfigManager {
 
-    private static final Map<Class<?>, Config<?>> CONFIGS = new HashMap<>();
-    private static final List<Config<?>> CLIENT_RELOADABLES = new ArrayList<>();
-    private static final List<Config<?>> SERVER_RELOADABLES = new ArrayList<>();
+    private static final Map<Class<?>, ConfigHolder<?>> CONFIGS = new HashMap<>();
+    private static final List<ConfigHolder<?>> CLIENT_RELOADABLES = new ArrayList<>();
+    private static final List<ConfigHolder<?>> SERVER_RELOADABLES = new ArrayList<>();
 
     private ConfigManager() {}
 
@@ -47,7 +47,7 @@ public final class ConfigManager {
      * @param <T>   The type of the config.
      * @return The config as type-safe object.
      */
-    public static <T> Config<T> get(Class<T> clazz) {
+    public static <T> ConfigHolder<T> get(Class<T> clazz) {
         var config = CONFIGS.get(clazz);
         if (config == null) {
             throw new IllegalArgumentException("No config registered for class " + clazz);
@@ -63,7 +63,7 @@ public final class ConfigManager {
      * <p>
      * After registering the config, it should be stored statically in the mod's main class
      * in order to be initialized and written to disk.<br>
-     * Use {@link Config#get()} to get the config.
+     * Use {@link ConfigHolder#get()} to get the config.
      *
      * @param path    The path to the config file.
      * @param clazz   The class of the config.
@@ -81,7 +81,7 @@ public final class ConfigManager {
      * <p>
      * After registering the config, it should be stored statically in the mod's main class
      * in order to be initialized and written to disk.<br>
-     * Use {@link Config#get()} to get the config.
+     * Use {@link ConfigHolder#get()} to get the config.
      *
      * @param path    The path to the config file.
      * @param clazz   The class of the config.
@@ -98,7 +98,7 @@ public final class ConfigManager {
      * <p>
      * After registering the config, it should be stored statically in the mod's main class
      * in order to be initialized and written to disk.<br>
-     * Use {@link Config#get()} to get the config.
+     * Use {@link ConfigHolder#get()} to get the config.
      *
      * @param path    The path to the config file.
      * @param clazz   The class of the config.
@@ -111,7 +111,7 @@ public final class ConfigManager {
         }
 
         Path filePath = AlmostLib.PLATFORM.getConfigPath().resolve(path);
-        Config<T> e = new Config<>(filePath, clazz, factory);
+        ConfigHolder<T> e = new ConfigHolder<>(filePath, clazz, factory);
         CONFIGS.put(clazz, e);
     }
 
@@ -121,11 +121,11 @@ public final class ConfigManager {
         private ReloadHandler() {}
 
         public static void reloadClient() {
-            CLIENT_RELOADABLES.forEach(Config::reload);
+            CLIENT_RELOADABLES.forEach(ConfigHolder::reload);
         }
 
         public static void reloadServer() {
-            SERVER_RELOADABLES.forEach(Config::reload);
+            SERVER_RELOADABLES.forEach(ConfigHolder::reload);
         }
     }
 }

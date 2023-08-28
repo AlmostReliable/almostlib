@@ -1,7 +1,7 @@
 package testmod;
 
-import com.almostreliable.lib.config.Config;
 import com.almostreliable.lib.config.ConfigBuilder;
+import com.almostreliable.lib.config.ConfigHolder;
 import com.almostreliable.lib.config.ValueSpec;
 
 import javax.annotation.Nullable;
@@ -33,7 +33,7 @@ import java.util.function.Function;
  * This will return an Object, but it's not actually used, so you can ignore it.<br>
  * Instead, use the created map with the values and test them.
  */
-public final class TestConfig extends Config<Object> {
+public final class TestConfigHolder extends ConfigHolder<Object> {
 
     private String configText = "";
     @Nullable private OutputStream outputStream;
@@ -53,14 +53,14 @@ public final class TestConfig extends Config<Object> {
      * @param consumer The consumer to define the config specs.
      * @return The instance of the TestConfig.
      */
-    public static TestConfig of(String name, Consumer<ConfigBuilder> consumer) {
-        return new TestConfig(name, builder -> {
+    public static TestConfigHolder of(String name, Consumer<ConfigBuilder> consumer) {
+        return new TestConfigHolder(name, builder -> {
             consumer.accept(builder);
             return new Object();
         });
     }
 
-    private TestConfig(String name, Function<ConfigBuilder, Object> factory) {
+    private TestConfigHolder(String name, Function<ConfigBuilder, Object> factory) {
         super(Path.of(name + ".toml"), Object.class, factory);
     }
 
