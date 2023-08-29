@@ -58,23 +58,30 @@ public class DataGenManager {
         }
 
         DataGenProviders providers = new DataGenProviders(namespace, generator);
-        Platform platform = readPlatform();
+        Platform[] platforms = readPlatform();
 
-        switch (platform) {
-            case FORGE -> forge().run(providers);
-            case FABRIC -> fabric().run(providers);
-            case COMMON -> common().run(providers);
+        for (Platform platform : platforms) {
+            (switch (platform) {
+                case FORGE -> forge();
+                case FABRIC -> fabric();
+                case COMMON -> common();
+            }).run(providers);
         }
     }
 
-    private Platform readPlatform() {
+    private Platform[] readPlatform() {
         String property = System.getProperty(ALMOST_DATA_GEN_PLATFORM);
-        return switch (property != null ? property : "common") {
-            case "common" -> Platform.COMMON;
-            case "fabric" -> Platform.FABRIC;
-            case "forge" -> Platform.FORGE;
-            default -> throw new IllegalStateException("Unknown platform: " + property);
-        };
+
+        if (property == null) {
+            return new Platform[]{ Platform.COMMON };
+        }
+
+        String[] platforms = property.split(",");
+        Platform[] result = new Platform[platforms.length];
+        for (int i = 0; i < platforms.length; i++) {
+            result[i] = Platform.valueOf(platforms[i].toUpperCase());
+        }
+        return result;
     }
 
     public interface Queue {
