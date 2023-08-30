@@ -78,6 +78,7 @@ subprojects {
 
     val loom = project.extensions.getByName<LoomGradleExtensionAPI>("loom")
     loom.silentMojangMappingsLicense()
+    loom.createRemapConfigurations(sourceSets.getByName("test")) // create test implementations that allow remapping
 
     dependencies {
         /**

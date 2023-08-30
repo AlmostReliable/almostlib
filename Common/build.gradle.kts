@@ -2,6 +2,7 @@ val enabledPlatforms: String by project
 val modPackage: String by project
 val modId: String by project
 val modName: String by project
+val nightConfigVersion: String by project
 val fabricLoaderVersion: String by project
 
 plugins {
@@ -26,6 +27,11 @@ dependencies {
      * do NOT use other classes from the Fabric loader
      */
     modImplementation("net.fabricmc:fabric-loader:$fabricLoaderVersion")
+
+    /**
+     * non-Minecraft dependencies
+     */
+    compileOnly("com.electronwill.night-config:toml:$nightConfigVersion")
 }
 
 buildConfig {
