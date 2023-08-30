@@ -71,7 +71,7 @@ public class IngredientStack {
          * @param json The json element to deserialize.
          * @return The IngredientStack.
          */
-        public static IngredientStack fromJson(@Nullable JsonElement json) {
+        public IngredientStack fromJson(@Nullable JsonElement json) {
             if (json instanceof JsonObject jsonObject && jsonObject.has("ingredient")) {
                 // nested ingredient found, serialized IngredientStack
                 Ingredient ingredient = Ingredient.fromJson(jsonObject.get("ingredient"));
@@ -93,7 +93,7 @@ public class IngredientStack {
          * @param buffer The buffer to read from.
          * @return The IngredientStack.
          */
-        public static IngredientStack fromNetwork(FriendlyByteBuf buffer) {
+        public IngredientStack fromNetwork(FriendlyByteBuf buffer) {
             var ingredient = Ingredient.fromNetwork(buffer);
             var count = buffer.readVarInt();
             return new IngredientStack(ingredient, count);
