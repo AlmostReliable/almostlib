@@ -18,6 +18,7 @@ import java.util.EnumSet;
 import java.util.HashMap;
 import java.util.Map;
 
+// TODO: add serialization tests
 public class BlockPredicateTests implements GameTestProvider {
 
     private static final BlockPos POS_1 = new BlockPos(1, 2, 1);

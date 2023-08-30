@@ -8,6 +8,7 @@ import testmod.TestConfigHolder;
 import java.util.HashMap;
 import java.util.Map;
 
+// TODO: add actual value tests, see example
 public class ConfigTests implements GameTestProvider {
 
     @GameTest
