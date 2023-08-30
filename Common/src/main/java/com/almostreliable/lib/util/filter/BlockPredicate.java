@@ -282,18 +282,21 @@ public class BlockPredicate implements Predicate<BlockState> {
      */
     public static class Serializer {
 
-        public BlockPredicate fromJson(@Nullable JsonObject json) {
-            if (json == null || json.keySet().isEmpty()) return ANY;
+        public BlockPredicate fromJson(@Nullable JsonElement json) {
+            if (!(json instanceof JsonObject jsonObject) || jsonObject.keySet().isEmpty()) {
+                return ANY;
+            }
+
             var builder = new Builder();
 
-            JsonArray blocks = readBlockArray(json.get("blocks"));
+            JsonArray blocks = readBlockArray(jsonObject.get("blocks"));
             addBlocksAndTags(builder, blocks);
 
-            if (json.get("nbt") instanceof JsonObject nbt) {
+            if (jsonObject.get("nbt") instanceof JsonObject nbt) {
                 builder.nbt(NbtPredicate.fromJson(nbt));
             }
 
-            if (json.get("state") instanceof JsonObject properties) {
+            if (jsonObject.get("state") instanceof JsonObject properties) {
                 readStatePredicates(builder, properties);
             }
 
