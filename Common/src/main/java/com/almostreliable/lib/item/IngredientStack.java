@@ -4,8 +4,12 @@ import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import net.minecraft.network.FriendlyByteBuf;
+import net.minecraft.tags.TagKey;
 import net.minecraft.util.GsonHelper;
+import net.minecraft.world.item.Item;
+import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.crafting.Ingredient;
+import net.minecraft.world.level.ItemLike;
 
 import javax.annotation.Nullable;
 
@@ -33,23 +37,36 @@ public class IngredientStack {
         this.count = count;
     }
 
-    /**
-     * Creates a new IngredientStack with the given ingredient and count.
-     *
-     * @param ingredient The ingredient.
-     * @param count      The count of the ingredient.
-     */
     public static IngredientStack of(Ingredient ingredient, int count) {
         return new IngredientStack(ingredient, count);
     }
 
-    /**
-     * Creates a new IngredientStack with the given ingredient and a count of 1.
-     *
-     * @param ingredient The ingredient.
-     */
     public static IngredientStack of(Ingredient ingredient) {
         return new IngredientStack(ingredient, 1);
+    }
+
+    public static IngredientStack of(ItemStack stack, int count) {
+        return new IngredientStack(Ingredient.of(stack), count);
+    }
+
+    public static IngredientStack of(ItemStack stack) {
+        return new IngredientStack(Ingredient.of(stack), stack.getCount());
+    }
+
+    public static IngredientStack of(ItemLike itemLike, int count) {
+        return new IngredientStack(Ingredient.of(itemLike), count);
+    }
+
+    public static IngredientStack of(ItemLike itemLike) {
+        return new IngredientStack(Ingredient.of(itemLike), 1);
+    }
+
+    public static IngredientStack of(TagKey<Item> itemTag, int count) {
+        return new IngredientStack(Ingredient.of(itemTag), count);
+    }
+
+    public static IngredientStack of(TagKey<Item> itemTag) {
+        return new IngredientStack(Ingredient.of(itemTag), 1);
     }
 
     public Ingredient getIngredient() {
