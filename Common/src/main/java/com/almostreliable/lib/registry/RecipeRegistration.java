@@ -3,6 +3,8 @@ package com.almostreliable.lib.registry;
 import com.almostreliable.lib.util.AlmostUtils;
 import net.minecraft.core.Registry;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.Container;
+import net.minecraft.world.item.crafting.Recipe;
 import net.minecraft.world.item.crafting.RecipeSerializer;
 
 import java.util.function.Supplier;
@@ -18,7 +20,7 @@ public class RecipeRegistration extends Registration<RecipeSerializer<?>, Recipe
         return new RecipeEntry<>(id, AlmostUtils.cast(supplier));
     }
 
-    public <R extends RecipeSerializer<?>> RecipeEntry<R> register(String id, Supplier<? extends R> supplier) {
+    public <R extends Recipe<Container>> RecipeEntry<R> register(String id, Supplier<RecipeSerializer<R>> supplier) {
         return AlmostUtils.cast(createOrThrowEntry(id, supplier));
     }
 }
