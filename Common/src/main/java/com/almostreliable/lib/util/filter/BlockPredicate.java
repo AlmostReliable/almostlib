@@ -11,7 +11,6 @@ import net.minecraft.core.Registry;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraft.server.level.ServerLevel;
 import net.minecraft.tags.TagKey;
 import net.minecraft.util.StringRepresentable;
 import net.minecraft.world.level.Level;
@@ -71,7 +70,6 @@ public class BlockPredicate implements Predicate<BlockState> {
 
     public boolean testNbt(Level level, BlockPos pos) {
         if (nbt == NbtPredicate.ANY) return true;
-        if (!(level instanceof ServerLevel)) throw new IllegalArgumentException("Level must be a ServerLevel");
         var blockEntity = level.getBlockEntity(pos);
         return testNbt(blockEntity);
     }
@@ -100,7 +98,6 @@ public class BlockPredicate implements Predicate<BlockState> {
 
     public boolean test(Level level, BlockPos pos) {
         if (equals(ANY)) return true;
-        if (!(level instanceof ServerLevel)) throw new IllegalArgumentException("Level must be a ServerLevel");
         if (!level.isLoaded(pos)) return false;
         BlockState state = level.getBlockState(pos);
         return test(state) && testNbt(level, pos);
