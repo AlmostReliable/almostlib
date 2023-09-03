@@ -12,6 +12,7 @@ import net.minecraft.world.item.crafting.Ingredient;
 import net.minecraft.world.level.ItemLike;
 
 import javax.annotation.Nullable;
+import java.util.function.Predicate;
 
 /**
  * A class representing an ingredient with a count.
@@ -25,7 +26,7 @@ import javax.annotation.Nullable;
  * <p>
  * The deserializer is also capable of reading vanilla ingredients.
  */
-public class IngredientStack {
+public class IngredientStack implements Predicate<ItemStack> {
 
     public static final Serializer SERIALIZER = new Serializer();
 
@@ -67,6 +68,11 @@ public class IngredientStack {
 
     public static IngredientStack of(TagKey<Item> itemTag) {
         return new IngredientStack(Ingredient.of(itemTag), 1);
+    }
+
+    @Override
+    public boolean test(ItemStack stack) {
+        return ingredient.test(stack) && stack.getCount() >= count;
     }
 
     public Ingredient getIngredient() {
