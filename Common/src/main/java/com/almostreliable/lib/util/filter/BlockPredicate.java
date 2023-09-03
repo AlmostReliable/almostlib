@@ -14,6 +14,7 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.tags.TagKey;
 import net.minecraft.util.StringRepresentable;
+import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
@@ -57,6 +58,10 @@ public class BlockPredicate implements Predicate<BlockState> {
         this.nbt = nbt;
     }
 
+    public boolean testBlocks(BlockState state) {
+        return blocks.contains(state.getBlock());
+    }
+
     public boolean testTags(BlockState state) {
         for (TagKey<Block> tag : tags) {
             if (state.is(tag)) return true;
@@ -64,12 +69,9 @@ public class BlockPredicate implements Predicate<BlockState> {
         return false;
     }
 
-    public boolean testBlocks(BlockState state) {
-        return blocks.contains(state.getBlock());
-    }
-
-    public boolean testNbt(ServerLevel level, BlockPos pos) {
+    public boolean testNbt(Level level, BlockPos pos) {
         if (nbt == NbtPredicate.ANY) return true;
+        if (!(level instanceof ServerLevel)) throw new IllegalArgumentException("Level must be a ServerLevel");
         var blockEntity = level.getBlockEntity(pos);
         return testNbt(blockEntity);
     }
@@ -96,8 +98,9 @@ public class BlockPredicate implements Predicate<BlockState> {
         return (testBlocks(state) || testTags(state)) && testProperties(state);
     }
 
-    public boolean test(ServerLevel level, BlockPos pos) {
+    public boolean test(Level level, BlockPos pos) {
         if (equals(ANY)) return true;
+        if (!(level instanceof ServerLevel)) throw new IllegalArgumentException("Level must be a ServerLevel");
         if (!level.isLoaded(pos)) return false;
         BlockState state = level.getBlockState(pos);
         return test(state) && testNbt(level, pos);
