@@ -44,7 +44,7 @@ import net.minecraftforge.registries.RegisterEvent;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.nio.file.Path;
-import java.util.List;
+import java.util.Set;
 import java.util.function.BiConsumer;
 import java.util.function.BiFunction;
 import java.util.function.Consumer;
@@ -179,7 +179,7 @@ public class AlmostLibPlatformForge implements AlmostLibPlatform {
     }
 
     @Override
-    public void writeRecipeModConditions(JsonObject json, List<String> modIds) {
+    public void writeRecipeModConditions(JsonObject json, Set<String> modIds) {
         var conditions = modIds.stream().map(ModLoadedCondition::new).toArray(ModLoadedCondition[]::new);
         json.add("forge:conditions", CraftingHelper.serialize(conditions));
     }

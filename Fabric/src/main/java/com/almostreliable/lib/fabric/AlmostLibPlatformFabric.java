@@ -43,6 +43,7 @@ import java.nio.file.Path;
 import java.util.Arrays;
 import java.util.Comparator;
 import java.util.List;
+import java.util.Set;
 import java.util.function.BiFunction;
 import java.util.function.Consumer;
 import java.util.function.Supplier;
@@ -181,7 +182,7 @@ public class AlmostLibPlatformFabric implements AlmostLibPlatform {
     }
 
     @Override
-    public void writeRecipeModConditions(JsonObject json, List<String> modIds) {
+    public void writeRecipeModConditions(JsonObject json, Set<String> modIds) {
         var conditions = DefaultResourceConditions.allModsLoaded(modIds.toArray(new String[0]));
         ConditionJsonProvider.write(json, conditions);
     }

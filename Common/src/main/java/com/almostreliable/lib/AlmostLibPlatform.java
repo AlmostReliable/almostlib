@@ -26,7 +26,7 @@ import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
 
 import java.nio.file.Path;
-import java.util.List;
+import java.util.Set;
 import java.util.function.BiFunction;
 import java.util.function.Consumer;
 import java.util.function.Supplier;
@@ -161,5 +161,5 @@ public interface AlmostLibPlatform {
      * @param json The json to write to.
      * @param modIds The mod ids to write.
      */
-    void writeRecipeModConditions(JsonObject json, List<String> modIds);
+    void writeRecipeModConditions(JsonObject json, Set<String> modIds);
 }
