@@ -1,5 +1,6 @@
 package com.almostreliable.lib.item;
 
+import com.almostreliable.lib.util.JsonSupplier;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
@@ -26,7 +27,7 @@ import java.util.function.Predicate;
  * <p>
  * The deserializer is also capable of reading vanilla ingredients.
  */
-public class IngredientStack implements Predicate<ItemStack> {
+public class IngredientStack implements Predicate<ItemStack>, JsonSupplier {
 
     public static final Serializer SERIALIZER = new Serializer();
 
@@ -81,6 +82,11 @@ public class IngredientStack implements Predicate<ItemStack> {
 
     public int getCount() {
         return count;
+    }
+
+    @Override
+    public JsonObject toJson() {
+        return SERIALIZER.toJson(this);
     }
 
     public static class Serializer {
