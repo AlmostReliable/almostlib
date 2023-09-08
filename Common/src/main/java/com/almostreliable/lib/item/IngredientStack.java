@@ -1,10 +1,12 @@
 package com.almostreliable.lib.item;
 
-import com.almostreliable.lib.util.JsonSupplier;
+import com.almostreliable.lib.datagen.recipe.RecipeComponent;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
+import net.minecraft.core.Registry;
 import net.minecraft.network.FriendlyByteBuf;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.tags.TagKey;
 import net.minecraft.util.GsonHelper;
 import net.minecraft.world.item.Item;
@@ -13,7 +15,10 @@ import net.minecraft.world.item.crafting.Ingredient;
 import net.minecraft.world.level.ItemLike;
 
 import javax.annotation.Nullable;
+import java.util.Arrays;
+import java.util.Set;
 import java.util.function.Predicate;
+import java.util.stream.Collectors;
 
 /**
  * A class representing an ingredient with a count.
@@ -27,7 +32,7 @@ import java.util.function.Predicate;
  * <p>
  * The deserializer is also capable of reading vanilla ingredients.
  */
-public class IngredientStack implements Predicate<ItemStack>, JsonSupplier {
+public class IngredientStack implements Predicate<ItemStack>, RecipeComponent {
 
     public static final Serializer SERIALIZER = new Serializer();
 
@@ -87,6 +92,14 @@ public class IngredientStack implements Predicate<ItemStack>, JsonSupplier {
     @Override
     public JsonObject toJson() {
         return SERIALIZER.toJson(this);
+    }
+
+    @Override
+    public Set<String> getModIds() {
+        return Arrays.stream(ingredient.getItems())
+            .map(stack -> Registry.ITEM.getKey(stack.getItem()))
+            .map(ResourceLocation::getNamespace)
+            .collect(Collectors.toSet());
     }
 
     public static class Serializer {

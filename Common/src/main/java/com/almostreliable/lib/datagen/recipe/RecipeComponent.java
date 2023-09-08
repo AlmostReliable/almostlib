@@ -1,7 +1,7 @@
 package com.almostreliable.lib.datagen.recipe;
 
 import com.almostreliable.lib.item.IngredientStack;
-import com.almostreliable.lib.util.JsonSupplier;
+import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import net.minecraft.data.recipes.FinishedRecipe;
 import net.minecraft.resources.ResourceLocation;
@@ -11,6 +11,8 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.crafting.Ingredient;
 import net.minecraft.world.level.ItemLike;
 
+import java.util.Set;
+
 /**
  * An abstraction for an item or an ingredient inside a datagen recipe.
  * <p>
@@ -18,64 +20,83 @@ import net.minecraft.world.level.ItemLike;
  */
 public interface RecipeComponent {
 
-    static JsonSupplier of(ResourceLocation id, int count) {
-        JsonObject json = new JsonObject();
-        json.addProperty("item", id.toString());
-        if (count > 1) json.addProperty("count", count);
-        return () -> json;
+    static RecipeComponent of(ResourceLocation id, int count) {
+        return new RecipeComponent() {
+            @Override
+            public JsonElement toJson() {
+                JsonObject json = new JsonObject();
+                json.addProperty("item", id.toString());
+                if (count > 1) json.addProperty("count", count);
+                return json;
+            }
+
+            @Override
+            public Set<String> getModIds() {
+                return Set.of(id.getNamespace());
+            }
+        };
     }
 
-    static JsonSupplier of(ResourceLocation id) {
+    static RecipeComponent of(ResourceLocation id) {
         return of(id, 1);
     }
 
-    static JsonSupplier of(String rawId, int count) {
-        if (rawId.startsWith("#")) {
-            JsonObject json = new JsonObject();
-            json.addProperty("tag", rawId.substring(1));
-            if (count > 1) json.addProperty("count", count);
-            return () -> json;
-        }
-        return of(new ResourceLocation(rawId));
+    static RecipeComponent of(String rawId, int count) {
+        if (!rawId.startsWith("#")) return of(new ResourceLocation(rawId), count);
+
+        return new RecipeComponent() {
+            @Override
+            public JsonElement toJson() {
+                JsonObject json = new JsonObject();
+                json.addProperty("tag", rawId.substring(1));
+                if (count > 1) json.addProperty("count", count);
+                return json;
+            }
+
+            @Override
+            public Set<String> getModIds() {
+                return Set.of(rawId.substring(1, rawId.indexOf(':')));
+            }
+        };
     }
 
-    static JsonSupplier of(String rawId) {
+    static RecipeComponent of(String rawId) {
         return of(rawId, 1);
     }
 
-    static JsonSupplier of(JsonObject json) {
-        return () -> json;
-    }
-
-    static JsonSupplier of(Ingredient ingredient, int count) {
+    static RecipeComponent of(Ingredient ingredient, int count) {
         return IngredientStack.of(ingredient, count);
     }
 
-    static JsonSupplier of(Ingredient ingredient) {
+    static RecipeComponent of(Ingredient ingredient) {
         return IngredientStack.of(ingredient);
     }
 
-    static JsonSupplier of(ItemStack stack, int count) {
+    static RecipeComponent of(ItemStack stack, int count) {
         return IngredientStack.of(stack, count);
     }
 
-    static JsonSupplier of(ItemStack stack) {
+    static RecipeComponent of(ItemStack stack) {
         return IngredientStack.of(stack);
     }
 
-    static JsonSupplier of(ItemLike itemLike, int count) {
+    static RecipeComponent of(ItemLike itemLike, int count) {
         return IngredientStack.of(itemLike, count);
     }
 
-    static JsonSupplier of(ItemLike itemLike) {
+    static RecipeComponent of(ItemLike itemLike) {
         return IngredientStack.of(itemLike);
     }
 
-    static JsonSupplier of(TagKey<Item> itemTag, int count) {
+    static RecipeComponent of(TagKey<Item> itemTag, int count) {
         return IngredientStack.of(itemTag, count);
     }
 
-    static JsonSupplier of(TagKey<Item> itemTag) {
+    static RecipeComponent of(TagKey<Item> itemTag) {
         return IngredientStack.of(itemTag);
     }
+
+    JsonElement toJson();
+
+    Set<String> getModIds();
 }
