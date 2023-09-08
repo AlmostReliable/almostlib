@@ -3,6 +3,7 @@ package com.almostreliable.lib;
 import com.almostreliable.lib.client.MenuFactory;
 import com.almostreliable.lib.network.NetworkHandler;
 import com.almostreliable.lib.registry.Registration;
+import com.google.gson.JsonObject;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Registry;
 import net.minecraft.network.FriendlyByteBuf;
@@ -25,6 +26,7 @@ import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
 
 import java.nio.file.Path;
+import java.util.List;
 import java.util.function.BiFunction;
 import java.util.function.Consumer;
 import java.util.function.Supplier;
@@ -152,4 +154,12 @@ public interface AlmostLibPlatform {
     void registerRecipeSerializers(ResourceLocation id, RecipeSerializer<? extends Recipe<?>> serializer);
 
     NetworkHandler createNetworkHandler(ResourceLocation id);
+
+    /**
+     * Writes the mod-loaded conditions to the json.
+     *
+     * @param json The json to write to.
+     * @param modIds The mod ids to write.
+     */
+    void writeRecipeModConditions(JsonObject json, List<String> modIds);
 }

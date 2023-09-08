@@ -7,9 +7,12 @@ import com.almostreliable.lib.fabric.network.NetworkHandlerFabric;
 import com.almostreliable.lib.network.NetworkHandler;
 import com.almostreliable.lib.registry.Registration;
 import com.google.auto.service.AutoService;
+import com.google.gson.JsonObject;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.fabric.api.client.itemgroup.FabricItemGroupBuilder;
 import net.fabricmc.fabric.api.object.builder.v1.block.entity.FabricBlockEntityTypeBuilder;
+import net.fabricmc.fabric.api.resource.conditions.v1.ConditionJsonProvider;
+import net.fabricmc.fabric.api.resource.conditions.v1.DefaultResourceConditions;
 import net.fabricmc.fabric.api.screenhandler.v1.ExtendedScreenHandlerFactory;
 import net.fabricmc.fabric.api.screenhandler.v1.ExtendedScreenHandlerType;
 import net.fabricmc.loader.api.FabricLoader;
@@ -175,5 +178,11 @@ public class AlmostLibPlatformFabric implements AlmostLibPlatform {
     @Override
     public NetworkHandler createNetworkHandler(ResourceLocation id) {
         return new NetworkHandlerFabric(id);
+    }
+
+    @Override
+    public void writeRecipeModConditions(JsonObject json, List<String> modIds) {
+        var conditions = DefaultResourceConditions.allModsLoaded(modIds.toArray(new String[0]));
+        ConditionJsonProvider.write(json, conditions);
     }
 }

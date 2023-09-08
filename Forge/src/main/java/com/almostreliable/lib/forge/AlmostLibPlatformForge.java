@@ -7,6 +7,7 @@ import com.almostreliable.lib.forge.network.NetworkHandlerForge;
 import com.almostreliable.lib.network.NetworkHandler;
 import com.almostreliable.lib.registry.Registration;
 import com.google.auto.service.AutoService;
+import com.google.gson.JsonObject;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Registry;
 import net.minecraft.network.FriendlyByteBuf;
@@ -26,6 +27,8 @@ import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraftforge.api.distmarker.Dist;
+import net.minecraftforge.common.crafting.CraftingHelper;
+import net.minecraftforge.common.crafting.conditions.ModLoadedCondition;
 import net.minecraftforge.common.extensions.IForgeMenuType;
 import net.minecraftforge.data.loading.DatagenModLoader;
 import net.minecraftforge.fml.ModList;
@@ -41,6 +44,7 @@ import net.minecraftforge.registries.RegisterEvent;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.nio.file.Path;
+import java.util.List;
 import java.util.function.BiConsumer;
 import java.util.function.BiFunction;
 import java.util.function.Consumer;
@@ -172,5 +176,11 @@ public class AlmostLibPlatformForge implements AlmostLibPlatform {
     @Override
     public NetworkHandler createNetworkHandler(ResourceLocation id) {
         return new NetworkHandlerForge(id);
+    }
+
+    @Override
+    public void writeRecipeModConditions(JsonObject json, List<String> modIds) {
+        var conditions = modIds.stream().map(ModLoadedCondition::new).toArray(ModLoadedCondition[]::new);
+        json.add("forge:conditions", CraftingHelper.serialize(conditions));
     }
 }
