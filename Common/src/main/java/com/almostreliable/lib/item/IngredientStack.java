@@ -89,6 +89,10 @@ public class IngredientStack implements Predicate<ItemStack>, RecipeComponent {
         return count;
     }
 
+    public boolean isEmpty() {
+        return ingredient.isEmpty();
+    }
+
     @Override
     public JsonObject toJson() {
         return SERIALIZER.toJson(this);
