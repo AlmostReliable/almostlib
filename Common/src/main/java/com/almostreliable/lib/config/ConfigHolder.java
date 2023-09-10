@@ -30,7 +30,7 @@ public class ConfigHolder<T> implements Supplier<T> {
         if (FilenameUtils.getExtension(path.toFile().getName()).isEmpty()) {
             path = path.resolveSibling(path.getFileName() + ".toml");
         }
-        Preconditions.checkArgument(FilenameUtils.getExtension(path.toFile().getName()).equals("toml"), "Config must be a TOML file");
+        Preconditions.checkArgument(FilenameUtils.getExtension(path.toFile().getName()).equals("toml"), "config must be a TOML file");
 
         this.path = path;
         this.clazz = clazz;

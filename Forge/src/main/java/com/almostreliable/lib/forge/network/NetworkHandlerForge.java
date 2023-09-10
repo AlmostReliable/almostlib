@@ -97,6 +97,6 @@ public class NetworkHandlerForge extends NetworkHandler {
     }
 
     private <T> void assertPacketMismatch(PacketHandler<T> handler, T packet) {
-        Preconditions.checkArgument(handler.getPacketType().isInstance(packet), "Packet type mismatch");
+        Preconditions.checkArgument(handler.getPacketType().isInstance(packet), "packet type mismatch");
     }
 }

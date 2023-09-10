@@ -12,7 +12,7 @@ public final class ItemStackExtension {
     private ItemStackExtension() {}
 
     public static ItemStack updateCount(@This ItemStack thiz, int count) {
-        Preconditions.checkArgument(count > thiz.getMaxStackSize(), "Count cannot be greater than max stack size");
+        Preconditions.checkArgument(count < thiz.getMaxStackSize(), "count must be less than max stack size");
         if (count == 0) return ItemStack.EMPTY;
         thiz.setCount(count);
         return thiz;

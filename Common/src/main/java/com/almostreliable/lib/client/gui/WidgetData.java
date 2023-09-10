@@ -140,7 +140,7 @@ public interface WidgetData extends Area.Mutable {
 
         @Override
         public void setWidth(int width) {
-            Preconditions.checkArgument(width >= 0, "Width must be positive");
+            Preconditions.checkArgument(width >= 0, "width must be positive");
             this.width = width;
         }
 
@@ -151,7 +151,7 @@ public interface WidgetData extends Area.Mutable {
 
         @Override
         public void setHeight(int height) {
-            Preconditions.checkArgument(height >= 0, "Height must be positive");
+            Preconditions.checkArgument(height >= 0, "height must be positive");
             this.height = height;
         }
 
