@@ -13,6 +13,8 @@ import net.minecraft.world.inventory.MenuType;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import org.jetbrains.annotations.ApiStatus;
 
+import javax.annotation.OverridingMethodsMustInvokeSuper;
+
 /**
  * An {@link AbstractContainerMenu} with a {@link MenuSynchronizer} and a linked {@link BlockEntity}.
  * <p>
@@ -33,12 +35,12 @@ import org.jetbrains.annotations.ApiStatus;
  */
 public abstract class SynchronizedContainerMenu<T extends BlockEntity> extends AbstractContainerMenu {
 
-    public final T blockEntity;
+    protected final T blockEntity;
     protected final MenuSynchronizer sync;
-    private final Inventory inventory;
+    protected final Inventory inventory;
 
-    protected SynchronizedContainerMenu(MenuType<?> menuType, int wid, Inventory inventory, T blockEntity) {
-        super(menuType, wid);
+    protected SynchronizedContainerMenu(MenuType<?> menuType, int id, Inventory inventory, T blockEntity) {
+        super(menuType, id);
         this.blockEntity = blockEntity;
         this.sync = new MenuSynchronizer();
         this.inventory = inventory;
@@ -72,5 +74,26 @@ public abstract class SynchronizedContainerMenu<T extends BlockEntity> extends A
     @ApiStatus.Internal
     public void receiveServerData(FriendlyByteBuf data) {
         sync.decode(data);
+        onServerDataChanged();
+    }
+
+    @SuppressWarnings("NoopMethodInAbstractClass")
+    @OverridingMethodsMustInvokeSuper
+    public void onServerDataChanged() {}
+
+    public T getBlockEntity() {
+        return blockEntity;
+    }
+
+    public Inventory getInventory() {
+        return inventory;
+    }
+
+    public Player getPlayer() {
+        return getInventory().player;
+    }
+
+    public boolean isClientSide() {
+        return getPlayer().level.isClientSide;
     }
 }
