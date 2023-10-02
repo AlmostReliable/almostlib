@@ -8,7 +8,7 @@ import java.util.function.Supplier;
 
 public class BooleanDataHandler extends AbstractDataHandler<Boolean> {
 
-    protected BooleanDataHandler(Supplier<Boolean> getter, Consumer<Boolean> setter) {
+    public BooleanDataHandler(Supplier<Boolean> getter, Consumer<Boolean> setter) {
         super(getter, setter);
     }
 

@@ -8,7 +8,7 @@ import java.util.function.Supplier;
 
 public class DoubleDataHandler extends AbstractDataHandler<Double> {
 
-    protected DoubleDataHandler(Supplier<Double> getter, Consumer<Double> setter) {
+    public DoubleDataHandler(Supplier<Double> getter, Consumer<Double> setter) {
         super(getter, setter);
     }
 

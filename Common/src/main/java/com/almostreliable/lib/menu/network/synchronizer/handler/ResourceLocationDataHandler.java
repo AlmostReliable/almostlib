@@ -9,7 +9,7 @@ import java.util.function.Supplier;
 
 public class ResourceLocationDataHandler extends AbstractDataHandler<ResourceLocation> {
 
-    protected ResourceLocationDataHandler(Supplier<ResourceLocation> getter, Consumer<ResourceLocation> setter) {
+    public ResourceLocationDataHandler(Supplier<ResourceLocation> getter, Consumer<ResourceLocation> setter) {
         super(getter, setter);
     }
 

@@ -9,7 +9,7 @@ import java.util.function.Supplier;
 
 public class BlockPosDataHandler extends AbstractDataHandler<BlockPos> {
 
-    protected BlockPosDataHandler(Supplier<BlockPos> getter, Consumer<BlockPos> setter) {
+    public BlockPosDataHandler(Supplier<BlockPos> getter, Consumer<BlockPos> setter) {
         super(getter, setter);
     }
 

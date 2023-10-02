@@ -8,7 +8,7 @@ import java.util.function.Supplier;
 
 public class LongDataHandler extends AbstractDataHandler<Long> {
 
-    protected LongDataHandler(Supplier<Long> getter, Consumer<Long> setter) {
+    public LongDataHandler(Supplier<Long> getter, Consumer<Long> setter) {
         super(getter, setter);
     }
 

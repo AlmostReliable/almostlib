@@ -8,7 +8,7 @@ import java.util.function.Supplier;
 
 public class IntegerDataHandler extends AbstractDataHandler<Integer> {
 
-    protected IntegerDataHandler(Supplier<Integer> getter, Consumer<Integer> setter) {
+    public IntegerDataHandler(Supplier<Integer> getter, Consumer<Integer> setter) {
         super(getter, setter);
     }
 

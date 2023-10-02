@@ -9,7 +9,7 @@ import java.util.function.Supplier;
 
 public class ItemStackDataHandler extends AbstractDataHandler<ItemStack> {
 
-    protected ItemStackDataHandler(Supplier<ItemStack> getter, Consumer<ItemStack> setter) {
+    public ItemStackDataHandler(Supplier<ItemStack> getter, Consumer<ItemStack> setter) {
         super(getter, setter);
     }
 
