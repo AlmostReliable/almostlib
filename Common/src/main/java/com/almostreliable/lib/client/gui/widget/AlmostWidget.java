@@ -24,6 +24,7 @@ public interface AlmostWidget<T extends WidgetData> extends Widget {
     @OverridingMethodsMustInvokeSuper
     @Override
     default void render(PoseStack poseStack, int mouseX, int mouseY, float delta) {
+        if (!getData().isActive() || !getData().isVisible()) return; // TODO: maybe render grayed out when inactive
         updateHovered(mouseX, mouseY);
     }
 
