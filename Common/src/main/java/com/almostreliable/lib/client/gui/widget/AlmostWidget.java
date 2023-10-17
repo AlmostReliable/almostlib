@@ -48,6 +48,24 @@ public interface AlmostWidget<T extends WidgetData> extends Widget {
     }
 
     /**
+     * Sets the visibility of the widget.<br>
+     * After the visibility is changed, the parent will be notified of the event.
+     * <p>
+     * When a widget is invisible, it will not be rendered and will not receive mouse events.
+     * <p>
+     * Because of the automated notification, this is the recommended way to change the visibility of a widget.
+     *
+     * @param visible True if the widget should be visible, false otherwise.
+     */
+    default void setVisible(boolean visible) {
+        boolean wasVisible = getData().isVisible();
+        getData().setVisible(visible);
+        if (wasVisible != getData().isVisible() && getData().getParent() != null) {
+            getData().getParent().onWidgetResize(this);
+        }
+    }
+
+    /**
      * Updates the hovered state of the widget. Widgets may call this in their {@link #render(PoseStack, int, int, float)} method.
      *
      * @param mouseX The x coordinate of the mouse.

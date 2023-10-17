@@ -15,5 +15,12 @@ public interface WidgetChangeListener {
      *
      * @param widget The widget that was resized.
      */
-    void onWidgetResize(AlmostWidget<?> widget);
+    default void onWidgetResize(AlmostWidget<?> widget) {}
+
+    /**
+     * Called when a child widget's visibility is changed.
+     *
+     * @param widget The widget that had its visibility changed.
+     */
+    default void onWidgetVisibilityChanged(AlmostWidget<?> widget) {}
 }
